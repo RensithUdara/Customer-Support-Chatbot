@@ -135,11 +135,15 @@ export async function POST(request: NextRequest) {
                     });
                 }
 
-                // Add the specific FAQ that matches their question (not all FAQs)
+                // Only add FAQ if it's different from the policy info and truly relevant
                 if (bestReturnFAQ && bestReturnFAQ.question && bestReturnFAQ.answer) {
-                    returnPolicyText += `\n❓ **Related FAQ:**\n\n`;
-                    returnPolicyText += `**Q: ${bestReturnFAQ.question}**\n`;
-                    returnPolicyText += `A: ${bestReturnFAQ.answer}\n`;
+                    // Don't show generic return policy FAQ if we already showed specific category policy
+                    const isGenericFAQ = bestReturnFAQ.answer.includes('14 days') && foundCategory;
+                    if (!isGenericFAQ) {
+                        returnPolicyText += `\n❓ **Additional Info:**\n\n`;
+                        returnPolicyText += `**Q: ${bestReturnFAQ.question}**\n`;
+                        returnPolicyText += `A: ${bestReturnFAQ.answer}\n`;
+                    }
                 }
 
                 returnPolicyText += '\n💡 Need more help? Contact our support team!';
