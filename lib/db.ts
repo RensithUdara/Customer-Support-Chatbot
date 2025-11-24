@@ -372,6 +372,94 @@ export const searchPromotions = (keyword: string) => {
   `).all(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`);
 };
 
+// Comprehensive database query functions for any table data
+export const getAllPaymentMethods = () => {
+  return db.prepare('SELECT * FROM payment_methods WHERE accepted = 1').all();
+};
+
+export const getAllWarrantyPolicies = () => {
+  return db.prepare('SELECT * FROM warranty_policies').all();
+};
+
+export const getAllShippingZones = () => {
+  return db.prepare('SELECT * FROM shipping_zones').all();
+};
+
+export const getAllPromotions = () => {
+  return db.prepare('SELECT * FROM promotions WHERE is_active = 1').all();
+};
+
+export const getAllCustomerSupport = () => {
+  return db.prepare('SELECT * FROM customer_support').all();
+};
+
+export const getProductCategories = () => {
+  return db.prepare('SELECT DISTINCT category FROM products ORDER BY category').all();
+};
+
+export const getProductsByCategory = (category: string) => {
+  return db.prepare('SELECT * FROM products WHERE category LIKE ? LIMIT 10').all(`%${category}%`);
+};
+
+export const getOrderStatistics = () => {
+  return db.prepare(`
+    SELECT 
+      status,
+      COUNT(*) as count,
+      AVG(totalAmount) as avg_amount
+    FROM orders 
+    GROUP BY status
+  `).all();
+};
+
+// Smart database query based on keywords
+export const smartDatabaseQuery = (message: string) => {
+  const lowercaseMessage = message.toLowerCase();
+  
+  // Payment methods queries
+  if (lowercaseMessage.includes('payment') || lowercaseMessage.includes('pay')) {
+    return { type: 'payment_methods', data: getAllPaymentMethods() };
+  }
+  
+  // Warranty queries
+  if (lowercaseMessage.includes('warranty') || lowercaseMessage.includes('guarantee')) {
+    return { type: 'warranty', data: getAllWarrantyPolicies() };
+  }
+  
+  // Shipping zones
+  if (lowercaseMessage.includes('shipping zone') || lowercaseMessage.includes('delivery area')) {
+    return { type: 'shipping_zones', data: getAllShippingZones() };
+  }
+  
+  // Promotions
+  if (lowercaseMessage.includes('promotion') || lowercaseMessage.includes('offer') || lowercaseMessage.includes('discount')) {
+    return { type: 'promotions', data: getAllPromotions() };
+  }
+  
+  // Customer support
+  if (lowercaseMessage.includes('customer support') || lowercaseMessage.includes('contact') || lowercaseMessage.includes('help desk')) {
+    return { type: 'customer_support', data: getAllCustomerSupport() };
+  }
+  
+  // Support topics
+  if (lowercaseMessage.includes('support topic') || lowercaseMessage.includes('help topic')) {
+    return { type: 'support_topics', data: getSupportTopics() };
+  }
+  
+  // Product categories
+  if (lowercaseMessage.includes('product categories') || lowercaseMessage.includes('categories') || lowercaseMessage.includes('what products')) {
+    return { type: 'product_categories', data: getProductCategories() };
+  }
+  
+  // Order statistics
+  if (lowercaseMessage.includes('order stat') || lowercaseMessage.includes('how many order')) {
+    return { type: 'order_statistics', data: getOrderStatistics() };
+  }
+  
+  // Default: return general store info
+  return { type: 'general_info', data: null };
+};
+
 // Initialize database on module load
 initDatabase();
 
