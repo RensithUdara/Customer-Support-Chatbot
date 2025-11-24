@@ -135,15 +135,23 @@ export async function POST(request: NextRequest) {
                     });
                 }
 
-                // Only add FAQ if it's different from the policy info and truly relevant
-                if (bestReturnFAQ && bestReturnFAQ.question && bestReturnFAQ.answer) {
+                // Only add FAQ if it's truly relevant and doesn't conflict with policy
+                if (bestReturnFAQ && bestReturnFAQ.question && bestReturnFAQ.answer && foundCategory) {
                     // Don't show generic return policy FAQ if we already showed specific category policy
-                    const isGenericFAQ = bestReturnFAQ.answer.includes('14 days') && foundCategory;
-                    if (!isGenericFAQ) {
+                    const isConflictingFAQ = bestReturnFAQ.answer.includes('14 days') || 
+                                           bestReturnFAQ.answer.includes('Items may be returned within') ||
+                                           bestReturnFAQ.question.includes('What is your return policy');
+                    
+                    if (!isConflictingFAQ) {
                         returnPolicyText += `\n❓ **Additional Info:**\n\n`;
                         returnPolicyText += `**Q: ${bestReturnFAQ.question}**\n`;
                         returnPolicyText += `A: ${bestReturnFAQ.answer}\n`;
                     }
+                } else if (!foundCategory && bestReturnFAQ && bestReturnFAQ.question && bestReturnFAQ.answer) {
+                    // For general queries, show the FAQ
+                    returnPolicyText += `\n❓ **Related FAQ:**\n\n`;
+                    returnPolicyText += `**Q: ${bestReturnFAQ.question}**\n`;
+                    returnPolicyText += `A: ${bestReturnFAQ.answer}\n`;
                 }
 
                 returnPolicyText += '\n💡 Need more help? Contact our support team!';
