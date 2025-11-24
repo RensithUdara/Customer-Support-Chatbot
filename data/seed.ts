@@ -23,14 +23,14 @@ const seedDatabase = () => {
     try {
         // Disable foreign key constraints during seeding
         db.exec('PRAGMA foreign_keys = OFF');
-        
+
         // Clear existing data first
         try {
             db.exec('DELETE FROM conversations');
-            db.exec('DELETE FROM orders');  
+            db.exec('DELETE FROM orders');
             db.exec('DELETE FROM products');
             db.exec('DELETE FROM faqs');
-            
+
             // Reset auto-increment counters
             db.exec('DELETE FROM sqlite_sequence WHERE name IN ("faqs", "products", "conversations")');
         } catch (error) {
@@ -48,26 +48,29 @@ const seedDatabase = () => {
             const brand = product.brand || 'Generic';
             const description = product.description || `${product.name} - ${product.category}`;
             const tags = product.tags || product.category.toLowerCase();
-            
+
             insertProduct.run(product.id, product.name, product.category, brand, product.price, description, tags);
         });        // Insert Orders
         const insertOrder = db.prepare('INSERT INTO orders (id, customer_name, product_id, order_date, delivery_date, status) VALUES (?, ?, ?, ?, ?, ?)');
         orders.forEach((order: any) => {
             insertOrder.run(order.order_id, order.customer, order.product_id, order.order_date, order.delivery_date, order.status);
-        }); console.log(`✅ Database seeded successfully!`);
-        console.log(`   - ${faqs.length} FAQs inserted`);
-        console.log(`   - ${products.length} products inserted`);
-        console.log(`   - ${orders.length} orders inserted`);
+            // Re-enable foreign key constraints
+            db.exec('PRAGMA foreign_keys = ON');
 
-    } catch (error) {
-        console.error('❌ Error seeding database:', error);
-        process.exit(1);
+            console.log(`✅ Database seeded successfully!`);
+            console.log(`   - ${faqs.length} FAQs inserted`);
+            console.log(`   - ${products.length} products inserted`);
+            console.log(`   - ${orders.length} orders inserted`);
+
+        } catch (error) {
+            console.error('❌ Error seeding database:', error);
+            process.exit(1);
+        }
+    };
+
+    // Run seeding if this file is executed directly
+    if (require.main === module) {
+        seedDatabase();
     }
-};
 
-// Run seeding if this file is executed directly
-if (require.main === module) {
-    seedDatabase();
-}
-
-export default seedDatabase;
+    export default seedDatabase;
