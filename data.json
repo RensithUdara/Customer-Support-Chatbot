@@ -120,7 +120,6 @@
             "question": "Can I return a product without its box?",
             "answer": "Original packaging and accessories are required for return approval."
         },
-        /* Payments */
         {
             "id": 21,
             "category": "Payments",
