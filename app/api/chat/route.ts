@@ -247,6 +247,25 @@ export async function POST(request: NextRequest) {
                         });
                         break;
 
+                    case 'specific_support':
+                        databaseResponse = `🆘 **${queryResult.supportType || 'Specific Support'} Information:**\n\n`;
+                        if (queryResult.data.length === 0) {
+                            databaseResponse += '❌ No specific support method found matching your query.\n\n';
+                            databaseResponse += '💡 Try asking for: "customer support info" to see all available methods.';
+                        } else {
+                            queryResult.data.forEach((support: any, index: number) => {
+                                databaseResponse += `**${support.support_type}** (${support.department})\n`;
+                                databaseResponse += `   📞 ${support.contact_method}: ${support.contact_info}\n`;
+                                databaseResponse += `   ⏰ Available: ${support.availability}\n`;
+                                databaseResponse += `   ⚡ Response Time: ${support.response_time}\n`;
+                                if (support.languages_supported) {
+                                    databaseResponse += `   🗣️ Languages: ${support.languages_supported}\n`;
+                                }
+                                databaseResponse += '\n';
+                            });
+                        }
+                        break;
+
                     case 'support_topics':
                         databaseResponse = '📚 **Available Support Topics:**\n\n';
                         queryResult.data.forEach((topic: any, index: number) => {
