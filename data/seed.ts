@@ -54,23 +54,25 @@ const seedDatabase = () => {
         const insertOrder = db.prepare('INSERT INTO orders (id, customer_name, product_id, order_date, delivery_date, status) VALUES (?, ?, ?, ?, ?, ?)');
         orders.forEach((order: any) => {
             insertOrder.run(order.order_id, order.customer, order.product_id, order.order_date, order.delivery_date, order.status);
-            // Re-enable foreign key constraints
-            db.exec('PRAGMA foreign_keys = ON');
+        });
 
-            console.log(`✅ Database seeded successfully!`);
-            console.log(`   - ${faqs.length} FAQs inserted`);
-            console.log(`   - ${products.length} products inserted`);
-            console.log(`   - ${orders.length} orders inserted`);
+        // Re-enable foreign key constraints
+        db.exec('PRAGMA foreign_keys = ON');
 
-        } catch (error) {
-            console.error('❌ Error seeding database:', error);
-            process.exit(1);
-        }
-    };
+        console.log(`✅ Database seeded successfully!`);
+        console.log(`   - ${faqs.length} FAQs inserted`);
+        console.log(`   - ${products.length} products inserted`);
+        console.log(`   - ${orders.length} orders inserted`);
 
-    // Run seeding if this file is executed directly
-    if (require.main === module) {
-        seedDatabase();
+    } catch (error) {
+        console.error('❌ Error seeding database:', error);
+        process.exit(1);
     }
+};
 
-    export default seedDatabase;
+// Run seeding if this file is executed directly
+if (require.main === module) {
+    seedDatabase();
+}
+
+export default seedDatabase;
