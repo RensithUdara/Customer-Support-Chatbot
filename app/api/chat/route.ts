@@ -101,8 +101,15 @@ export async function POST(request: NextRequest) {
         // Save bot response to conversation history
         await saveConversation(sessionId, botReply, 'bot', intentResult.intent);
 
+        // Debug logging
+        console.log('Bot reply being sent:', { 
+            reply: botReply, 
+            replyType: typeof botReply, 
+            replyLength: botReply?.length 
+        });
+
         return NextResponse.json({
-            reply: botReply,
+            reply: botReply || "I apologize, but I couldn't generate a proper response. Please try again.",
             intent: intentResult.intent,
             confidence: intentResult.confidence,
             sessionId
