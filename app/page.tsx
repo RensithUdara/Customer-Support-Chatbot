@@ -25,10 +25,10 @@ export default function Home() {
                 AI Customer Support Chatbot
               </h2>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Get instant help with order tracking, return policies, and personalized product recommendations. 
+                Get instant help with order tracking, return policies, and personalized product recommendations.
                 Our AI assistant is available 24/7 to provide you with accurate and helpful responses.
               </p>
-              <Link 
+              <Link
                 href="/chat"
                 className="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
               >
