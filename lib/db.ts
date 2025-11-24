@@ -436,7 +436,27 @@ export const smartDatabaseQuery = (message: string) => {
     return { type: 'promotions', data: getAllPromotions() };
   }
 
-  // Customer support
+  // Specific customer support methods
+  if (lowercaseMessage.includes('whatsapp support') || lowercaseMessage.includes('whatsapp contact')) {
+    return { type: 'specific_support', data: getSpecificCustomerSupport('whatsapp'), supportType: 'WhatsApp Support' };
+  }
+  if (lowercaseMessage.includes('phone support') || lowercaseMessage.includes('phone contact')) {
+    return { type: 'specific_support', data: getSpecificCustomerSupport('phone'), supportType: 'Phone Support' };
+  }
+  if (lowercaseMessage.includes('email support') || lowercaseMessage.includes('email contact')) {
+    return { type: 'specific_support', data: getSpecificCustomerSupport('email'), supportType: 'Email Support' };
+  }
+  if (lowercaseMessage.includes('live chat') || lowercaseMessage.includes('chat support')) {
+    return { type: 'specific_support', data: getSpecificCustomerSupport('chat'), supportType: 'Live Chat Support' };
+  }
+  if (lowercaseMessage.includes('technical support') || lowercaseMessage.includes('tech support')) {
+    return { type: 'specific_support', data: getSpecificCustomerSupport('technical'), supportType: 'Technical Support' };
+  }
+  if (lowercaseMessage.includes('returns support') || lowercaseMessage.includes('return support')) {
+    return { type: 'specific_support', data: getSpecificCustomerSupport('returns'), supportType: 'Returns Support' };
+  }
+
+  // General customer support (all methods)
   if (lowercaseMessage.includes('customer support') || lowercaseMessage.includes('contact') || lowercaseMessage.includes('help desk')) {
     return { type: 'customer_support', data: getAllCustomerSupport() };
   }
