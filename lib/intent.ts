@@ -38,7 +38,7 @@ export const detectIntent = (message: string): IntentResult => {
 
     // Also check if it's a category-specific return question
     const returnCategories = ['electronics', 'fashion', 'home', 'kitchen', 'sports', 'toys', 'health', 'books', 'beauty'];
-    const hasReturnCategoryQuery = returnCategories.some(cat => 
+    const hasReturnCategoryQuery = returnCategories.some(cat =>
         lowercaseMessage.includes('return') && lowercaseMessage.includes(cat)
     );
 
