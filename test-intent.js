@@ -12,7 +12,7 @@ const testMessages = [
 // Mock the intent detection logic (simplified version)
 function testIntent(message) {
     const lowercaseMessage = message.toLowerCase();
-    
+
     // Database query keywords
     const databaseQueryKeywords = [
         'how many', 'what are', 'list all', 'show me', 'tell me about', 'information about',
@@ -24,21 +24,21 @@ function testIntent(message) {
         'show warranty', 'warranty info', 'show promotions', 'current offers',
         'shipping options', 'delivery zones', 'support info', 'contact details'
     ];
-    
+
     const hasDatabaseQueryKeywords = databaseQueryKeywords.some(keyword => lowercaseMessage.includes(keyword));
-    
+
     // Policy keywords
     const policyKeywords = ['return', 'refund', 'policy', 'shipping', 'delivery charge', 'cash on delivery', 'cod', 'warranty', 'exchange', 'payment', 'pay', 'emi', 'card', 'credit', 'debit', 'wallet', 'upi', 'invoice', 'fee', 'charge', 'secure', 'account', 'login', 'password', 'profile'];
     const hasPolicyKeywords = policyKeywords.some(keyword => lowercaseMessage.includes(keyword));
-    
+
     if (hasDatabaseQueryKeywords) {
         return { intent: 'DATABASE_QUERY', confidence: 0.8 };
     }
-    
+
     if (hasPolicyKeywords) {
         return { intent: 'POLICY', confidence: 0.8 };
     }
-    
+
     return { intent: 'OTHER', confidence: 0.3 };
 }
 
