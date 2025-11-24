@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { detectIntent, extractKeywords } from '@/lib/intent';
-import { searchFAQs, getOrderById, searchProducts, saveConversation } from '@/lib/db';
+import { searchFAQs, getOrderById, searchProducts, saveConversation, searchBestFAQ } from '@/lib/db';
 import { callLLM } from '@/lib/llm';
 
 export async function POST(request: NextRequest) {
@@ -45,7 +45,6 @@ export async function POST(request: NextRequest) {
             case 'POLICY':
                 // Return exact database answer for policy questions
                 const keywords = extractKeywords(message);
-                const { searchBestFAQ } = await import('@/lib/db');
                 const bestMatch = await searchBestFAQ(message, keywords);
 
                 if (bestMatch && bestMatch.answer) {
@@ -81,7 +80,6 @@ export async function POST(request: NextRequest) {
             default:
                 // Try to find relevant FAQs for general questions and return exact answers
                 const generalKeywords = extractKeywords(message);
-                const { searchBestFAQ } = await import('@/lib/db');
                 const generalBestMatch = await searchBestFAQ(message, generalKeywords);
 
                 if (generalBestMatch && generalBestMatch.answer) {
