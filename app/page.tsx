@@ -110,7 +110,7 @@ export default function Home() {
               </div>
             </div>
             <p className="text-gray-700 leading-relaxed grow text-sm">
-              Budget-smart filtering from ₹1,300 to ₹4,00,000. AI analyzes your needs for personalized product matches across all categories.
+              Budget-smart filtering from Rs.1,300 to Rs.4,00,000. AI analyzes your needs for personalized product matches across all categories.
             </p>
           </div>
         </div>
@@ -170,7 +170,7 @@ export default function Home() {
                 <li>• Standard Delivery (3-5 working days)</li>
                 <li>• Express Delivery (1-2 days, metro cities)</li>
                 <li>• Same-day Delivery (selected items/areas)</li>
-                <li>• Free shipping on orders above ₹999</li>
+                <li>• Free shipping on orders above Rs.999</li>
                 <li>• Real-time tracking with SMS/Email updates</li>
                 <li>• Delivery rescheduling & address changes</li>
               </ul>

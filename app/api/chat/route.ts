@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { detectIntent, extractKeywords } from '@/lib/intent';
-import { searchFAQs, getOrderById, searchProducts, saveConversation } from '@/lib/db';
+import { searchFAQs, getOrderById, searchProducts, saveConversation, searchBestFAQ } from '@/lib/db';
 import { callLLM } from '@/lib/llm';
 
 export async function POST(request: NextRequest) {
@@ -43,19 +43,21 @@ export async function POST(request: NextRequest) {
                 break;
 
             case 'POLICY':
-                systemPrompt = 'You are a customer service agent explaining company policies. Use only the FAQ information provided and be helpful.';
-
+                // Return exact database answer for policy questions
                 const keywords = extractKeywords(message);
-                const relevantFAQs = await searchFAQs(keywords);
-                context.faqs = relevantFAQs;
+                const bestMatch = await searchBestFAQ(message, keywords);
 
-                const policyResponse = await callLLM({
-                    systemPrompt: systemPrompt + ' Answer based only on the provided FAQ information.',
-                    userMessage: message,
-                    context
-                });
-
-                botReply = policyResponse.reply;
+                if (bestMatch && bestMatch.answer) {
+                    botReply = bestMatch.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                } else {
+                    // Fallback to general search
+                    const relevantFAQs = await searchFAQs(keywords);
+                    if (relevantFAQs.length > 0) {
+                        botReply = relevantFAQs[0].answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                    } else {
+                        botReply = "I'd be happy to help you with policy information. Could you please be more specific about what you'd like to know about our shipping, returns, payments, or other policies?";
+                    }
+                }
                 break;
 
             case 'PRODUCT_RECOMMENDATION':
@@ -76,24 +78,23 @@ export async function POST(request: NextRequest) {
 
             case 'OTHER':
             default:
-                // Try to find relevant FAQs for general questions
+                // Try to find relevant FAQs for general questions and return exact answers
                 const generalKeywords = extractKeywords(message);
-                const generalFAQs = await searchFAQs(generalKeywords);
+                const generalBestMatch = await searchBestFAQ(message, generalKeywords);
 
-                if (generalFAQs.length > 0) {
-                    context.faqs = generalFAQs;
-                    const generalResponse = await callLLM({
-                        systemPrompt: 'You are a helpful customer service agent. Try to answer using the FAQ information if relevant, otherwise provide general assistance.',
-                        userMessage: message,
-                        context
-                    });
-                    botReply = generalResponse.reply;
+                if (generalBestMatch && generalBestMatch.answer) {
+                    botReply = generalBestMatch.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
                 } else {
-                    botReply = "Hello! I'm here to help you with:\n\n" +
-                        "🔍 **Order Tracking** - Check your order status (e.g., 'Where is order 1012?')\n" +
-                        "📋 **Policies & FAQs** - Return policy, shipping, payments, warranty\n" +
-                        "🛍️ **Product Recommendations** - Find products based on your budget and needs\n\n" +
-                        "How can I assist you today?";
+                    const generalFAQs = await searchFAQs(generalKeywords);
+                    if (generalFAQs.length > 0) {
+                        botReply = generalFAQs[0].answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                    } else {
+                        botReply = "Hello! I'm here to help you with:\n\n" +
+                            "🔍 **Order Tracking** - Check your order status (e.g., 'Where is order 1012?')\n" +
+                            "📋 **Policies & FAQs** - Return policy, shipping, payments, warranty\n" +
+                            "🛍️ **Product Recommendations** - Find products based on your budget and needs\n\n" +
+                            "How can I assist you today?";
+                    }
                 }
                 break;
         }
@@ -101,8 +102,15 @@ export async function POST(request: NextRequest) {
         // Save bot response to conversation history
         await saveConversation(sessionId, botReply, 'bot', intentResult.intent);
 
-        return NextResponse.json({
+        // Debug logging
+        console.log('Bot reply being sent:', {
             reply: botReply,
+            replyType: typeof botReply,
+            replyLength: botReply?.length
+        });
+
+        return NextResponse.json({
+            reply: botReply || "I apologize, but I couldn't generate a proper response. Please try again.",
             intent: intentResult.intent,
             confidence: intentResult.confidence,
             sessionId
