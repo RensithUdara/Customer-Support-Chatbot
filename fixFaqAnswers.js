@@ -34,7 +34,7 @@ const categoryAnswers = {
         "We don't deliver to PO boxes; physical addresses only.",
         "Multiple orders can be combined if placed within same day."
     ],
-    
+
     "Returns & Refunds": [
         "Items may be returned within 14 days if unused and in original packaging.",
         "Log in → My Orders → Select order → Request return.",
@@ -62,7 +62,7 @@ const categoryAnswers = {
         "Return requests can be cancelled before item pickup.",
         "Returned items are inspected and either restocked or disposed."
     ],
-    
+
     "Payments": [
         "We accept credit/debit cards, bank transfers, and Cash on Delivery.",
         "COD is available only in selected districts.",
@@ -90,7 +90,7 @@ const categoryAnswers = {
         "Foreign transaction fees may apply for international cards.",
         "We accept LKR only; USD payments are converted automatically."
     ],
-    
+
     "Account": [
         "Use 'Forgot Password' link on login page to reset your password.",
         "Email address can be changed in Account Settings after verification.",
@@ -118,7 +118,7 @@ const categoryAnswers = {
         "Account issues should be reported through Help Center → Contact Support.",
         "Deleted accounts cannot be recovered; create new account if needed."
     ],
-    
+
     "Product & Warranty": [
         "Most products include 1-year manufacturer warranty.",
         "Submit warranty claims with purchase receipt and product serial number.",
@@ -146,7 +146,7 @@ const categoryAnswers = {
         "Satisfaction guarantee allows returns within 14 days.",
         "Technical documentation available for professional products."
     ],
-    
+
     "Customer Support": [
         "24/7 customer support available via phone, email, and live chat.",
         "Average response time is 2-4 hours for email queries.",
@@ -174,7 +174,7 @@ const categoryAnswers = {
         "Support documentation updated regularly.",
         "Feedback and suggestions welcomed through support channels."
     ],
-    
+
     "Technical Issues": [
         "Website technical issues usually resolve within 30 minutes.",
         "Clear browser cache and cookies if pages load slowly.",
@@ -202,7 +202,7 @@ const categoryAnswers = {
         "Network connectivity issues affect real-time features.",
         "Server maintenance scheduled during low-traffic hours."
     ],
-    
+
     "Promotions & Offers": [
         "Current promotions are displayed on homepage and category pages.",
         "Newsletter subscribers get early access to special offers.",
@@ -230,7 +230,7 @@ const categoryAnswers = {
         "Bundle discounts for purchasing multiple categories.",
         "VIP customer early access to major sales events."
     ],
-    
+
     "Security & Privacy": [
         "All personal data is encrypted using industry-standard protocols.",
         "We comply with international data protection standards.",
@@ -258,7 +258,7 @@ const categoryAnswers = {
         "Regular penetration testing identifies vulnerabilities.",
         "Compliance with GDPR and local privacy laws maintained."
     ],
-    
+
     "Mobile App": [
         "Mobile app available for Android and iOS devices.",
         "Download from Google Play Store or Apple App Store.",
@@ -304,7 +304,7 @@ let updatedCount = 0;
 data.faqs.forEach((faq, index) => {
     const questionIndex = index % 25; // Cycle through 25 answers per category
     const newAnswer = getCategoryAnswer(faq.category, questionIndex);
-    
+
     if (faq.answer !== newAnswer) {
         faq.answer = newAnswer;
         updatedCount++;
