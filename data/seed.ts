@@ -4,7 +4,7 @@ import { faqData, productsData, ordersData } from './seedData';
 // Seed the database with initial data
 const seedDatabase = () => {
     console.log('Seeding database...');
-    
+
     // Ensure database is initialized first
     initDatabase();
 
