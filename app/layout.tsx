@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ChatProvider } from "@/components/ChatContext";
+import FloatingChatWidget from "@/components/FloatingChatWidget";
+import ChatPopup from "@/components/ChatPopup";
 
 export const metadata: Metadata = {
   title: "ShopEasy - Customer Support Chatbot",
@@ -14,7 +17,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        {children}
+        <ChatProvider>
+          {children}
+          <FloatingChatWidget />
+          <ChatPopup />
+        </ChatProvider>
       </body>
     </html>
   );
