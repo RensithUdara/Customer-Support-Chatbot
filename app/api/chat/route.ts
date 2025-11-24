@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { detectIntent, extractKeywords } from '@/lib/intent';
-import { searchFAQs, getOrderById, searchProducts, saveConversation, searchBestFAQ } from '@/lib/db';
+import { searchFAQs, getOrderById, searchProducts, saveConversation, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs } from '@/lib/db';
 import { callLLM } from '@/lib/llm';
 
 export async function POST(request: NextRequest) {
@@ -24,22 +24,126 @@ export async function POST(request: NextRequest) {
 
         switch (intentResult.intent) {
             case 'ORDER_STATUS':
-                systemPrompt = 'You are a helpful customer service agent providing order status information. Be polite and informative.';
-
                 if (intentResult.extractedData?.orderId) {
-                    const order = await getOrderById(intentResult.extractedData.orderId);
-                    context.order = order;
+                    const order = await getOrderById(intentResult.extractedData.orderId.toString());
+                    
+                    if (order) {
+                        // Check if user is asking for detailed information or just basic tracking
+                        const isDetailedRequest = message.toLowerCase().includes('detail') || 
+                                              message.toLowerCase().includes('information') ||
+                                              message.toLowerCase().includes('full') ||
+                                              message.toLowerCase().includes('complete');
 
-                    const llmResponse = await callLLM({
-                        systemPrompt: systemPrompt + ' Focus on explaining the order status clearly.',
-                        userMessage: message,
-                        context
-                    });
+                        if (isDetailedRequest) {
+                            // Show detailed information (without sensitive personal data)
+                            let itemsInfo = '';
+                            try {
+                                const items = JSON.parse(order.items || '[]');
+                                if (items.length > 0) {
+                                    itemsInfo = '\n\n**Items ordered:**\n' + 
+                                        items.map((item: any, index: number) => 
+                                            `${index + 1}. ${item.name} (${item.category}) - Qty: ${item.quantity} - Rs.${item.price.toLocaleString()}`
+                                        ).join('\n');
+                                }
+                            } catch (e) {
+                                itemsInfo = '\n\n**Items:** Order details available';
+                            }
 
-                    botReply = llmResponse.reply;
+                            botReply = `📦 **Order #${order.orderId}** - ${order.status}\n\n` +
+                                `👤 **Customer:** ${order.customerName}\n` +
+                                `📅 **Order Date:** ${order.orderDate}\n` +
+                                `💰 **Total Amount:** Rs.${order.totalAmount?.toLocaleString()}\n` +
+                                `💳 **Payment Method:** ${order.paymentMethod}\n` +
+                                `🚚 **Tracking Number:** ${order.trackingNumber}\n` +
+                                `📦 **Estimated Delivery:** ${order.estimatedDelivery}` +
+                                itemsInfo;
+                        } else {
+                            // Show basic tracking information only (privacy-safe)
+                            botReply = `📦 **Order #${order.orderId}** - ${order.status}\n\n` +
+                                `🚚 **Tracking Number:** ${order.trackingNumber}\n` +
+                                `📅 **Order Date:** ${order.orderDate}\n` +
+                                `📦 **Estimated Delivery:** ${order.estimatedDelivery}\n\n` +
+                                `💡 Ask for "order details" if you need more information.`;
+                        }
+                    } else {
+                        botReply = "I couldn't find that order number. Please double-check your order ID and try again, or contact our support team for assistance.";
+                    }
                 } else {
-                    botReply = "I'd be happy to help you track your order! Could you please provide your order number? It's usually a 4-6 digit number like 1001 or 1234.";
+                    botReply = "I'd be happy to help you track your order! Could you please provide your order number? It's usually a 4-digit number like 1001 or 1015.";
                 }
+                break;
+
+            case 'DELIVERY_METHODS':
+                // Show all available delivery methods
+                const deliveryMethods = getDeliveryMethods();
+                let deliveryMethodsText = '🚚 **Available Delivery Methods:**\n\n';
+                
+                deliveryMethods.forEach((method: any, index: number) => {
+                    deliveryMethodsText += `**${index + 1}. ${method.method}** (${method.provider})\n`;
+                    deliveryMethodsText += `   📍 Coverage: ${method.coverage_area}\n`;
+                    deliveryMethodsText += `   ⏱️ Delivery Time: ${method.delivery_time}\n`;
+                    deliveryMethodsText += `   💰 Cost: Rs.${method.cost}\n`;
+                    deliveryMethodsText += `   📦 Weight Limit: ${method.weight_limit}kg\n`;
+                    deliveryMethodsText += `   🚚 Tracking: ${method.tracking_available ? 'Yes' : 'No'}\n`;
+                    deliveryMethodsText += `   💵 COD Available: ${method.cod_available ? 'Yes' : 'No'}\n`;
+                    if (method.insurance_included) {
+                        deliveryMethodsText += `   🛡️ Insurance: Included\n`;
+                    }
+                    deliveryMethodsText += '\n';
+                });
+                
+                deliveryMethodsText += '💡 Choose the method that best suits your needs!';
+                botReply = deliveryMethodsText;
+                break;
+
+            case 'RETURN_POLICIES':
+                // Check if user is asking for category-specific return policy
+                const categories = ['electronics', 'fashion', 'home', 'kitchen', 'sports', 'toys', 'health', 'books', 'beauty'];
+                const messageWords = message.toLowerCase().split(' ');
+                const foundCategory = categories.find(cat => messageWords.some(word => word.includes(cat)));
+                
+                // Find the most relevant FAQ for their specific question
+                const bestReturnFAQ = searchBestFAQ(message, extractKeywords(message));
+                
+                let returnPolicyText = '';
+                let returnPolicies;
+                
+                if (foundCategory) {
+                    // Show category-specific return policies
+                    returnPolicies = getReturnPoliciesByCategory(foundCategory);
+                    if (returnPolicies.length > 0) {
+                        const policy = returnPolicies[0];
+                        returnPolicyText = `📋 **Return Policy for ${foundCategory.charAt(0).toUpperCase() + foundCategory.slice(1)} Products:**\n\n`;
+                        returnPolicyText += `⏰ **Return Period:** ${policy.return_period} days\n`;
+                        returnPolicyText += `📦 **Condition Required:** ${policy.condition_required}\n`;
+                        returnPolicyText += `🚚 **Return Shipping:** ${policy.return_shipping}\n`;
+                        returnPolicyText += `💰 **Refund Method:** ${policy.refund_method}\n`;
+                        returnPolicyText += `⚡ **Processing Time:** ${policy.processing_time} days\n`;
+                        returnPolicyText += `🔄 **Exchange:** ${policy.exchange_allowed ? 'Available' : 'Not Available'}\n`;
+                        if (policy.restocking_fee > 0) {
+                            returnPolicyText += `💸 **Restocking Fee:** Rs.${policy.restocking_fee}\n`;
+                        }
+                    }
+                } else {
+                    // For general return policy questions, show a summary
+                    returnPolicies = getReturnPolicies();
+                    returnPolicyText = '📋 **Return Policy Summary:**\n\n';
+                    returnPolicies.forEach((policy: any) => {
+                        if (policy.return_period > 0) { // Skip non-returnable categories
+                            returnPolicyText += `• **${policy.product_category}:** ${policy.return_period} days - ${policy.condition_required}\n`;
+                        }
+                    });
+                }
+                
+                // Add the specific FAQ that matches their question (not all FAQs)
+                if (bestReturnFAQ && bestReturnFAQ.question && bestReturnFAQ.answer) {
+                    returnPolicyText += `\n❓ **Related FAQ:**\n\n`;
+                    returnPolicyText += `**Q: ${bestReturnFAQ.question}**\n`;
+                    returnPolicyText += `A: ${bestReturnFAQ.answer}\n`;
+                }
+                
+                returnPolicyText += '\n💡 Need more help? Contact our support team!';
+                botReply = returnPolicyText;
                 break;
 
             case 'POLICY':
@@ -132,4 +236,4 @@ export async function GET() {
         message: 'Customer Support Chatbot API is running',
         timestamp: new Date().toISOString()
     });
-}
+}// Updated privacy settings
