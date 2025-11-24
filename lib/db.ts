@@ -415,47 +415,47 @@ export const getOrderStatistics = () => {
 // Smart database query based on keywords
 export const smartDatabaseQuery = (message: string) => {
   const lowercaseMessage = message.toLowerCase();
-  
+
   // Payment methods queries
   if (lowercaseMessage.includes('payment') || lowercaseMessage.includes('pay')) {
     return { type: 'payment_methods', data: getAllPaymentMethods() };
   }
-  
+
   // Warranty queries
   if (lowercaseMessage.includes('warranty') || lowercaseMessage.includes('guarantee')) {
     return { type: 'warranty', data: getAllWarrantyPolicies() };
   }
-  
+
   // Shipping zones
   if (lowercaseMessage.includes('shipping zone') || lowercaseMessage.includes('delivery area')) {
     return { type: 'shipping_zones', data: getAllShippingZones() };
   }
-  
+
   // Promotions
   if (lowercaseMessage.includes('promotion') || lowercaseMessage.includes('offer') || lowercaseMessage.includes('discount')) {
     return { type: 'promotions', data: getAllPromotions() };
   }
-  
+
   // Customer support
   if (lowercaseMessage.includes('customer support') || lowercaseMessage.includes('contact') || lowercaseMessage.includes('help desk')) {
     return { type: 'customer_support', data: getAllCustomerSupport() };
   }
-  
+
   // Support topics
   if (lowercaseMessage.includes('support topic') || lowercaseMessage.includes('help topic')) {
     return { type: 'support_topics', data: getSupportTopics() };
   }
-  
+
   // Product categories
   if (lowercaseMessage.includes('product categories') || lowercaseMessage.includes('categories') || lowercaseMessage.includes('what products')) {
     return { type: 'product_categories', data: getProductCategories() };
   }
-  
+
   // Order statistics
   if (lowercaseMessage.includes('order stat') || lowercaseMessage.includes('how many order')) {
     return { type: 'order_statistics', data: getOrderStatistics() };
   }
-  
+
   // Default: return general store info
   return { type: 'general_info', data: null };
 };
