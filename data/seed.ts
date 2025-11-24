@@ -1,20 +1,14 @@
-import db from '../lib/db';
+import db, { initDatabase } from '../lib/db';
 import { faqData, productsData, ordersData } from './seedData';
 
 // Seed the database with initial data
 const seedDatabase = () => {
     console.log('Seeding database...');
 
+    // Ensure database is initialized first
+    initDatabase();
+
     try {
-        // Clear existing data
-        db.exec('DELETE FROM conversations');
-        db.exec('DELETE FROM orders');
-        db.exec('DELETE FROM products');
-        db.exec('DELETE FROM faqs');
-
-        // Reset auto-increment counters
-        db.exec('DELETE FROM sqlite_sequence WHERE name IN ("faqs", "products", "conversations")');
-
         // Insert FAQs
         const insertFAQ = db.prepare('INSERT INTO faqs (category, question_example, answer_text) VALUES (?, ?, ?)');
         faqData.forEach(faq => {

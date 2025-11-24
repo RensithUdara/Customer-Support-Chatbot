@@ -1,0 +1,391 @@
+{
+  "faqs": [
+    {
+      "id": 1,
+      "category": "Orders & Shipping",
+      "question": "What are your delivery times?",
+      "answer": "Standard delivery takes 3–5 working days for most areas."
+    },
+    {
+      "id": 2,
+      "category": "Orders & Shipping",
+      "question": "Do you offer express shipping?",
+      "answer": "Yes, express delivery (1–2 days) is available for selected cities."
+    },
+    {
+      "id": 3,
+      "category": "Orders & Shipping",
+      "question": "How can I track my order?",
+      "answer": "You can track your order using the tracking link sent to your email or SMS."
+    },
+    {
+      "id": 4,
+      "category": "Orders & Shipping",
+      "question": "My order is delayed. What should I do?",
+      "answer": "Please contact support with your order ID, and we will check the status."
+    },
+    {
+      "id": 5,
+      "category": "Orders & Shipping",
+      "question": "Do you ship internationally?",
+      "answer": "Currently, we only ship within Sri Lanka."
+    },
+    {
+      "id": 6,
+      "category": "Orders & Shipping",
+      "question": "What happens if I’m not home during delivery?",
+      "answer": "Our courier will attempt delivery twice and contact you to reschedule."
+    },
+    {
+      "id": 7,
+      "category": "Orders & Shipping",
+      "question": "Can I change my delivery address?",
+      "answer": "Address changes are possible only before the order is shipped."
+    },
+    {
+      "id": 8,
+      "category": "Orders & Shipping",
+      "question": "Do you offer same-day delivery?",
+      "answer": "Same-day delivery is available for selected items and areas."
+    },
+    {
+      "id": 9,
+      "category": "Orders & Shipping",
+      "question": "How are shipping charges calculated?",
+      "answer": "Shipping charges depend on product weight and delivery location."
+    },
+    {
+      "id": 10,
+      "category": "Orders & Shipping",
+      "question": "Can I cancel my order before it ships?",
+      "answer": "Yes, you can cancel the order before it is dispatched."
+    },
+
+    /* Returns & Refund */
+    {
+      "id": 11,
+      "category": "Returns & Refunds",
+      "question": "What is your return policy?",
+      "answer": "Items may be returned within 14 days if unused and in original packaging."
+    },
+    {
+      "id": 12,
+      "category": "Returns & Refunds",
+      "question": "How do I request a return?",
+      "answer": "Log in → My Orders → Select order → Request return."
+    },
+    {
+      "id": 13,
+      "category": "Returns & Refunds",
+      "question": "When will I get my refund?",
+      "answer": "Refunds are processed within 3–7 working days after inspection."
+    },
+    {
+      "id": 14,
+      "category": "Returns & Refunds",
+      "question": "Are all items returnable?",
+      "answer": "Cosmetics, undergarments, and clearance products are non-returnable."
+    },
+    {
+      "id": 15,
+      "category": "Returns & Refunds",
+      "question": "Who pays for return shipping?",
+      "answer": "Return shipping is free for defective items; otherwise customer pays."
+    },
+    {
+      "id": 16,
+      "category": "Returns & Refunds",
+      "question": "Can I exchange instead of return?",
+      "answer": "Yes, exchanges are allowed for size or color variations."
+    },
+    {
+      "id": 17,
+      "category": "Returns & Refunds",
+      "question": "What if my product arrives damaged?",
+      "answer": "Report within 48 hours with photos; replacement will be arranged."
+    },
+    {
+      "id": 18,
+      "category": "Returns & Refunds",
+      "question": "Do you refund shipping fees?",
+      "answer": "Shipping fees are refunded only if the item was defective."
+    },
+    {
+      "id": 19,
+      "category": "Returns & Refunds",
+      "question": "How will I receive my refund?",
+      "answer": "Refunds are issued to your original payment method."
+    },
+    {
+      "id": 20,
+      "category": "Returns & Refunds",
+      "question": "Can I return a product without its box?",
+      "answer": "Original packaging and accessories are required for return approval."
+    },
+
+    /* Payments */
+    {
+      "id": 21,
+      "category": "Payments",
+      "question": "What payment methods do you accept?",
+      "answer": "We accept credit/debit cards, bank transfers, and Cash on Delivery."
+    },
+    {
+      "id": 22,
+      "category": "Payments",
+      "question": "Is Cash on Delivery available everywhere?",
+      "answer": "COD is available only in selected districts."
+    },
+    {
+      "id": 23,
+      "category": "Payments",
+      "question": "Why was my payment declined?",
+      "answer": "Check your card details, balance, or try another payment method."
+    },
+    {
+      "id": 24,
+      "category": "Payments",
+      "question": "Do you offer EMI plans?",
+      "answer": "Yes, EMI is available on orders above Rs. 25,000."
+    },
+    {
+      "id": 25,
+      "category": "Payments",
+      "question": "Do you support mobile wallets?",
+      "answer": "Yes, major mobile wallets are supported."
+    },
+    {
+      "id": 26,
+      "category": "Payments",
+      "question": "Are online payments secure?",
+      "answer": "All payments are encrypted and PCI-DSS compliant."
+    },
+    {
+      "id": 27,
+      "category": "Payments",
+      "question": "Can I split my payment?",
+      "answer": "Currently split payments are not supported."
+    },
+    {
+      "id": 28,
+      "category": "Payments",
+      "question": "Are card payments charged extra?",
+      "answer": "No, there are no additional fees."
+    },
+    {
+      "id": 29,
+      "category": "Payments",
+      "question": "How do I get an invoice?",
+      "answer": "An invoice is emailed once your order is confirmed."
+    },
+    {
+      "id": 30,
+      "category": "Payments",
+      "question": "Why is COD unavailable for some items?",
+      "answer": "High-value items require prepaid payment due to security reasons."
+    },
+
+    /* Account */
+    {
+      "id": 31,
+      "category": "Account",
+      "question": "I forgot my password. What should I do?",
+      "answer": "Click 'Forgot Password' and follow the instructions."
+    },
+    {
+      "id": 32,
+      "category": "Account",
+      "question": "Can I change my email address?",
+      "answer": "Yes, email changes can be made in account settings."
+    },
+    {
+      "id": 33,
+      "category": "Account",
+      "question": "How do I delete my account?",
+      "answer": "Contact customer support to delete your account."
+    },
+    {
+      "id": 34,
+      "category": "Account",
+      "question": "Why can't I log in?",
+      "answer": "Check your email, password, or reset your password."
+    },
+    {
+      "id": 35,
+      "category": "Account",
+      "question": "How do I update my phone number?",
+      "answer": "Go to account settings → Personal Info."
+    },
+    {
+      "id": 36,
+      "category": "Account",
+      "question": "Can I save multiple addresses?",
+      "answer": "Yes, you can save several addresses in your profile."
+    },
+    {
+      "id": 37,
+      "category": "Account",
+      "question": "How do I subscribe to newsletters?",
+      "answer": "Enable email notifications under settings."
+    },
+    {
+      "id": 38,
+      "category": "Account",
+      "question": "How do I view my past orders?",
+      "answer": "Go to 'My Orders' in your account."
+    },
+    {
+      "id": 39,
+      "category": "Account",
+      "question": "Can I disable notifications?",
+      "answer": "Yes, notification preferences can be changed anytime."
+    },
+    {
+      "id": 40,
+      "category": "Account",
+      "question": "How do I update my profile information?",
+      "answer": "Use the Edit Profile option in account settings."
+    },
+
+    /* Product & Warranty */
+    {
+      "id": 41,
+      "category": "Product & Warranty",
+      "question": "Do your products include warranty?",
+      "answer": "Most electronics include a 6–12 month warranty."
+    },
+    {
+      "id": 42,
+      "category": "Product & Warranty",
+      "question": "How do I claim warranty?",
+      "answer": "Present your invoice and visit an authorized service center."
+    },
+    {
+      "id": 43,
+      "category": "Product & Warranty",
+      "question": "Are all products brand new?",
+      "answer": "Yes, we only sell 100% new products."
+    },
+    {
+      "id": 44,
+      "category": "Product & Warranty",
+      "question": "Do you sell refurbished products?",
+      "answer": "Refurbished items are clearly marked and discounted."
+    },
+    {
+      "id": 45,
+      "category": "Product & Warranty",
+      "question": "Do you offer installation services?",
+      "answer": "Installation is available for selected large appliances."
+    },
+    {
+      "id": 46,
+      "category": "Product & Warranty",
+      "question": "What if a product is out of stock?",
+      "answer": "Click 'Notify Me' to receive restock alerts."
+    },
+    {
+      "id": 47,
+      "category": "Product & Warranty",
+      "question": "Are product images accurate?",
+      "answer": "Images are representative and may slightly differ."
+    },
+    {
+      "id": 48,
+      "category": "Product & Warranty",
+      "question": "Can I customize a product?",
+      "answer": "Customization is not available for most items."
+    },
+    {
+      "id": 49,
+      "category": "Product & Warranty",
+      "question": "How do I compare products?",
+      "answer": "Use the Compare option on product pages."
+    },
+    {
+      "id": 50,
+      "category": "Product & Warranty",
+      "question": "What if the price drops after purchase?",
+      "answer": "We do not offer price adjustments after purchase."
+    }
+  ],
+
+  "products": [
+    { "id": 1, "name": "Samsung Galaxy A14", "category": "Mobile", "price": 45000 },
+    { "id": 2, "name": "Xiaomi Redmi Note 12", "category": "Mobile", "price": 52000 },
+    { "id": 3, "name": "Apple iPhone 12", "category": "Mobile", "price": 185000 },
+    { "id": 4, "name": "Oppo A57", "category": "Mobile", "price": 48000 },
+    { "id": 5, "name": "Vivo Y21", "category": "Mobile", "price": 39000 },
+    { "id": 6, "name": "Realme C35", "category": "Mobile", "price": 55000 },
+    { "id": 7, "name": "Samsung Galaxy S22", "category": "Mobile", "price": 245000 },
+    { "id": 8, "name": "Xiaomi Poco X5 Pro", "category": "Mobile", "price": 96000 },
+    { "id": 9, "name": "Nokia G21", "category": "Mobile", "price": 42000 },
+    { "id": 10, "name": "Apple iPhone 15", "category": "Mobile", "price": 265000 },
+
+    { "id": 11, "name": "Dell Inspiron 15", "category": "Laptop", "price": 165000 },
+    { "id": 12, "name": "HP Pavilion Gaming", "category": "Laptop", "price": 210000 },
+    { "id": 13, "name": "Acer Aspire 5", "category": "Laptop", "price": 145000 },
+    { "id": 14, "name": "Lenovo ThinkPad E14", "category": "Laptop", "price": 225000 },
+    { "id": 15, "name": "Asus TUF Gaming A15", "category": "Laptop", "price": 275000 },
+    { "id": 16, "name": "MacBook Air M1", "category": "Laptop", "price": 285000 },
+    { "id": 17, "name": "HP Victus i5", "category": "Laptop", "price": 240000 },
+    { "id": 18, "name": "Lenovo IdeaPad 3 Ryzen", "category": "Laptop", "price": 185000 },
+    { "id": 19, "name": "Dell XPS 13", "category": "Laptop", "price": 390000 },
+    { "id": 20, "name": "Acer Nitro 5", "category": "Laptop", "price": 315000 },
+
+    { "id": 21, "name": "Samsung 7kg Washing Machine", "category": "Home Appliances", "price": 98000 },
+    { "id": 22, "name": "LG 32” Smart TV", "category": "Home Appliances", "price": 69000 },
+    { "id": 23, "name": "Panasonic Blender MX100", "category": "Home Appliances", "price": 12500 },
+    { "id": 24, "name": "Philips Air Fryer XXL", "category": "Home Appliances", "price": 48000 },
+    { "id": 25, "name": "Samsung 250L Refrigerator", "category": "Home Appliances", "price": 145000 },
+    { "id": 26, "name": "Sony 43” LED TV", "category": "Home Appliances", "price": 115000 },
+    { "id": 27, "name": "Sanford Electric Kettle", "category": "Home Appliances", "price": 4500 },
+    { "id": 28, "name": "Toshiba Rice Cooker 2.2L", "category": "Home Appliances", "price": 13000 },
+    { "id": 29, "name": "Hitachi Vacuum Cleaner", "category": "Home Appliances", "price": 33000 },
+    { "id": 30, "name": "Sharp Microwave Oven", "category": "Home Appliances", "price": 29500 },
+
+    { "id": 31, "name": "Men’s Slim Fit Jeans", "category": "Fashion", "price": 3200 },
+    { "id": 32, "name": "Women’s Casual T-Shirt", "category": "Fashion", "price": 1900 },
+    { "id": 33, "name": "Unisex Hoodie", "category": "Fashion", "price": 3800 },
+    { "id": 34, "name": "Men’s Running Shoes", "category": "Fashion", "price": 6500 },
+    { "id": 35, "name": "Women’s Handbag", "category": "Fashion", "price": 4200 },
+    { "id": 36, "name": "Cotton Saree", "category": "Fashion", "price": 6900 },
+    { "id": 37, "name": "Men's Leather Belt", "category": "Fashion", "price": 1800 },
+    { "id": 38, "name": "Sports Cap", "category": "Fashion", "price": 1300 },
+    { "id": 39, "name": "Women’s Sandals", "category": "Fashion", "price": 2900 },
+    { "id": 40, "name": "Men's Formal Shirt", "category": "Fashion", "price": 2800 }
+  ],
+
+  "orders": [
+    { "order_id": 1001, "customer": "Ravindu", "product_id": 1, "order_date": "2025-01-02", "delivery_date": "2025-01-06", "status": "Delivered" },
+    { "order_id": 1002, "customer": "Sahan", "product_id": 15, "order_date": "2025-01-05", "delivery_date": "2025-01-09", "status": "Shipped" },
+    { "order_id": 1003, "customer": "Malsha", "product_id": 4, "order_date": "2025-01-06", "delivery_date": "2025-01-11", "status": "Processing" },
+    { "order_id": 1004, "customer": "Dinithi", "product_id": 23, "order_date": "2025-01-06", "delivery_date": "2025-01-10", "status": "Delivered" },
+    { "order_id": 1005, "customer": "Thisara", "product_id": 7, "order_date": "2025-01-07", "delivery_date": "2025-01-14", "status": "Shipped" },
+    { "order_id": 1006, "customer": "Kavindu", "product_id": 16, "order_date": "2025-01-08", "delivery_date": "2025-01-13", "status": "Delivered" },
+    { "order_id": 1007, "customer": "Nirosha", "product_id": 25, "order_date": "2025-01-08", "delivery_date": "2025-01-15", "status": "Processing" },
+    { "order_id": 1008, "customer": "Pasindu", "product_id": 9, "order_date": "2025-01-09", "delivery_date": "2025-01-14", "status": "Delivered" },
+    { "order_id": 1009, "customer": "Hansi", "product_id": 31, "order_date": "2025-01-10", "delivery_date": "2025-01-15", "status": "Cancelled" },
+    { "order_id": 1010, "customer": "Imal", "product_id": 18, "order_date": "2025-01-11", "delivery_date": "2025-01-16", "status": "Delivered" },
+    { "order_id": 1011, "customer": "Nipuni", "product_id": 35, "order_date": "2025-01-12", "delivery_date": "2025-01-18", "status": "Processing" },
+    { "order_id": 1012, "customer": "Thilina", "product_id": 2, "order_date": "2025-01-13", "delivery_date": "2025-01-17", "status": "Shipped" },
+    { "order_id": 1013, "customer": "Maduka", "product_id": 22, "order_date": "2025-01-14", "delivery_date": "2025-01-20", "status": "Processing" },
+    { "order_id": 1014, "customer": "Sachini", "product_id": 10, "order_date": "2025-01-15", "delivery_date": "2025-01-19", "status": "Delivered" },
+    { "order_id": 1015, "customer": "Ishara", "product_id": 14, "order_date": "2025-01-15", "delivery_date": "2025-01-21", "status": "Shipped" },
+    { "order_id": 1016, "customer": "Kalana", "product_id": 12, "order_date": "2025-01-16", "delivery_date": "2025-01-22", "status": "Delivered" },
+    { "order_id": 1017, "customer": "Dulmi", "product_id": 29, "order_date": "2025-01-16", "delivery_date": "2025-01-23", "status": "Processing" },
+    { "order_id": 1018, "customer": "Supun", "product_id": 3, "order_date": "2025-01-17", "delivery_date": "2025-01-22", "status": "Delivered" },
+    { "order_id": 1019, "customer": "Jayani", "product_id": 40, "order_date": "2025-01-18", "delivery_date": "2025-01-25", "status": "Shipped" },
+    { "order_id": 1020, "customer": "Chamika", "product_id": 17, "order_date": "2025-01-19", "delivery_date": "2025-01-26", "status": "Processing" },
+    { "order_id": 1021, "customer": "Sanduni", "product_id": 6, "order_date": "2025-01-19", "delivery_date": "2025-01-24", "status": "Delivered" },
+    { "order_id": 1022, "customer": "Nipun", "product_id": 32, "order_date": "2025-01-20", "delivery_date": "2025-01-27", "status": "Processing" },
+    { "order_id": 1023, "customer": "Viraj", "product_id": 11, "order_date": "2025-01-20", "delivery_date": "2025-01-25", "status": "Delivered" },
+    { "order_id": 1024, "customer": "Dilhani", "product_id": 8, "order_date": "2025-01-21", "delivery_date": "2025-01-28", "status": "Shipped" },
+    { "order_id": 1025, "customer": "Minura", "product_id": 20, "order_date": "2025-01-22", "delivery_date": "2025-01-29", "status": "Processing" },
+    { "order_id": 1026, "customer": "Oshada", "product_id": 19, "order_date": "2025-01-22", "delivery_date": "2025-01-30", "status": "Delivered" },
+    { "order_id": 1027, "customer": "Janidu", "product_id": 5, "order_date": "2025-01-23", "delivery_date": "2025-01-29", "status": "Delivered" },
+    { "order_id": 1028, "customer": "Kavisha", "product_id": 21, "order_date": "2025-01-23", "delivery_date": "2025-01-31", "status": "Shipped" },
+    { "order_id": 1029, "customer": "Loshini", "product_id": 34, "order_date": "2025-01-24", "delivery_date": "2025-02-01", "status": "Processing" },
+    { "order_id": 1030, "customer": "Rashmika", "product_id": 13, "order_date": "2025-01-25", "delivery_date": "2025-01-30", "status": "Delivered" }
+  ]
+}
