@@ -84,10 +84,10 @@ export const searchBestFAQ = (message: string, keywords: string[]) => {
 
   // Then try keyword-based search with simple scoring
   if (keywords.length === 0) return null;
-  
+
   const keywordQuery = keywords.map(() => `question LIKE ? OR answer LIKE ? OR category LIKE ?`).join(' OR ');
   const params = keywords.flatMap(k => [`%${k}%`, `%${k}%`, `%${k}%`]);
-  
+
   const bestMatch = db.prepare(`
     SELECT * FROM faqs 
     WHERE ${keywordQuery}
