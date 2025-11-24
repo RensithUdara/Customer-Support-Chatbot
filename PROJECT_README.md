@@ -113,9 +113,9 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 ### Product Recommendations
 **User:** "Recommend a phone under 25000"  
 **Bot:** "Based on your requirements, here are my top recommendations:
-1. **OnePlus Nord CE 3** - ₹26,999
-2. **Xiaomi Redmi Note 12 Pro** - ₹23,999
-3. **POCO X5 Pro** - ₹22,999"
+1. **OnePlus Nord CE 3** - Rs.26,999
+2. **Xiaomi Redmi Note 12 Pro** - Rs.23,999
+3. **POCO X5 Pro** - Rs.22,999"
 
 ## 🛠️ Technical Features
 
