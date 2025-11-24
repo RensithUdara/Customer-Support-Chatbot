@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
                 const keywords = extractKeywords(message);
                 const { searchBestFAQ } = await import('@/lib/db');
                 const bestMatch = await searchBestFAQ(message, keywords);
-                
+
                 if (bestMatch && bestMatch.answer) {
                     botReply = bestMatch.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
                 } else {
@@ -79,24 +79,24 @@ export async function POST(request: NextRequest) {
 
             case 'OTHER':
             default:
-                // Try to find relevant FAQs for general questions
+                // Try to find relevant FAQs for general questions and return exact answers
                 const generalKeywords = extractKeywords(message);
-                const generalFAQs = await searchFAQs(generalKeywords);
+                const { searchBestFAQ } = await import('@/lib/db');
+                const generalBestMatch = await searchBestFAQ(message, generalKeywords);
 
-                if (generalFAQs.length > 0) {
-                    context.faqs = generalFAQs;
-                    const generalResponse = await callLLM({
-                        systemPrompt: 'You are a helpful customer service agent. Try to answer using the FAQ information if relevant, otherwise provide general assistance.',
-                        userMessage: message,
-                        context
-                    });
-                    botReply = generalResponse.reply;
+                if (generalBestMatch && generalBestMatch.answer) {
+                    botReply = generalBestMatch.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
                 } else {
-                    botReply = "Hello! I'm here to help you with:\n\n" +
-                        "🔍 **Order Tracking** - Check your order status (e.g., 'Where is order 1012?')\n" +
-                        "📋 **Policies & FAQs** - Return policy, shipping, payments, warranty\n" +
-                        "🛍️ **Product Recommendations** - Find products based on your budget and needs\n\n" +
-                        "How can I assist you today?";
+                    const generalFAQs = await searchFAQs(generalKeywords);
+                    if (generalFAQs.length > 0) {
+                        botReply = generalFAQs[0].answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                    } else {
+                        botReply = "Hello! I'm here to help you with:\n\n" +
+                            "🔍 **Order Tracking** - Check your order status (e.g., 'Where is order 1012?')\n" +
+                            "📋 **Policies & FAQs** - Return policy, shipping, payments, warranty\n" +
+                            "🛍️ **Product Recommendations** - Find products based on your budget and needs\n\n" +
+                            "How can I assist you today?";
+                    }
                 }
                 break;
         }
