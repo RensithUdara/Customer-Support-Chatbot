@@ -160,7 +160,7 @@ export default function Home() {
                 <li>• Payment Security & PCI Compliance</li>
               </ul>
             </div>
-            
+
             <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-200">
               <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
                 <span className="bg-green-100 p-2 rounded-lg mr-3">🚚</span>
