@@ -29,16 +29,24 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
     if (systemPrompt.includes('order status')) {
         if (context?.order) {
             const order = context.order;
-            reply = `Your order #${order.id} for ${order.product_name} (${order.brand || ''}) is currently ${order.status.toLowerCase()}. `;
+            reply = `Your order #${order.orderId || order.id} for ${order.product_name || 'your item'} (${order.brand || ''}) is currently ${order.status.toLowerCase()}. `;
 
             if (order.status === 'Processing') {
-                reply += `Your order was placed on ${order.order_date} and is being prepared for shipment.`;
+                reply += `Your order was placed on ${order.orderDate || order.order_date} and is being prepared for shipment.`;
             } else if (order.status === 'Shipped') {
-                reply += `It was shipped on ${order.order_date} and is expected to be delivered by ${order.delivery_date}.`;
+                reply += `It was shipped on ${order.orderDate || order.order_date} and is expected to be delivered by ${order.estimatedDelivery || order.delivery_date}.`;
             } else if (order.status === 'Delivered') {
-                reply += `It was successfully delivered on ${order.delivery_date}.`;
+                reply += `It was successfully delivered on ${order.estimatedDelivery || order.delivery_date}.`;
             } else if (order.status === 'Cancelled') {
                 reply += `This order was cancelled. If you have any questions, please contact our support team.`;
+            }
+
+            // Add payment and total amount info if available
+            if (order.totalAmount) {
+                reply += `\n\nOrder Total: ₹${order.totalAmount.toLocaleString()}`;
+            }
+            if (order.paymentMethod) {
+                reply += `\nPayment Method: ${order.paymentMethod}`;
             }
         } else {
             reply = "I couldn't find that order number. Please double-check your order ID and try again, or contact our support team for assistance.";
@@ -46,7 +54,7 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
     } else if (systemPrompt.includes('FAQ') || systemPrompt.includes('policy')) {
         if (context?.faqs && context.faqs.length > 0) {
             const faq = context.faqs[0];
-            reply = faq.answer_text;
+            reply = faq.answer;
 
             // Add helpful additional info
             if (context.faqs.length > 1) {
@@ -64,8 +72,14 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
                 reply += `${index + 1}. **${product.name}** (${product.brand || 'Generic'})\n`;
                 reply += `   - Price: ₹${product.price.toLocaleString()}\n`;
                 reply += `   - ${product.description}\n`;
-                if (product.tags) {
-                    reply += `   - Features: ${product.tags}\n`;
+                if (product.features) {
+                    reply += `   - Features: ${product.features}\n`;
+                }
+                if (product.rating) {
+                    reply += `   - Rating: ${product.rating}/5 stars\n`;
+                }
+                if (product.stock > 0) {
+                    reply += `   - In Stock: ${product.stock} available\n`;
                 }
                 reply += '\n';
             });
