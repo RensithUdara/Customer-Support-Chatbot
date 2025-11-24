@@ -26,13 +26,13 @@ export async function POST(request: NextRequest) {
             case 'ORDER_STATUS':
                 if (intentResult.extractedData?.orderId) {
                     const order = await getOrderById(intentResult.extractedData.orderId.toString());
-                    
+
                     if (order) {
                         // Check if user is asking for detailed information or just basic tracking
-                        const isDetailedRequest = message.toLowerCase().includes('detail') || 
-                                              message.toLowerCase().includes('information') ||
-                                              message.toLowerCase().includes('full') ||
-                                              message.toLowerCase().includes('complete');
+                        const isDetailedRequest = message.toLowerCase().includes('detail') ||
+                            message.toLowerCase().includes('information') ||
+                            message.toLowerCase().includes('full') ||
+                            message.toLowerCase().includes('complete');
 
                         if (isDetailedRequest) {
                             // Show detailed information (without sensitive personal data)
@@ -40,8 +40,8 @@ export async function POST(request: NextRequest) {
                             try {
                                 const items = JSON.parse(order.items || '[]');
                                 if (items.length > 0) {
-                                    itemsInfo = '\n\n**Items ordered:**\n' + 
-                                        items.map((item: any, index: number) => 
+                                    itemsInfo = '\n\n**Items ordered:**\n' +
+                                        items.map((item: any, index: number) =>
                                             `${index + 1}. ${item.name} (${item.category}) - Qty: ${item.quantity} - Rs.${item.price.toLocaleString()}`
                                         ).join('\n');
                                 }
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
                 // Show all available delivery methods
                 const deliveryMethods = getDeliveryMethods();
                 let deliveryMethodsText = '🚚 **Available Delivery Methods:**\n\n';
-                
+
                 deliveryMethods.forEach((method: any, index: number) => {
                     deliveryMethodsText += `**${index + 1}. ${method.method}** (${method.provider})\n`;
                     deliveryMethodsText += `   📍 Coverage: ${method.coverage_area}\n`;
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
                     }
                     deliveryMethodsText += '\n';
                 });
-                
+
                 deliveryMethodsText += '💡 Choose the method that best suits your needs!';
                 botReply = deliveryMethodsText;
                 break;
@@ -101,13 +101,13 @@ export async function POST(request: NextRequest) {
                 const categories = ['electronics', 'fashion', 'home', 'kitchen', 'sports', 'toys', 'health', 'books', 'beauty'];
                 const messageWords = message.toLowerCase().split(' ');
                 const foundCategory = categories.find(cat => messageWords.some(word => word.includes(cat)));
-                
+
                 // Find the most relevant FAQ for their specific question
                 const bestReturnFAQ = searchBestFAQ(message, extractKeywords(message));
-                
+
                 let returnPolicyText = '';
                 let returnPolicies;
-                
+
                 if (foundCategory) {
                     // Show category-specific return policies
                     returnPolicies = getReturnPoliciesByCategory(foundCategory);
@@ -134,14 +134,14 @@ export async function POST(request: NextRequest) {
                         }
                     });
                 }
-                
+
                 // Add the specific FAQ that matches their question (not all FAQs)
                 if (bestReturnFAQ && bestReturnFAQ.question && bestReturnFAQ.answer) {
                     returnPolicyText += `\n❓ **Related FAQ:**\n\n`;
                     returnPolicyText += `**Q: ${bestReturnFAQ.question}**\n`;
                     returnPolicyText += `A: ${bestReturnFAQ.answer}\n`;
                 }
-                
+
                 returnPolicyText += '\n💡 Need more help? Contact our support team!';
                 botReply = returnPolicyText;
                 break;
