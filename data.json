@@ -60,8 +60,6 @@
       "question": "Can I cancel my order before it ships?",
       "answer": "Yes, you can cancel the order before it is dispatched."
     },
-
-    /* Returns & Refund */
     {
       "id": 11,
       "category": "Returns & Refunds",
