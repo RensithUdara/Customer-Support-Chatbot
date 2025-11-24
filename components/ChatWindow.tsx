@@ -216,7 +216,7 @@ export default function ChatWindow() {
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyPress={handleKeyPress}
                         placeholder="Ask me about orders, policies, or product recommendations..."
-                        className="flex-1 min-h-11 max-h-32 p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 min-h-11 max-h-32 p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
                         disabled={isLoading}
                         rows={1}
                     />
