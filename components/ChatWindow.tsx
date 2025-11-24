@@ -88,7 +88,7 @@ export default function ChatWindow() {
 
             const botMessage: Message = {
                 id: (Date.now() + 1).toString(),
-                text: data.reply,
+                text: data.reply || "I apologize, but I couldn't process your request properly. Please try again.",
                 sender: 'bot',
                 timestamp: new Date(),
                 intent: data.intent
