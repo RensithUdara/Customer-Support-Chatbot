@@ -43,19 +43,22 @@ export async function POST(request: NextRequest) {
                 break;
 
             case 'POLICY':
-                systemPrompt = 'You are a customer service agent explaining company policies. Use only the FAQ information provided and be helpful.';
-
+                // Return exact database answer for policy questions
                 const keywords = extractKeywords(message);
-                const relevantFAQs = await searchFAQs(keywords);
-                context.faqs = relevantFAQs;
-
-                const policyResponse = await callLLM({
-                    systemPrompt: systemPrompt + ' Answer based only on the provided FAQ information.',
-                    userMessage: message,
-                    context
-                });
-
-                botReply = policyResponse.reply;
+                const { searchBestFAQ } = await import('@/lib/db');
+                const bestMatch = await searchBestFAQ(message, keywords);
+                
+                if (bestMatch && bestMatch.answer) {
+                    botReply = bestMatch.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                } else {
+                    // Fallback to general search
+                    const relevantFAQs = await searchFAQs(keywords);
+                    if (relevantFAQs.length > 0) {
+                        botReply = relevantFAQs[0].answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                    } else {
+                        botReply = "I'd be happy to help you with policy information. Could you please be more specific about what you'd like to know about our shipping, returns, payments, or other policies?";
+                    }
+                }
                 break;
 
             case 'PRODUCT_RECOMMENDATION':
