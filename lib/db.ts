@@ -82,21 +82,20 @@ export const searchBestFAQ = (message: string, keywords: string[]) => {
   const exactMatch = db.prepare('SELECT * FROM faqs WHERE question = ?').get(message);
   if (exactMatch) return exactMatch;
 
-  // Then try partial question matches with scoring
-  const partialMatches = db.prepare(`
-    SELECT *, 
-    (
-      CASE WHEN question LIKE ? THEN 10 ELSE 0 END +
-      CASE WHEN question LIKE ? THEN 8 ELSE 0 END +
-      CASE WHEN category IN (${keywords.map(() => '?').join(',')}) THEN 5 ELSE 0 END
-    ) as score
-    FROM faqs 
-    WHERE ${keywords.map(k => `question LIKE '%${k}%' OR answer LIKE '%${k}%'`).join(' OR ')}
-    ORDER BY score DESC, id ASC
+  // Then try keyword-based search with simple scoring
+  if (keywords.length === 0) return null;
+  
+  const keywordQuery = keywords.map(() => `question LIKE ? OR answer LIKE ? OR category LIKE ?`).join(' OR ');
+  const params = keywords.flatMap(k => [`%${k}%`, `%${k}%`, `%${k}%`]);
+  
+  const bestMatch = db.prepare(`
+    SELECT * FROM faqs 
+    WHERE ${keywordQuery}
+    ORDER BY id ASC
     LIMIT 1
-  `).get(`%${message}%`, `%${keywords[0]}%`, ...keywords);
+  `).get(...params);
 
-  return partialMatches;
+  return bestMatch;
 };
 
 // Search FAQs by category
