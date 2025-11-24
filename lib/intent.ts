@@ -21,7 +21,7 @@ export const detectIntent = (message: string): IntentResult => {
     const orderId = numberMatch ? parseInt(numberMatch[0]) : undefined;
 
     // Extract budget/price
-    const budgetMatch = message.match(/(?:under|below|less than|within|budget|price)\s*(?:rs\.?\s*|₹\s*)?(\d+(?:,\d+)*)/i);
+    const budgetMatch = message.match(/(?:under|below|less than|within|budget|price)\s*(?:rs\.?\s*|Rs.\s*)?(\d+(?:,\d+)*)/i);
     const budget = budgetMatch ? parseInt(budgetMatch[1].replace(/,/g, '')) : undefined;
 
     // Order status keywords
@@ -29,7 +29,7 @@ export const detectIntent = (message: string): IntentResult => {
     const hasOrderKeywords = orderKeywords.some(keyword => lowercaseMessage.includes(keyword));
 
     // Policy/FAQ keywords
-    const policyKeywords = ['return', 'refund', 'policy', 'shipping', 'delivery charge', 'cash on delivery', 'cod', 'warranty', 'exchange'];
+    const policyKeywords = ['return', 'refund', 'policy', 'shipping', 'delivery charge', 'cash on delivery', 'cod', 'warranty', 'exchange', 'payment', 'pay', 'emi', 'card', 'credit', 'debit', 'wallet', 'upi', 'invoice', 'fee', 'charge', 'secure', 'account', 'login', 'password', 'profile'];
     const hasPolicyKeywords = policyKeywords.some(keyword => lowercaseMessage.includes(keyword));
 
     // Product recommendation keywords
@@ -85,11 +85,22 @@ export const detectIntent = (message: string): IntentResult => {
 
 // Keywords for search
 export const extractKeywords = (message: string): string[] => {
-    const stopWords = ['the', 'is', 'at', 'which', 'on', 'and', 'a', 'to', 'are', 'as', 'what', 'how', 'can', 'do', 'i', 'my'];
+    const stopWords = ['the', 'is', 'at', 'which', 'on', 'and', 'a', 'to', 'are', 'as', 'what', 'how', 'can', 'do', 'i', 'my', 'you', 'your', 'offer', 'have'];
 
-    return message
+    // Special handling for important short keywords
+    const specialKeywords = ['emi', 'cod', 'upi'];
+    let keywords = message
         .toLowerCase()
         .replace(/[^\w\s]/g, '')
         .split(/\s+/)
-        .filter(word => word.length > 2 && !stopWords.includes(word));
+        .filter(word => (word.length > 2 && !stopWords.includes(word)) || specialKeywords.includes(word));
+
+    // Add the special keywords if they appear in the message
+    specialKeywords.forEach(special => {
+        if (message.toLowerCase().includes(special) && !keywords.includes(special)) {
+            keywords.push(special);
+        }
+    });
+
+    return keywords;
 };
