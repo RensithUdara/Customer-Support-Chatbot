@@ -38,14 +38,16 @@ export default function ChatWindow() {
     useEffect(() => {
         const welcomeMessage: Message = {
             id: 'welcome',
-            text: "👋 Welcome to ShopEasy Customer Support! I'm here to help you with:\n\n" +
-                "🔍 **Order Tracking** - Check your order status\n" +
-                "📋 **Policies & FAQs** - Return policy, shipping, payments\n" +
-                "🛍️ **Product Recommendations** - Find products based on your needs\n\n" +
-                "Try asking me something like:\n" +
-                "• \"Where is my order 1012?\"\n" +
-                "• \"What is your return policy?\"\n" +
-                "• \"Recommend a phone under 30000\"",
+            text: "🎉 Welcome to ShopEasy Customer Support! I'm your AI assistant ready to help with:\n\n" +
+                "📦 **Order Tracking** - Real-time status for orders 1001-1030\n" +
+                "📋 **Policies & Support** - 50+ FAQs on shipping, returns, payments\n" +
+                "🛍️ **Smart Recommendations** - 40+ products across all categories\n" +
+                "💡 **Expert Advice** - Warranty, EMI plans, delivery options\n\n" +
+                "✨ **Try these popular queries:**\n" +
+                "• \"Where is my order 1015?\" (Laptop - Shipped)\n" +
+                "• \"What are your delivery times?\"\n" +
+                "• \"Best Samsung mobile under 100000\"\n" +
+                "• \"Do you offer EMI plans?\"",
             sender: 'bot',
             timestamp: new Date()
         };
@@ -160,8 +162,8 @@ export default function ChatWindow() {
                     >
                         <div
                             className={`max-w-[70%] rounded-lg px-4 py-2 ${message.sender === 'user'
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-gray-100 text-gray-800'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-100 text-gray-800'
                                 }`}
                         >
                             <div className="flex items-start space-x-2">
