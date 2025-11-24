@@ -393,6 +393,15 @@ export const getAllCustomerSupport = () => {
   return db.prepare('SELECT * FROM customer_support').all();
 };
 
+// Get specific customer support method
+export const getSpecificCustomerSupport = (supportType: string) => {
+  return db.prepare(`
+    SELECT * FROM customer_support
+    WHERE LOWER(support_type) LIKE ? OR LOWER(contact_method) LIKE ?
+    ORDER BY id
+  `).all(`%${supportType.toLowerCase()}%`, `%${supportType.toLowerCase()}%`);
+};
+
 export const getProductCategories = () => {
   return db.prepare('SELECT DISTINCT category FROM products ORDER BY category').all();
 };
