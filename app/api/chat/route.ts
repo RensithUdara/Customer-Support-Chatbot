@@ -138,10 +138,10 @@ export async function POST(request: NextRequest) {
                 // Only add FAQ if it's truly relevant and doesn't conflict with policy
                 if (bestReturnFAQ && bestReturnFAQ.question && bestReturnFAQ.answer && foundCategory) {
                     // Don't show generic return policy FAQ if we already showed specific category policy
-                    const isConflictingFAQ = bestReturnFAQ.answer.includes('14 days') || 
-                                           bestReturnFAQ.answer.includes('Items may be returned within') ||
-                                           bestReturnFAQ.question.includes('What is your return policy');
-                    
+                    const isConflictingFAQ = bestReturnFAQ.answer.includes('14 days') ||
+                        bestReturnFAQ.answer.includes('Items may be returned within') ||
+                        bestReturnFAQ.question.includes('What is your return policy');
+
                     if (!isConflictingFAQ) {
                         returnPolicyText += `\n❓ **Additional Info:**\n\n`;
                         returnPolicyText += `**Q: ${bestReturnFAQ.question}**\n`;
