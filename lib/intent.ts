@@ -35,10 +35,10 @@ export const detectIntent = (message: string): IntentResult => {
     // Return policies keywords (specific queries about return policies)
     const returnPolicyKeywords = ['return policy', 'return policies', 'refund policy', 'refund policies', 'exchange policy', 'return procedure', 'how to return', 'return process', 'return rules', 'return conditions', 'return for electronics', 'return for fashion', 'return for books', 'return for home', 'return electronics', 'return fashion', 'return items', 'returning'];
     const hasReturnPolicyKeywords = returnPolicyKeywords.some(keyword => lowercaseMessage.includes(keyword));
-    
+
     // Also check if it's a category-specific return question
     const returnCategories = ['electronics', 'fashion', 'home', 'kitchen', 'sports', 'toys', 'health', 'books', 'beauty'];
-    const hasReturnCategoryQuery = returnCategories.some(cat => 
+    const hasReturnCategoryQuery = returnCategories.some(cat =>
         lowercaseMessage.includes('return') && lowercaseMessage.includes(cat)
     );
 
@@ -114,7 +114,7 @@ export const detectIntent = (message: string): IntentResult => {
 // Keywords for search
 export const extractKeywords = (message: string): string[] => {
     const stopWords = ['the', 'is', 'at', 'which', 'on', 'and', 'a', 'to', 'are', 'as', 'what', 'how', 'can', 'do', 'i', 'my', 'you', 'your', 'offer', 'have'];
-    
+
     // Delivery-related keyword mapping for better FAQ matching
     const deliveryKeywordMapping: { [key: string]: string[] } = {
         'international': ['ship internationally', 'international shipping', 'overseas'],
@@ -127,10 +127,10 @@ export const extractKeywords = (message: string): string[] => {
         'home': ['not home', 'absent', 'redelivery'],
         'track': ['delivery updates', 'tracking', 'status']
     };
-    
+
     let message_lower = message.toLowerCase();
     let additionalKeywords: string[] = [];
-    
+
     // Add mapped keywords for better FAQ matching
     Object.entries(deliveryKeywordMapping).forEach(([key, synonyms]) => {
         if (synonyms.some(synonym => message_lower.includes(synonym)) || message_lower.includes(key)) {
@@ -153,7 +153,7 @@ export const extractKeywords = (message: string): string[] => {
             keywords.push(special);
         }
     });
-    
+
     // Add delivery-related mapped keywords
     keywords = [...new Set([...keywords, ...additionalKeywords])];
 
