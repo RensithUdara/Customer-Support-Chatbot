@@ -102,10 +102,10 @@ export async function POST(request: NextRequest) {
         await saveConversation(sessionId, botReply, 'bot', intentResult.intent);
 
         // Debug logging
-        console.log('Bot reply being sent:', { 
-            reply: botReply, 
-            replyType: typeof botReply, 
-            replyLength: botReply?.length 
+        console.log('Bot reply being sent:', {
+            reply: botReply,
+            replyType: typeof botReply,
+            replyLength: botReply?.length
         });
 
         return NextResponse.json({
