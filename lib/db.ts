@@ -185,7 +185,7 @@ export const searchBestFAQ = (message: string, keywords: string[]) => {
   if (exactMatch) return exactMatch;
 
   const messageLower = message.toLowerCase();
-  
+
   // Special handling for common delivery queries
   const deliveryMappings = [
     { patterns: ['international delivery', 'ship internationally', 'overseas shipping', 'abroad'], searchFor: 'ship internationally' },
@@ -199,7 +199,7 @@ export const searchBestFAQ = (message: string, keywords: string[]) => {
     { patterns: ['delivery updates', 'track delivery', 'delivery status'], searchFor: 'delivery updates' },
     { patterns: ['delivery times', 'how long delivery'], searchFor: 'delivery times' }
   ];
-  
+
   // Check for delivery pattern matches
   for (const mapping of deliveryMappings) {
     if (mapping.patterns.some(pattern => messageLower.includes(pattern))) {
