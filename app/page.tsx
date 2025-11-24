@@ -70,8 +70,8 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-white to-purple-50 rounded-xl shadow-xl p-8 border border-purple-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+          <div className="bg-linear-gradient-br from-white to-purple-50 rounded-xl shadow-xl p-8 border border-purple-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+            <div className="bg-linear-gradient-br from-purple-500 to-purple-600 w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg">
               <Bot className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-3">Smart Recommendations</h3>
@@ -87,7 +87,7 @@ export default function Home() {
             Try These Sample Queries
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-200 hover:shadow-lg transition-all duration-300">
+            <div className="bg-linear-gradient-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-200 hover:shadow-lg transition-all duration-300">
               <h4 className="font-bold text-blue-900 mb-3 text-lg">📦 Order Tracking</h4>
               <p className="text-blue-800 font-medium mb-2">
                 "Where is my order 1015?"
@@ -96,7 +96,7 @@ export default function Home() {
                 "Track order 1025"
               </p>
             </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border-2 border-green-200 hover:shadow-lg transition-all duration-300">
+            <div className="bg-linear-gradient-br from-green-50 to-green-100 rounded-xl p-6 border-2 border-green-200 hover:shadow-lg transition-all duration-300">
               <h4 className="font-bold text-green-900 mb-3 text-lg">📋 Policy & Support</h4>
               <p className="text-green-800 font-medium mb-2">
                 "What are your delivery times?"
@@ -105,7 +105,7 @@ export default function Home() {
                 "Do you offer EMI plans?"
               </p>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border-2 border-purple-200 hover:shadow-lg transition-all duration-300">
+            <div className="bg-linear-gradient-br from-purple-50 to-purple-100 rounded-xl p-6 border-2 border-purple-200 hover:shadow-lg transition-all duration-300">
               <h4 className="font-bold text-purple-900 mb-3 text-lg">🛍️ Product Search</h4>
               <p className="text-purple-800 font-medium mb-2">
                 "Best laptop under 200000"
