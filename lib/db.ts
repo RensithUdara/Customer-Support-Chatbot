@@ -184,6 +184,30 @@ export const searchBestFAQ = (message: string, keywords: string[]) => {
   const exactMatch = db.prepare('SELECT * FROM faqs WHERE question = ?').get(message);
   if (exactMatch) return exactMatch;
 
+  const messageLower = message.toLowerCase();
+
+  // Special handling for common delivery queries
+  const deliveryMappings = [
+    { patterns: ['international delivery', 'ship internationally', 'overseas shipping', 'abroad'], searchFor: 'ship internationally' },
+    { patterns: ['express delivery', 'express shipping', 'fast delivery'], searchFor: 'express shipping' },
+    { patterns: ['same day delivery', 'same-day delivery', 'today delivery'], searchFor: 'same-day delivery' },
+    { patterns: ['delivery charges', 'shipping charges', 'delivery cost', 'shipping cost'], searchFor: 'shipping charges' },
+    { patterns: ['bulk delivery', 'wholesale delivery', 'large orders'], searchFor: 'bulk delivery' },
+    { patterns: ['delivery address', 'shipping address', 'change address'], searchFor: 'delivery address' },
+    { patterns: ['delivery time', 'schedule delivery', 'time slot'], searchFor: 'schedule' },
+    { patterns: ['not home', 'absent during delivery', 'redelivery'], searchFor: 'not home' },
+    { patterns: ['delivery updates', 'track delivery', 'delivery status'], searchFor: 'delivery updates' },
+    { patterns: ['delivery times', 'how long delivery'], searchFor: 'delivery times' }
+  ];
+
+  // Check for delivery pattern matches
+  for (const mapping of deliveryMappings) {
+    if (mapping.patterns.some(pattern => messageLower.includes(pattern))) {
+      const directMatch = db.prepare('SELECT * FROM faqs WHERE question LIKE ?').get(`%${mapping.searchFor}%`);
+      if (directMatch) return directMatch;
+    }
+  }
+
   // Then try keyword-based search with simple scoring
   if (keywords.length === 0) return null;
 
@@ -193,9 +217,15 @@ export const searchBestFAQ = (message: string, keywords: string[]) => {
   const bestMatch = db.prepare(`
     SELECT * FROM faqs 
     WHERE ${keywordQuery}
-    ORDER BY id ASC
+    ORDER BY 
+      CASE 
+        WHEN question LIKE ? THEN 1
+        WHEN answer LIKE ? THEN 2
+        ELSE 3
+      END,
+      id ASC
     LIMIT 1
-  `).get(...params);
+  `).get(...params, `%${keywords[0]}%`, `%${keywords[0]}%`);
 
   return bestMatch;
 };
@@ -234,12 +264,8 @@ export const searchProducts = (category?: string, maxPrice?: number, tags?: stri
 };
 
 export const getOrderById = (orderId: string) => {
-  const query = `
-    SELECT o.*, p.name as product_name, p.brand, p.price 
-    FROM orders o 
-    LEFT JOIN products p ON CAST(o.items AS INTEGER) = p.id 
-    WHERE o.orderId = ?
-  `;
+  // Simply get the order by ID - items are already stored as JSON
+  const query = `SELECT * FROM orders WHERE orderId = ?`;
   return db.prepare(query).get(orderId);
 };
 
@@ -297,6 +323,14 @@ export const searchReturnPolicies = (keyword: string) => {
 // Additional helper functions for new tables
 export const getDeliveryMethods = () => {
   return db.prepare('SELECT * FROM delivery_methods').all();
+};
+
+export const getReturnPoliciesByCategory = (category: string) => {
+  return db.prepare('SELECT * FROM return_policies WHERE product_category LIKE ?').all(`%${category}%`);
+};
+
+export const getReturnFAQs = () => {
+  return db.prepare('SELECT * FROM faqs WHERE question LIKE ? OR question LIKE ? OR question LIKE ?').all('%return%', '%refund%', '%exchange%');
 };
 
 export const getSupportTopics = () => {
