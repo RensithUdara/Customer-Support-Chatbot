@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
                 // Handle comprehensive database queries for any table data
                 const queryResult = smartDatabaseQuery(message);
                 let databaseResponse = '';
-                
+
                 switch (queryResult.type) {
                     case 'payment_methods':
                         databaseResponse = '💳 **Available Payment Methods:**\n\n';
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
                             databaseResponse += '\n';
                         });
                         break;
-                        
+
                     case 'warranty':
                         databaseResponse = '🛡️ **Warranty Policies:**\n\n';
                         queryResult.data.forEach((warranty: any, index: number) => {
@@ -208,7 +208,7 @@ export async function POST(request: NextRequest) {
                             databaseResponse += '\n';
                         });
                         break;
-                        
+
                     case 'shipping_zones':
                         databaseResponse = '📍 **Shipping Zones & Areas:**\n\n';
                         queryResult.data.forEach((zone: any, index: number) => {
@@ -220,7 +220,7 @@ export async function POST(request: NextRequest) {
                             databaseResponse += '\n';
                         });
                         break;
-                        
+
                     case 'promotions':
                         databaseResponse = '🎉 **Current Promotions & Offers:**\n\n';
                         queryResult.data.forEach((promo: any, index: number) => {
@@ -232,21 +232,21 @@ export async function POST(request: NextRequest) {
                             databaseResponse += '\n';
                         });
                         break;
-                        
+
                     case 'customer_support':
                         databaseResponse = '🆘 **Customer Support Contacts:**\n\n';
                         queryResult.data.forEach((support: any, index: number) => {
-                            databaseResponse += `**${index + 1}. ${support.department}**\n`;
-                            databaseResponse += `   📞 Phone: ${support.phone_number}\n`;
-                            databaseResponse += `   📧 Email: ${support.email}\n`;
-                            databaseResponse += `   ⏰ Hours: ${support.working_hours}\n`;
-                            if (support.specialization) {
-                                databaseResponse += `   🎯 Specialization: ${support.specialization}\n`;
+                            databaseResponse += `**${index + 1}. ${support.support_type}** (${support.department})\n`;
+                            databaseResponse += `   📞 ${support.contact_method}: ${support.contact_info}\n`;
+                            databaseResponse += `   ⏰ Available: ${support.availability}\n`;
+                            databaseResponse += `   ⚡ Response Time: ${support.response_time}\n`;
+                            if (support.languages_supported) {
+                                databaseResponse += `   🗣️ Languages: ${support.languages_supported}\n`;
                             }
                             databaseResponse += '\n';
                         });
                         break;
-                        
+
                     case 'support_topics':
                         databaseResponse = '📚 **Available Support Topics:**\n\n';
                         queryResult.data.forEach((topic: any, index: number) => {
@@ -258,7 +258,7 @@ export async function POST(request: NextRequest) {
                             databaseResponse += '\n';
                         });
                         break;
-                        
+
                     case 'product_categories':
                         databaseResponse = '🛍️ **Available Product Categories:**\n\n';
                         queryResult.data.forEach((cat: any, index: number) => {
@@ -266,14 +266,14 @@ export async function POST(request: NextRequest) {
                         });
                         databaseResponse += '\n💡 Ask about specific categories for product recommendations!';
                         break;
-                        
+
                     case 'order_statistics':
                         databaseResponse = '📊 **Order Statistics:**\n\n';
                         queryResult.data.forEach((stat: any) => {
                             databaseResponse += `📦 **${stat.status}:** ${stat.count} orders (Avg: Rs.${Math.round(stat.avg_amount)})\n`;
                         });
                         break;
-                        
+
                     default:
                         databaseResponse = '🏪 **General Store Information:**\n\n';
                         databaseResponse += '• Product Catalog: 1,100+ items across multiple categories\n';
@@ -285,7 +285,7 @@ export async function POST(request: NextRequest) {
                         databaseResponse += '💡 Ask me about any specific information you need!';
                         break;
                 }
-                
+
                 botReply = databaseResponse;
                 break;
 
