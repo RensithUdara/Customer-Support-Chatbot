@@ -64,6 +64,108 @@ export const initDatabase = () => {
       intent TEXT
     )
   `);
+
+  // Create delivery policies table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS delivery_policies (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      policy_name TEXT NOT NULL,
+      description TEXT NOT NULL,
+      delivery_time TEXT,
+      cost REAL,
+      areas_covered TEXT,
+      restrictions TEXT,
+      is_active BOOLEAN DEFAULT 1
+    )
+  `);
+
+  // Create return policies table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS return_policies (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      policy_name TEXT NOT NULL,
+      description TEXT NOT NULL,
+      return_window_days INTEGER,
+      conditions TEXT,
+      refund_method TEXT,
+      processing_time TEXT,
+      category TEXT,
+      is_active BOOLEAN DEFAULT 1
+    )
+  `);
+
+  // Create payment methods table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS payment_methods (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      method_name TEXT NOT NULL,
+      description TEXT NOT NULL,
+      processing_fee REAL DEFAULT 0,
+      min_amount REAL DEFAULT 0,
+      max_amount REAL,
+      supported_regions TEXT,
+      is_active BOOLEAN DEFAULT 1
+    )
+  `);
+
+  // Create warranty policies table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS warranty_policies (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_category TEXT NOT NULL,
+      warranty_period TEXT NOT NULL,
+      description TEXT NOT NULL,
+      coverage TEXT,
+      exclusions TEXT,
+      claim_process TEXT,
+      contact_info TEXT
+    )
+  `);
+
+  // Create customer support table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS customer_support (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      support_type TEXT NOT NULL,
+      contact_method TEXT NOT NULL,
+      contact_info TEXT NOT NULL,
+      availability TEXT,
+      response_time TEXT,
+      languages_supported TEXT,
+      department TEXT
+    )
+  `);
+
+  // Create shipping zones table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS shipping_zones (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      zone_name TEXT NOT NULL,
+      regions TEXT NOT NULL,
+      standard_delivery_days INTEGER,
+      express_delivery_days INTEGER,
+      standard_cost REAL,
+      express_cost REAL,
+      cod_available BOOLEAN DEFAULT 0
+    )
+  `);
+
+  // Create promotions table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS promotions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      promo_name TEXT NOT NULL,
+      description TEXT NOT NULL,
+      discount_type TEXT,
+      discount_value REAL,
+      min_order_amount REAL,
+      valid_from TEXT,
+      valid_until TEXT,
+      promo_code TEXT,
+      terms_conditions TEXT,
+      is_active BOOLEAN DEFAULT 1
+    )
+  `);
 };
 
 // Database helper functions
@@ -147,6 +249,93 @@ export const saveConversation = (sessionId: string, message: string, sender: 'us
     VALUES (?, ?, ?, ?, ?)
   `);
   return stmt.run(sessionId, message, sender, new Date().toISOString(), intent);
+};
+
+// Helper functions for new tables
+export const getDeliveryPolicies = () => {
+  return db.prepare('SELECT * FROM delivery_policies WHERE is_active = 1').all();
+};
+
+export const getReturnPolicies = () => {
+  return db.prepare('SELECT * FROM return_policies').all();
+};
+
+export const getPaymentMethods = () => {
+  return db.prepare('SELECT * FROM payment_methods WHERE accepted = 1').all();
+};
+
+export const getWarrantyPolicies = () => {
+  return db.prepare('SELECT * FROM warranty_policies').all();
+};
+
+export const getCustomerSupport = () => {
+  return db.prepare('SELECT * FROM customer_support').all();
+};
+
+export const getShippingZones = () => {
+  return db.prepare('SELECT * FROM shipping_zones').all();
+};
+
+export const getActivePromotions = () => {
+  return db.prepare('SELECT * FROM promotions WHERE is_active = 1').all();
+};
+
+export const searchDeliveryPolicies = (keyword: string) => {
+  return db.prepare(`
+    SELECT * FROM delivery_policies 
+    WHERE is_active = 1 AND (policy_name LIKE ? OR description LIKE ?)
+  `).all(`%${keyword}%`, `%${keyword}%`);
+};
+
+export const searchReturnPolicies = (keyword: string) => {
+  return db.prepare(`
+    SELECT * FROM return_policies 
+    WHERE product_category LIKE ? OR condition_required LIKE ?
+  `).all(`%${keyword}%`, `%${keyword}%`);
+};
+
+// Additional helper functions for new tables
+export const getDeliveryMethods = () => {
+  return db.prepare('SELECT * FROM delivery_methods').all();
+};
+
+export const getSupportTopics = () => {
+  return db.prepare('SELECT * FROM support_topics').all();
+};
+
+export const searchPaymentMethods = (keyword: string) => {
+  return db.prepare(`
+    SELECT * FROM payment_methods 
+    WHERE accepted = 1 AND (type LIKE ? OR provider LIKE ?)
+  `).all(`%${keyword}%`, `%${keyword}%`);
+};
+
+export const searchWarrantyPolicies = (category: string) => {
+  return db.prepare(`
+    SELECT * FROM warranty_policies 
+    WHERE product_category LIKE ?
+  `).all(`%${category}%`);
+};
+
+export const searchCustomerSupport = (type: string) => {
+  return db.prepare(`
+    SELECT * FROM customer_support 
+    WHERE support_type LIKE ? OR department LIKE ?
+  `).all(`%${type}%`, `%${type}%`);
+};
+
+export const getShippingZoneByRegion = (region: string) => {
+  return db.prepare(`
+    SELECT * FROM shipping_zones 
+    WHERE regions LIKE ?
+  `).all(`%${region}%`);
+};
+
+export const searchPromotions = (keyword: string) => {
+  return db.prepare(`
+    SELECT * FROM promotions 
+    WHERE is_active = 1 AND (promo_name LIKE ? OR description LIKE ? OR promo_code LIKE ?)
+  `).all(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`);
 };
 
 // Initialize database on module load
