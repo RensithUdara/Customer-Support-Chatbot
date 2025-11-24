@@ -43,7 +43,7 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
 
             // Add payment and total amount info if available
             if (order.totalAmount) {
-                reply += `\n\nOrder Total: ₹${order.totalAmount.toLocaleString()}`;
+                reply += `\n\nOrder Total: Rs.${order.totalAmount.toLocaleString()}`;
             }
             if (order.paymentMethod) {
                 reply += `\nPayment Method: ${order.paymentMethod}`;
@@ -70,7 +70,7 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
 
             products.forEach((product: any, index: number) => {
                 reply += `${index + 1}. **${product.name}** (${product.brand || 'Generic'})\n`;
-                reply += `   - Price: ₹${product.price.toLocaleString()}\n`;
+                reply += `   - Price: Rs.${product.price.toLocaleString()}\n`;
                 reply += `   - ${product.description}\n`;
                 if (product.features) {
                     reply += `   - Features: ${product.features}\n`;
@@ -91,6 +91,11 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
     } else {
         // General response
         reply = "I'm here to help you with order tracking, return policies, product recommendations, and general shopping questions. How can I assist you today?";
+    }
+
+    // Safety check to ensure reply is not undefined or empty
+    if (!reply || reply.trim() === '') {
+        reply = "I'm sorry, I encountered an issue processing your request. Please try rephrasing your question or contact our support team.";
     }
 
     return {
