@@ -1,49 +1,134 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Bot, MessageCircle, ShoppingCart, Headphones } from "lucide-react";
+import { Bot, MessageCircle, ShoppingCart, Headphones, Sparkles, Shield, Clock, Users, Star, CheckCircle } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100">
-      <main className="container mx-auto px-4 py-16">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+      <div className="absolute top-1/3 right-0 translate-x-1/2 w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+      <main className="container mx-auto px-4 py-16 relative z-10">
         {/* Header */}
-        <div className="text-center mb-16">
-          <div className="flex justify-center items-center mb-6">
-            <ShoppingCart className="w-12 h-12 text-blue-600 mr-3" />
-            <h1 className="text-4xl font-bold text-gray-900">ShopEasy</h1>
+        <div className="text-center mb-20">
+          <div className="flex justify-center items-center mb-8">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur-lg opacity-30 animate-pulse"></div>
+              <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 p-4 rounded-2xl shadow-xl">
+                <ShoppingCart className="w-12 h-12 text-white" />
+              </div>
+            </div>
+            <div className="ml-6">
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-900 bg-clip-text text-transparent">
+                ShopEasy
+              </h1>
+              <div className="flex items-center justify-center mt-2">
+                <Sparkles className="w-4 h-4 text-blue-500 mr-2" />
+                <span className="text-sm font-medium text-blue-600 tracking-wider uppercase">AI Powered</span>
+              </div>
+            </div>
           </div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Your intelligent e-commerce platform with AI-powered customer support
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Transform your shopping experience with our intelligent e-commerce platform featuring
+            <span className="text-blue-600 font-semibold">24/7 AI customer support</span> and personalized assistance
           </p>
+          <div className="flex items-center justify-center mt-6 space-x-8">
+            <div className="flex items-center text-sm text-gray-500">
+              <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+              <span>3000+ Products</span>
+            </div>
+            <div className="flex items-center text-sm text-gray-500">
+              <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+              <span>AI Support 24/7</span>
+            </div>
+            <div className="flex items-center text-sm text-gray-500">
+              <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+              <span>Instant Tracking</span>
+            </div>
+          </div>
         </div>
 
         {/* Hero Section */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-12 max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl p-10 mb-16 max-w-6xl mx-auto border border-white/20">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                AI Customer Support Chatbot
+              <div className="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                <Sparkles className="w-4 h-4 mr-2" />
+                Powered by Advanced AI
+              </div>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
+                Experience the Future of
+                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"> Customer Support</span>
               </h2>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Get instant help with order tracking, return policies, and personalized product recommendations.
-                Our AI assistant is available 24/7 to provide you with accurate and helpful responses.
+              <p className="text-gray-600 mb-8 text-lg leading-relaxed">
+                Get instant, intelligent assistance with our AI-powered chatbot. From order tracking to product recommendations,
+                we're here to help you 24/7 with accurate and personalized responses.
               </p>
-              <Link
-                href="/chat"
-                className="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-              >
-                <MessageCircle className="w-5 h-5 mr-2" />
-                Start Chatting
-              </Link>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-4 mb-8">
+                <div className="text-center p-4 bg-blue-50 rounded-xl">
+                  <Clock className="w-6 h-6 text-blue-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-blue-900">24/7</div>
+                  <div className="text-xs text-blue-600">Available</div>
+                </div>
+                <div className="text-center p-4 bg-green-50 rounded-xl">
+                  <Users className="w-6 h-6 text-green-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-green-900">5K+</div>
+                  <div className="text-xs text-green-600">Happy Users</div>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-xl">
+                  <Star className="w-6 h-6 text-purple-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-purple-900">4.9</div>
+                  <div className="text-xs text-purple-600">Rating</div>
+                </div>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link
+                  href="/chat"
+                  className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
+                  <MessageCircle className="w-5 h-5 mr-3" />
+                  Start Chatting Now
+                </Link>
+                <button className="inline-flex items-center justify-center border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-xl hover:border-blue-500 hover:text-blue-600 transition-all duration-300 font-semibold">
+                  <Bot className="w-5 h-5 mr-3" />
+                  See Demo
+                </button>
+              </div>
             </div>
-            <div className="bg-linear-to-br from-blue-500 to-purple-600 rounded-xl p-8 text-white">
-              <Bot className="w-16 h-16 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-center mb-2">
-                Intelligent Assistant
-              </h3>
-              <p className="text-center text-blue-100">
-                Powered by advanced AI to understand your needs and provide personalized assistance
-              </p>
+
+            {/* Right side - AI Assistant Visual */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-indigo-600/20 rounded-3xl blur-3xl"></div>
+              <div className="relative bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-8 text-white shadow-2xl">
+                <div className="absolute top-4 right-4 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                <div className="absolute top-4 right-10 w-2 h-2 bg-white/50 rounded-full"></div>
+                <Bot className="w-20 h-20 mx-auto mb-6 drop-shadow-lg" />
+                <h3 className="text-2xl font-bold text-center mb-4">
+                  AI Assistant
+                </h3>
+                <p className="text-center text-blue-100 leading-relaxed mb-6">
+                  Advanced natural language processing to understand your queries and provide instant, accurate responses
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-center bg-white/10 rounded-lg p-3">
+                    <CheckCircle className="w-4 h-4 mr-3 text-green-300" />
+                    <span className="text-sm">Order Tracking & Updates</span>
+                  </div>
+                  <div className="flex items-center bg-white/10 rounded-lg p-3">
+                    <CheckCircle className="w-4 h-4 mr-3 text-green-300" />
+                    <span className="text-sm">Product Recommendations</span>
+                  </div>
+                  <div className="flex items-center bg-white/10 rounded-lg p-3">
+                    <CheckCircle className="w-4 h-4 mr-3 text-green-300" />
+                    <span className="text-sm">Policy & Support Info</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -209,38 +294,126 @@ export default function Home() {
         </div>
 
         {/* Demo Section */}
-        <div className="mt-16 bg-white rounded-2xl shadow-xl p-8 max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Try These Sample Queries
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-linear-gradient-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-200 hover:shadow-lg transition-all duration-300">
-              <h4 className="font-bold text-blue-900 mb-3 text-lg">📦 Order Tracking</h4>
-              <p className="text-blue-800 font-medium mb-2">
-                "Where is my order 1015?"
-              </p>
-              <p className="text-blue-700 text-sm">
-                "Track order 1025"
-              </p>
+        <div className="mt-20 bg-gradient-to-br from-white via-blue-50 to-indigo-50 rounded-3xl shadow-2xl p-10 max-w-6xl mx-auto border border-blue-100">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Experience AI-Powered Support
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Try our intelligent chatbot with these popular queries. See how fast and accurate our AI responses are!
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8 mb-12">
+            {/* Order Tracking Card */}
+            <div className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-blue-100 hover:border-blue-300">
+              <div className="flex items-center mb-6">
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-3 rounded-xl">
+                  <ShoppingCart className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="font-bold text-blue-900 ml-4 text-xl">Order Tracking</h4>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                  <p className="text-blue-800 font-medium text-lg mb-2">
+                    "Where is my order 1015?"
+                  </p>
+                  <p className="text-blue-600 text-sm">
+                    Get real-time updates on your order status
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
+                  <div className="flex items-start space-x-3">
+                    <Bot className="w-5 h-5 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium">AI Response Preview:</p>
+                      <p className="text-blue-100 text-sm mt-1">
+                        "Order 1015 (Laptop) is Shipped and will arrive by 2025-11-26. Track: LK334230336"
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="bg-linear-gradient-br from-green-50 to-green-100 rounded-xl p-6 border-2 border-green-200 hover:shadow-lg transition-all duration-300">
-              <h4 className="font-bold text-green-900 mb-3 text-lg">📋 Policy & Support</h4>
-              <p className="text-green-800 font-medium mb-2">
-                "What are your delivery times?"
-              </p>
-              <p className="text-green-700 text-sm">
-                "Do you offer EMI plans?"
-              </p>
+
+            {/* Policy Support Card */}
+            <div className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-green-100 hover:border-green-300">
+              <div className="flex items-center mb-6">
+                <div className="bg-gradient-to-r from-green-500 to-green-600 p-3 rounded-xl">
+                  <Headphones className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="font-bold text-green-900 ml-4 text-xl">Policy Support</h4>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                  <p className="text-green-800 font-medium text-lg mb-2">
+                    "What are your delivery times?"
+                  </p>
+                  <p className="text-green-600 text-sm">
+                    Instant answers on policies and procedures
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
+                  <div className="flex items-start space-x-3">
+                    <Bot className="w-5 h-5 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium">AI Response Preview:</p>
+                      <p className="text-green-100 text-sm mt-1">
+                        "Standard: 3-5 days, Express: 1-2 days, Same-day available in metro areas"
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="bg-linear-gradient-br from-purple-50 to-purple-100 rounded-xl p-6 border-2 border-purple-200 hover:shadow-lg transition-all duration-300">
-              <h4 className="font-bold text-purple-900 mb-3 text-lg">🛍️ Product Search</h4>
-              <p className="text-purple-800 font-medium mb-2">
-                "Best laptop under 200000"
-              </p>
-              <p className="text-purple-700 text-sm">
-                "Show me Samsung mobiles"
-              </p>
+
+            {/* Product Search Card */}
+            <div className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-purple-100 hover:border-purple-300">
+              <div className="flex items-center mb-6">
+                <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-3 rounded-xl">
+                  <Bot className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="font-bold text-purple-900 ml-4 text-xl">Smart Search</h4>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
+                  <p className="text-purple-800 font-medium text-lg mb-2">
+                    "Best laptop under 200000"
+                  </p>
+                  <p className="text-purple-600 text-sm">
+                    AI-powered product recommendations
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-4 text-white">
+                  <div className="flex items-start space-x-3">
+                    <Bot className="w-5 h-5 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium">AI Response Preview:</p>
+                      <p className="text-purple-100 text-sm mt-1">
+                        "Found 15 laptops under Rs.2,00,000. Top pick: Dell Inspiron i5 at Rs.1,85,000"
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
+
+          {/* Call to Action */}
+          <div className="text-center">
+            <div className="inline-flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 mb-4">
+              <Sparkles className="w-5 h-5 mr-3" />
+              <span className="font-semibold text-lg">Ready to try? Start chatting now!</span>
+            </div>
+            <p className="text-gray-500 text-sm">
+              Click the floating chat icon in the bottom-right corner or visit our full chat page
+            </p>
           </div>
         </div>
 
