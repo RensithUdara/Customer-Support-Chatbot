@@ -10,9 +10,10 @@ export const initDatabase = () => {
     db.exec(`
     CREATE TABLE IF NOT EXISTS faqs (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      question TEXT NOT NULL,
+      answer TEXT NOT NULL,
       category TEXT NOT NULL,
-      question_example TEXT NOT NULL,
-      answer_text TEXT NOT NULL
+      tags TEXT
     )
   `);
 
@@ -21,24 +22,34 @@ export const initDatabase = () => {
     CREATE TABLE IF NOT EXISTS products (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
-      category TEXT NOT NULL,
-      brand TEXT,
+      description TEXT,
       price REAL NOT NULL,
-      description TEXT NOT NULL,
-      tags TEXT
+      category TEXT NOT NULL,
+      stock INTEGER DEFAULT 0,
+      rating REAL,
+      brand TEXT,
+      warranty TEXT,
+      features TEXT
     )
   `);
 
     // Create orders table
     db.exec(`
     CREATE TABLE IF NOT EXISTS orders (
-      id INTEGER PRIMARY KEY,
-      customer_name TEXT NOT NULL,
-      product_id INTEGER NOT NULL,
-      order_date TEXT NOT NULL,
-      delivery_date TEXT,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      orderId TEXT NOT NULL,
+      customerId TEXT,
+      customerName TEXT NOT NULL,
+      customerEmail TEXT,
+      customerPhone TEXT,
       status TEXT NOT NULL,
-      FOREIGN KEY (product_id) REFERENCES products (id)
+      orderDate TEXT NOT NULL,
+      totalAmount REAL,
+      paymentMethod TEXT,
+      shippingAddress TEXT,
+      trackingNumber TEXT,
+      estimatedDelivery TEXT,
+      items TEXT
     )
   `);
 
@@ -61,7 +72,7 @@ export const getFAQs = () => {
 };
 
 export const searchFAQs = (keywords: string[]) => {
-    const query = keywords.map(k => `question_example LIKE '%${k}%' OR answer_text LIKE '%${k}%' OR category LIKE '%${k}%'`).join(' OR ');
+    const query = keywords.map(k => `question LIKE '%${k}%' OR answer LIKE '%${k}%' OR category LIKE '%${k}%'`).join(' OR ');
     return db.prepare(`SELECT * FROM faqs WHERE ${query} LIMIT 3`).all();
 };
 
@@ -84,8 +95,8 @@ export const searchProducts = (category?: string, maxPrice?: number, tags?: stri
     }
 
     if (tags) {
-        query += ' AND tags LIKE ?';
-        params.push(`%${tags}%`);
+        query += ' AND (brand LIKE ? OR features LIKE ?)';
+        params.push(`%${tags}%`, `%${tags}%`);
     }
 
     query += ' LIMIT 5';
@@ -93,12 +104,12 @@ export const searchProducts = (category?: string, maxPrice?: number, tags?: stri
     return db.prepare(query).all(...params);
 };
 
-export const getOrderById = (orderId: number) => {
+export const getOrderById = (orderId: string) => {
     const query = `
     SELECT o.*, p.name as product_name, p.brand, p.price 
     FROM orders o 
-    JOIN products p ON o.product_id = p.id 
-    WHERE o.id = ?
+    LEFT JOIN products p ON CAST(o.items AS INTEGER) = p.id 
+    WHERE o.orderId = ?
   `;
     return db.prepare(query).get(orderId);
 };
