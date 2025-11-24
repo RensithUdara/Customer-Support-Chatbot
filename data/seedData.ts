@@ -4,8 +4,8 @@ import * as comprehensiveData from './comprehensiveData.json';
 // Convert JSON data to the format expected by our database
 export const faqData = comprehensiveData.faqs.map(faq => ({
     category: faq.category,
-    question_example: faq.question,
-    answer_text: faq.answer
+    question: faq.question,
+    answer: faq.answer
 }));
 
 export const productsData = comprehensiveData.products.map(product => ({
