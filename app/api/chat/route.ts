@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { detectIntent, extractKeywords } from '@/lib/intent';
-import { searchFAQs, getOrderById, searchProducts, saveConversation, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs } from '@/lib/db';
+import { searchFAQs, getOrderById, searchProducts, saveConversation, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs, smartDatabaseQuery } from '@/lib/db';
 import { callLLM } from '@/lib/llm';
 
 export async function POST(request: NextRequest) {
@@ -174,6 +174,119 @@ export async function POST(request: NextRequest) {
                         botReply = "I'd be happy to help you with policy information. Could you please be more specific about what you'd like to know about our shipping, returns, payments, or other policies?";
                     }
                 }
+                break;
+
+            case 'DATABASE_QUERY':
+                // Handle comprehensive database queries for any table data
+                const queryResult = smartDatabaseQuery(message);
+                let databaseResponse = '';
+
+                switch (queryResult.type) {
+                    case 'payment_methods':
+                        databaseResponse = '💳 **Available Payment Methods:**\n\n';
+                        queryResult.data.forEach((method: any, index: number) => {
+                            databaseResponse += `**${index + 1}. ${method.type}** (${method.provider})\n`;
+                            databaseResponse += `   💰 Processing Fee: ${method.processing_fee}%\n`;
+                            databaseResponse += `   ⚡ Processing Time: ${method.processing_time}\n`;
+                            if (method.features) {
+                                databaseResponse += `   ✨ Features: ${method.features}\n`;
+                            }
+                            databaseResponse += '\n';
+                        });
+                        break;
+
+                    case 'warranty':
+                        databaseResponse = '🛡️ **Warranty Policies:**\n\n';
+                        queryResult.data.forEach((warranty: any, index: number) => {
+                            databaseResponse += `**${index + 1}. ${warranty.product_category}**\n`;
+                            databaseResponse += `   ⏰ Warranty Period: ${warranty.warranty_period} months\n`;
+                            databaseResponse += `   📋 Coverage: ${warranty.coverage_details}\n`;
+                            databaseResponse += `   🔄 Claim Process: ${warranty.claim_process}\n`;
+                            if (warranty.exclusions) {
+                                databaseResponse += `   ❌ Exclusions: ${warranty.exclusions}\n`;
+                            }
+                            databaseResponse += '\n';
+                        });
+                        break;
+
+                    case 'shipping_zones':
+                        databaseResponse = '📍 **Shipping Zones & Areas:**\n\n';
+                        queryResult.data.forEach((zone: any, index: number) => {
+                            databaseResponse += `**${index + 1}. ${zone.zone_name}**\n`;
+                            databaseResponse += `   🌍 Regions: ${zone.regions}\n`;
+                            databaseResponse += `   💰 Standard Cost: Rs.${zone.standard_cost} | Express: Rs.${zone.express_cost}\n`;
+                            databaseResponse += `   ⚡ Delivery Time: ${zone.standard_delivery_days} days (standard) | ${zone.express_delivery_days} days (express)\n`;
+                            databaseResponse += `   📦 COD Available: ${zone.cod_available ? 'Yes' : 'No'}\n`;
+                            databaseResponse += '\n';
+                        });
+                        break;
+
+                    case 'promotions':
+                        databaseResponse = '🎉 **Current Promotions & Offers:**\n\n';
+                        queryResult.data.forEach((promo: any, index: number) => {
+                            databaseResponse += `**${index + 1}. ${promo.promo_name}**\n`;
+                            databaseResponse += `   🏷️ Code: ${promo.promo_code}\n`;
+                            databaseResponse += `   💰 Discount: ${promo.discount_percentage}% or Rs.${promo.discount_amount}\n`;
+                            databaseResponse += `   📅 Valid Until: ${promo.end_date}\n`;
+                            databaseResponse += `   📋 Description: ${promo.description}\n`;
+                            databaseResponse += '\n';
+                        });
+                        break;
+
+                    case 'customer_support':
+                        databaseResponse = '🆘 **Customer Support Contacts:**\n\n';
+                        queryResult.data.forEach((support: any, index: number) => {
+                            databaseResponse += `**${index + 1}. ${support.support_type}** (${support.department})\n`;
+                            databaseResponse += `   📞 ${support.contact_method}: ${support.contact_info}\n`;
+                            databaseResponse += `   ⏰ Available: ${support.availability}\n`;
+                            databaseResponse += `   ⚡ Response Time: ${support.response_time}\n`;
+                            if (support.languages_supported) {
+                                databaseResponse += `   🗣️ Languages: ${support.languages_supported}\n`;
+                            }
+                            databaseResponse += '\n';
+                        });
+                        break;
+
+                    case 'support_topics':
+                        databaseResponse = '📚 **Available Support Topics:**\n\n';
+                        queryResult.data.forEach((topic: any, index: number) => {
+                            databaseResponse += `**${index + 1}. ${topic.topic_name}**\n`;
+                            databaseResponse += `   📋 Description: ${topic.description}\n`;
+                            if (topic.category) {
+                                databaseResponse += `   🏷️ Category: ${topic.category}\n`;
+                            }
+                            databaseResponse += '\n';
+                        });
+                        break;
+
+                    case 'product_categories':
+                        databaseResponse = '🛍️ **Available Product Categories:**\n\n';
+                        queryResult.data.forEach((cat: any, index: number) => {
+                            databaseResponse += `${index + 1}. ${cat.category}\n`;
+                        });
+                        databaseResponse += '\n💡 Ask about specific categories for product recommendations!';
+                        break;
+
+                    case 'order_statistics':
+                        databaseResponse = '📊 **Order Statistics:**\n\n';
+                        queryResult.data.forEach((stat: any) => {
+                            databaseResponse += `📦 **${stat.status}:** ${stat.count} orders (Avg: Rs.${Math.round(stat.avg_amount)})\n`;
+                        });
+                        break;
+
+                    default:
+                        databaseResponse = '🏪 **General Store Information:**\n\n';
+                        databaseResponse += '• Product Catalog: 1,100+ items across multiple categories\n';
+                        databaseResponse += '• Order Management: Complete tracking system\n';
+                        databaseResponse += '• Customer Support: Multiple contact methods\n';
+                        databaseResponse += '• Delivery Options: 5 different delivery methods\n';
+                        databaseResponse += '• Return Policies: Category-specific policies\n';
+                        databaseResponse += '• Payment Methods: Multiple secure options\n\n';
+                        databaseResponse += '💡 Ask me about any specific information you need!';
+                        break;
+                }
+
+                botReply = databaseResponse;
                 break;
 
             case 'PRODUCT_RECOMMENDATION':

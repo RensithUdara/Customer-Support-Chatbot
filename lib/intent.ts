@@ -1,5 +1,5 @@
 // Intent detection logic
-export type Intent = 'ORDER_STATUS' | 'POLICY' | 'PRODUCT_RECOMMENDATION' | 'DELIVERY_METHODS' | 'RETURN_POLICIES' | 'OTHER';
+export type Intent = 'ORDER_STATUS' | 'POLICY' | 'PRODUCT_RECOMMENDATION' | 'DELIVERY_METHODS' | 'RETURN_POLICIES' | 'DATABASE_QUERY' | 'OTHER';
 
 export interface IntentResult {
     intent: Intent;
@@ -41,6 +41,21 @@ export const detectIntent = (message: string): IntentResult => {
     const hasReturnCategoryQuery = returnCategories.some(cat =>
         lowercaseMessage.includes('return') && lowercaseMessage.includes(cat)
     );
+
+    // Database query keywords (questions about data/information)
+    const databaseQueryKeywords = [
+        'how many', 'what are', 'list all', 'show me', 'tell me about', 'information about',
+        'details about', 'all products', 'all orders', 'customer support', 'contact info',
+        'support topics', 'warranty', 'promotions', 'shipping zones', 'payment methods',
+        'available products', 'product categories', 'support contact', 'warranty policy',
+        'current promotions', 'active promotions', 'payment options', 'shipping areas',
+        'what payment', 'show payment', 'payment types', 'payment ways', 'ways to pay',
+        'show warranty', 'warranty info', 'show promotions', 'current offers',
+        'shipping options', 'delivery zones', 'support info', 'contact details',
+        'whatsapp support', 'phone support', 'email support', 'live chat', 'technical support',
+        'returns support', 'whatsapp contact', 'phone contact', 'email contact', 'chat support'
+    ];
+    const hasDatabaseQueryKeywords = databaseQueryKeywords.some(keyword => lowercaseMessage.includes(keyword));
 
     // Policy/FAQ keywords
     const policyKeywords = ['return', 'refund', 'policy', 'shipping', 'delivery charge', 'cash on delivery', 'cod', 'warranty', 'exchange', 'payment', 'pay', 'emi', 'card', 'credit', 'debit', 'wallet', 'upi', 'invoice', 'fee', 'charge', 'secure', 'account', 'login', 'password', 'profile'];
@@ -87,6 +102,13 @@ export const detectIntent = (message: string): IntentResult => {
         return {
             intent: 'RETURN_POLICIES',
             confidence: 0.9
+        };
+    }
+
+    if (hasDatabaseQueryKeywords) {
+        return {
+            intent: 'DATABASE_QUERY',
+            confidence: 0.8
         };
     }
 
