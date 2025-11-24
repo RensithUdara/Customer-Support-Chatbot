@@ -58,12 +58,12 @@ const seedDatabase = () => {
             const totalAmount = Math.floor(Math.random() * 50000) + 1000; // Random amount between 1000-51000
             const paymentMethods = ['Credit Card', 'Debit Card', 'UPI', 'Cash on Delivery', 'Net Banking'];
             const paymentMethod = paymentMethods[Math.floor(Math.random() * paymentMethods.length)];
-            
+
             insertOrder.run(
-                order.order_id.toString(), 
-                order.customer, 
-                order.status, 
-                order.order_date, 
+                order.order_id.toString(),
+                order.customer,
+                order.status,
+                order.order_date,
                 order.delivery_date,
                 totalAmount,
                 paymentMethod
