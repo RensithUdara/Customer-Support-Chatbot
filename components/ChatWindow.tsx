@@ -38,14 +38,16 @@ export default function ChatWindow() {
     useEffect(() => {
         const welcomeMessage: Message = {
             id: 'welcome',
-            text: "👋 Welcome to ShopEasy Customer Support! I'm here to help you with:\n\n" +
-                "🔍 **Order Tracking** - Check your order status\n" +
-                "📋 **Policies & FAQs** - Return policy, shipping, payments\n" +
-                "🛍️ **Product Recommendations** - Find products based on your needs\n\n" +
-                "Try asking me something like:\n" +
-                "• \"Where is my order 1012?\"\n" +
-                "• \"What is your return policy?\"\n" +
-                "• \"Recommend a phone under 30000\"",
+            text: "🎉 Welcome to ShopEasy Customer Support! I'm your AI assistant ready to help with:\n\n" +
+                "📦 **Order Tracking** - Real-time status for orders 1001-1030\n" +
+                "📋 **Policies & Support** - 50+ FAQs on shipping, returns, payments\n" +
+                "🛍️ **Smart Recommendations** - 40+ products across all categories\n" +
+                "💡 **Expert Advice** - Warranty, EMI plans, delivery options\n\n" +
+                "✨ **Try these popular queries:**\n" +
+                "• \"Where is my order 1015?\" (Laptop - Shipped)\n" +
+                "• \"What are your delivery times?\"\n" +
+                "• \"Best Samsung mobile under 100000\"\n" +
+                "• \"Do you offer EMI plans?\"",
             sender: 'bot',
             timestamp: new Date()
         };
@@ -160,8 +162,8 @@ export default function ChatWindow() {
                     >
                         <div
                             className={`max-w-[70%] rounded-lg px-4 py-2 ${message.sender === 'user'
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-gray-100 text-gray-800'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-100 text-gray-800'
                                 }`}
                         >
                             <div className="flex items-start space-x-2">
@@ -228,27 +230,41 @@ export default function ChatWindow() {
                 </div>
 
                 {/* Quick action buttons */}
-                <div className="flex flex-wrap gap-2 mt-3">
+                <div className="flex flex-wrap gap-3 mt-4">
                     <button
-                        onClick={() => setInputValue('Where is my order 1012?')}
-                        className="bg-white border border-gray-300 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-50 transition-colors"
+                        onClick={() => setInputValue('Where is my order 1015?')}
+                        className="bg-linear-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-md"
                         disabled={isLoading}
                     >
-                        Track Order
+                        📦 Track Order
                     </button>
                     <button
-                        onClick={() => setInputValue('What is your return policy?')}
-                        className="bg-white border border-gray-300 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-50 transition-colors"
+                        onClick={() => setInputValue('What are your delivery times?')}
+                        className="bg-linear-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200 shadow-md"
                         disabled={isLoading}
                     >
-                        Return Policy
+                        🚚 Delivery Info
                     </button>
                     <button
-                        onClick={() => setInputValue('Recommend a phone under 25000')}
-                        className="bg-white border border-gray-300 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-50 transition-colors"
+                        onClick={() => setInputValue('Best laptop under 200000')}
+                        className="bg-linear-to-r from-purple-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:from-purple-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-md"
                         disabled={isLoading}
                     >
-                        Product Recommendation
+                        💻 Find Products
+                    </button>
+                    <button
+                        onClick={() => setInputValue('Do you offer EMI plans?')}
+                        className="bg-linear-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-200 shadow-md"
+                        disabled={isLoading}
+                    >
+                        💳 Payment Options
+                    </button>
+                    <button
+                        onClick={() => setInputValue('How do I return an item?')}
+                        className="bg-linear-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all duration-200 shadow-md"
+                        disabled={isLoading}
+                    >
+                        🔄 Returns
                     </button>
                 </div>
             </div>
