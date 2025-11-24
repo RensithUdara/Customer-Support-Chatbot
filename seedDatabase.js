@@ -2,16 +2,16 @@
 const { execSync } = require('child_process');
 
 try {
-  console.log('🚀 Starting comprehensive database seeding...');
-  
-  // Run the seeding script using tsx
-  execSync('npx tsx data/seedComprehensive.ts', { 
-    stdio: 'inherit',
-    cwd: process.cwd()
-  });
-  
-  console.log('✅ Database seeding completed successfully!');
+    console.log('🚀 Starting comprehensive database seeding...');
+
+    // Run the seeding script using tsx
+    execSync('npx tsx data/seedComprehensive.ts', {
+        stdio: 'inherit',
+        cwd: process.cwd()
+    });
+
+    console.log('✅ Database seeding completed successfully!');
 } catch (error) {
-  console.error('❌ Database seeding failed:', error.message);
-  process.exit(1);
+    console.error('❌ Database seeding failed:', error.message);
+    process.exit(1);
 }
