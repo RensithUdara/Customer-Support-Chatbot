@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
         // Detect intent from the message (now async with Dialogflow)
         const intentResult = await detectIntent(message);
         console.log('Intent detected:', intentResult);
-        
+
         // Log Dialogflow data if available
         if (intentResult.dialogflowData) {
             console.log('Dialogflow intent:', intentResult.dialogflowData.originalIntent);
