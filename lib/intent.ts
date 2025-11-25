@@ -1,19 +1,70 @@
-// Intent detection logic
+// Intent detection logic with Dialogflow integration
+import { detectIntentWithDialogflow, extractEntitiesFromDialogflow, testDialogflowConnection } from './dialogflow';
+
 export type Intent = 'ORDER_STATUS' | 'POLICY' | 'PRODUCT_RECOMMENDATION' | 'DELIVERY_METHODS' | 'RETURN_POLICIES' | 'DATABASE_QUERY' | 'OTHER';
 
 export interface IntentResult {
     intent: Intent;
     confidence: number;
     extractedData?: {
-        orderId?: number;
+        orderId?: string;
         category?: string;
         budget?: number;
         tags?: string[];
+        supportType?: string;
+    };
+    dialogflowData?: {
+        originalIntent: string;
+        fulfillmentText: string;
+        queryText: string;
     };
 }
 
-// Rule-based intent detection
-export const detectIntent = (message: string): IntentResult => {
+// Enhanced hybrid intent detection (Dialogflow + Fallback)
+export const detectIntent = async (message: string): Promise<IntentResult> => {
+    try {
+        // Try Dialogflow first
+        const isDialogflowAvailable = await testDialogflowConnection();
+        
+        if (isDialogflowAvailable) {
+            const dialogflowResult = await detectIntentWithDialogflow(message);
+            
+            // Use Dialogflow result if confidence is high enough
+            if (dialogflowResult.confidence >= 0.6) {
+                const entities = extractEntitiesFromDialogflow(
+                    dialogflowResult.parameters, 
+                    message, 
+                    dialogflowResult.originalIntent
+                );
+                
+                return {
+                    intent: dialogflowResult.intent as Intent,
+                    confidence: dialogflowResult.confidence,
+                    extractedData: {
+                        orderId: entities.orderId || undefined,
+                        supportType: entities.supportType || undefined,
+                        category: entities.productCategory || undefined,
+                        budget: entities.budget || undefined,
+                        tags: []
+                    },
+                    dialogflowData: {
+                        originalIntent: dialogflowResult.originalIntent,
+                        fulfillmentText: dialogflowResult.fulfillmentText,
+                        queryText: dialogflowResult.queryText
+                    }
+                };
+            }
+        }
+    } catch (error) {
+        console.log('Dialogflow unavailable, using fallback detection:', error?.message);
+    }
+    
+    // Fallback to original rule-based detection
+    return detectIntentOriginal(message);
+};
+
+// Original rule-based intent detection (fallback)
+export const detectIntentOriginal = (message: string): IntentResult => {
     const lowercaseMessage = message.toLowerCase();
 
     // Extract numbers (potential order IDs)
