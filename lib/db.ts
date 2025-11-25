@@ -277,6 +277,16 @@ export const saveConversation = (sessionId: string, message: string, sender: 'us
   return stmt.run(sessionId, message, sender, new Date().toISOString(), intent);
 };
 
+// Get conversation history for context-aware responses
+export const getConversationHistory = (sessionId: string, limit: number = 10) => {
+  return db.prepare(`
+    SELECT * FROM conversations 
+    WHERE session_id = ? 
+    ORDER BY timestamp DESC 
+    LIMIT ?
+  `).all(sessionId, limit).reverse(); // Reverse to get chronological order
+};
+
 // Helper functions for new tables
 export const getDeliveryPolicies = () => {
   return db.prepare('SELECT * FROM delivery_policies WHERE is_active = 1').all();

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { detectIntent, extractKeywords } from '@/lib/intent';
-import { searchFAQs, getOrderById, searchProducts, saveConversation, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs, smartDatabaseQuery } from '@/lib/db';
+import { detectIntent, detectIntentWithContext, extractKeywords } from '@/lib/intent';
+import { searchFAQs, getOrderById, searchProducts, saveConversation, getConversationHistory, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs, smartDatabaseQuery } from '@/lib/db';
 import { callLLM } from '@/lib/llm';
 
 // Type definitions for database entities
@@ -56,11 +56,14 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Message is required' }, { status: 400 });
         }
 
+        // Get recent conversation history for context
+        const conversationHistory = await getConversationHistory(sessionId, 6); // Last 6 messages
+        
         // Save user message to conversation history
         await saveConversation(sessionId, message, 'user');
 
-        // Detect intent from the message
-        const intentResult = detectIntent(message);
+        // Detect intent from the message with conversation context
+        const intentResult = detectIntentWithContext(message, conversationHistory);
         console.log('Intent detected:', intentResult);
 
         let botReply = '';

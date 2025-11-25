@@ -12,6 +12,45 @@ export interface IntentResult {
     };
 }
 
+// Context-aware intent detection
+export const detectIntentWithContext = (message: string, conversationHistory: any[] = []): IntentResult => {
+    const basicIntent = detectIntent(message);
+    
+    // Enhance intent detection with conversation context
+    if (conversationHistory.length > 0) {
+        const recentMessages = conversationHistory.slice(-3); // Last 3 messages
+        
+        // Check if user is continuing a previous conversation
+        const lastBotMessage = recentMessages.find(msg => msg.sender === 'bot');
+        if (lastBotMessage) {
+            const botContent = lastBotMessage.message.toLowerCase();
+            
+            // If bot mentioned products and user gives a short response, likely product-related
+            if (botContent.includes('product') || botContent.includes('acer') || botContent.includes('laptop')) {
+                if (message.length < 20 && (message.toLowerCase().includes('yes') || 
+                    message.toLowerCase().includes('more') || message.toLowerCase().includes('details'))) {
+                    return {
+                        intent: 'PRODUCT_RECOMMENDATION',
+                        confidence: 0.8,
+                        extractedData: { category: 'continuing_conversation' }
+                    };
+                }
+            }
+            
+            // If bot mentioned order and user gives order-related response
+            if (botContent.includes('order') && message.match(/\d{4}/)) {
+                return {
+                    intent: 'ORDER_STATUS',
+                    confidence: 0.9,
+                    extractedData: { orderId: parseInt(message.match(/\d{4}/)![0]) }
+                };
+            }
+        }
+    }
+    
+    return basicIntent;
+};
+
 // Rule-based intent detection
 export const detectIntent = (message: string): IntentResult => {
     const lowercaseMessage = message.toLowerCase();
@@ -61,9 +100,26 @@ export const detectIntent = (message: string): IntentResult => {
     const policyKeywords = ['return', 'refund', 'policy', 'shipping', 'delivery charge', 'cash on delivery', 'cod', 'warranty', 'exchange', 'payment', 'pay', 'emi', 'card', 'credit', 'debit', 'wallet', 'upi', 'invoice', 'fee', 'charge', 'secure', 'account', 'login', 'password', 'profile'];
     const hasPolicyKeywords = policyKeywords.some(keyword => lowercaseMessage.includes(keyword));
 
-    // Product recommendation keywords
+    // Enhanced Product recommendation detection
     const productKeywords = ['recommend', 'suggest', 'best', 'good', 'under', 'budget', 'cheap', 'phone', 'laptop', 'mobile'];
     const hasProductKeywords = productKeywords.some(keyword => lowercaseMessage.includes(keyword));
+
+    // Brand name detection - Common tech brands
+    const brandNames = [
+        'acer', 'asus', 'hp', 'dell', 'lenovo', 'apple', 'samsung', 'lg', 'sony',
+        'microsoft', 'huawei', 'xiaomi', 'oppo', 'vivo', 'oneplus', 'realme',
+        'intel', 'amd', 'nvidia', 'canon', 'nikon', 'jbl', 'bose', 'beats',
+        'logitech', 'razer', 'corsair', 'kingston', 'seagate', 'wd', 'toshiba'
+    ];
+    const hasBrandName = brandNames.some(brand => lowercaseMessage.includes(brand));
+
+    // Product model/type detection - Common product identifiers
+    const productTypes = [
+        'inspiron', 'pavilion', 'thinkpad', 'macbook', 'iphone', 'galaxy', 'pixel',
+        'ryzen', 'core', 'gtx', 'rtx', 'pro', 'max', 'ultra', 'gaming', 'office',
+        'student', 'business', 'home', 'professional', 'premium', 'budget'
+    ];
+    const hasProductType = productTypes.some(type => lowercaseMessage.includes(type));
 
     // Category detection
     let category = '';
@@ -119,10 +175,18 @@ export const detectIntent = (message: string): IntentResult => {
         };
     }
 
-    if (hasProductKeywords || budget) {
+    // Enhanced product recommendation detection
+    if (hasProductKeywords || budget || hasBrandName || hasProductType || foundCategory) {
+        let confidence = 0.7;
+        
+        // Higher confidence for brand names or specific product types
+        if (hasBrandName) confidence = 0.9;
+        if (hasProductType) confidence = Math.max(confidence, 0.8);
+        if (foundCategory) confidence = Math.max(confidence, 0.75);
+        
         return {
             intent: 'PRODUCT_RECOMMENDATION',
-            confidence: 0.7,
+            confidence: confidence,
             extractedData: { category, budget, tags }
         };
     }
