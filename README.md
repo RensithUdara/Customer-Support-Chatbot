@@ -24,12 +24,14 @@ customer-support-chatbot/
 │   ├── api/                   # API routes
 │   │   ├── analytics/         # Analytics endpoints  
 │   │   └── chat/             # Main chat API
-│   ├── chat/                 # Chat page
+│   ├── analytics/            # Analytics dashboard
+│   ├── chat/                 # Chat interface page
 │   └── globals.css           # Global styles
 ├── 📁 components/            # React components
 │   ├── ChatWindow.tsx        # Advanced chat interface
 │   ├── FloatingChatWidget.tsx # Floating chat widget
-│   └── ui/                   # UI components
+│   ├── ChatContext.tsx       # Context provider
+│   └── ChatNotification.tsx  # Notifications
 ├── 📁 data/                  # Database & data
 │   ├── ecommerce.db          # SQLite database (1100+ records)
 │   └── *.json               # Data seeds
