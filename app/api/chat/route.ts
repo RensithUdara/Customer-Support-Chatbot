@@ -411,11 +411,11 @@ export async function POST(request: NextRequest) {
             replyLength: botReply?.length
         });
 
-        // Generate enhanced response if using LLM
-        let enhancedResponse = null;
+        // Generate AI response if using LLM
+        let aiResponse = null;
         if (systemPrompt) {
             try {
-                enhancedResponse = await callLLM({
+                aiResponse = await callLLM({
                     systemPrompt,
                     userMessage: message,
                     context,
@@ -423,7 +423,7 @@ export async function POST(request: NextRequest) {
                     userPreferences: { responseStyle: 'friendly', technicalLevel: 'basic' }
                 });
             } catch (error) {
-                console.error('LLM Enhancement Error:', error);
+                console.error('LLM Processing Error:', error);
             }
         }
 
@@ -432,9 +432,9 @@ export async function POST(request: NextRequest) {
             intent: intentResult.intent,
             confidence: intentResult.confidence,
             sessionId,
-            suggestions: enhancedResponse?.suggestions || [],
-            followUpQuestions: enhancedResponse?.followUpQuestions || [],
-            metadata: enhancedResponse?.metadata || {
+            suggestions: aiResponse?.suggestions || [],
+            followUpQuestions: aiResponse?.followUpQuestions || [],
+            metadata: aiResponse?.metadata || {
                 processingTime: Date.now() - Date.now(),
                 dataSourcesUsed: ['database'],
                 confidenceFactors: ['intent_match']
