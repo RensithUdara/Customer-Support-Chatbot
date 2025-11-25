@@ -225,6 +225,37 @@ export default function ChatWindow() {
                                         }}
                                         className="leading-relaxed"
                                     />
+                                    
+                                    {/* Suggestions */}
+                                    {message.sender === 'bot' && message.suggestions && message.suggestions.length > 0 && (
+                                        <div className="mt-3 flex flex-wrap gap-2">
+                                            {message.suggestions.map((suggestion, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handleSuggestionClick(suggestion)}
+                                                    className="px-3 py-1 text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full border border-blue-200 transition-colors"
+                                                >
+                                                    💡 {suggestion}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                    
+                                    {/* Follow-up Questions */}
+                                    {message.sender === 'bot' && message.followUpQuestions && message.followUpQuestions.length > 0 && (
+                                        <div className="mt-2 space-y-1">
+                                            {message.followUpQuestions.map((question, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handleSuggestionClick(question)}
+                                                    className="block w-full text-left px-2 py-1 text-xs text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                                >
+                                                    ❓ {question}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                    
                                     <div className="flex items-center justify-between mt-2">
                                         <span className="text-xs opacity-70">
                                             {message.timestamp.toLocaleTimeString([], {
