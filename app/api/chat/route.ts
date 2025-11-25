@@ -14,9 +14,15 @@ export async function POST(request: NextRequest) {
         // Save user message to conversation history
         await saveConversation(sessionId, message, 'user');
 
-        // Detect intent from the message
-        const intentResult = detectIntent(message);
+        // Detect intent from the message (now async with Dialogflow)
+        const intentResult = await detectIntent(message);
         console.log('Intent detected:', intentResult);
+        
+        // Log Dialogflow data if available
+        if (intentResult.dialogflowData) {
+            console.log('Dialogflow intent:', intentResult.dialogflowData.originalIntent);
+            console.log('Dialogflow confidence:', intentResult.confidence);
+        }
 
         let botReply = '';
         let systemPrompt = '';
