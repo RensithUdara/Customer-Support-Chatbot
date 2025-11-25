@@ -1,0 +1,51 @@
+[
+  {
+    "value": "WhatsApp Support",
+    "synonyms": [
+      "whatsapp",
+      "whats app",
+      "wa",
+      "whatsapp support",
+      "+94 77 123 4567"
+    ]
+  },
+  {
+    "value": "Phone Support",
+    "synonyms": [
+      "phone",
+      "call",
+      "telephone",
+      "phone support",
+      "+94 11 234 5678"
+    ]
+  },
+  {
+    "value": "Email Support",
+    "synonyms": [
+      "email",
+      "mail",
+      "e-mail",
+      "email support",
+      "help@yourstore.lk"
+    ]
+  },
+  {
+    "value": "Live Chat",
+    "synonyms": [
+      "chat",
+      "live chat",
+      "online chat",
+      "web chat",
+      "website chat"
+    ]
+  },
+  {
+    "value": "Technical Support",
+    "synonyms": [
+      "technical",
+      "tech support",
+      "technical help",
+      "tech@yourstore.lk"
+    ]
+  }
+]

@@ -1,0 +1,67 @@
+[
+  {
+    "id": "phone_support_1",
+    "data": [
+      {
+        "text": "Phone support",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "phone_support_2",
+    "data": [
+      {
+        "text": "Phone contact",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "phone_support_3",
+    "data": [
+      {
+        "text": "Call customer service",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "phone_support_4",
+    "data": [
+      {
+        "text": "Customer service number",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "phone_support_5",
+    "data": [
+      {
+        "text": "I want to call support",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  }
+]

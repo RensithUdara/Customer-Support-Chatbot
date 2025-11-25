@@ -1,0 +1,186 @@
+[
+  {
+    "id": "order_status_1",
+    "data": [
+      {
+        "text": "What is the status of my order ",
+        "userDefined": false
+      },
+      {
+        "text": "1003",
+        "alias": "order-id",
+        "meta": "@order-id",
+        "userDefined": false
+      },
+      {
+        "text": "?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "order_status_2",
+    "data": [
+      {
+        "text": "Track my order",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "order_status_3",
+    "data": [
+      {
+        "text": "Where is my order?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "order_status_4",
+    "data": [
+      {
+        "text": "I want to track order ",
+        "userDefined": false
+      },
+      {
+        "text": "1005",
+        "alias": "order-id",
+        "meta": "@order-id",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "order_status_5",
+    "data": [
+      {
+        "text": "Check my order status",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "order_status_6",
+    "data": [
+      {
+        "text": "Order tracking information",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "order_status_7",
+    "data": [
+      {
+        "text": "When will my order arrive?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "order_status_8",
+    "data": [
+      {
+        "text": "Has my order shipped?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "order_status_9",
+    "data": [
+      {
+        "text": "Show me the status of ",
+        "userDefined": false
+      },
+      {
+        "text": "1008",
+        "alias": "order-id",
+        "meta": "@order-id",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "order_status_10",
+    "data": [
+      {
+        "text": "Is my order ready for pickup?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "order_status_11",
+    "data": [
+      {
+        "text": "මගේ ඕඩර් එක track කරන්න ",
+        "userDefined": false
+      },
+      {
+        "text": "1002",
+        "alias": "order-id",
+        "meta": "@order-id",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "order_status_12",
+    "data": [
+      {
+        "text": "Order status check karanna",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  }
+]

@@ -10,7 +10,8 @@
     "seed": "npx tsx data/seed.ts",
     "setup-dialogflow": "npx tsx scripts/setup-dialogflow.ts",
     "auto-setup-dialogflow": "node scripts/auto-setup-dialogflow.js",
-    "test-dialogflow": "node -e \"require('./lib/dialogflow.js').testDialogflowConnection().then(result => console.log('Dialogflow available:', result))\""
+    "test-dialogflow": "node -e \"require('./lib/dialogflow.js').testDialogflowConnection().then(result => console.log('Dialogflow available:', result))\"",
+    "test-integration": "node test-integration.js"
   },
   "dependencies": {
     "@google-cloud/dialogflow": "^7.4.0",

@@ -1,0 +1,55 @@
+{
+  "id": "aa4b5276-e29d-4e96-bd1a-e18ddcac0001",
+  "name": "order.status",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "order.status",
+      "affectedContexts": [
+        {
+          "name": "order_context",
+          "lifespan": 5
+        }
+      ],
+      "parameters": [
+        {
+          "id": "cc4b5276-e29d-4e96-bd1a-e18ddcac0001",
+          "name": "order-id",
+          "required": false,
+          "dataType": "@order-id",
+          "value": "$order-id",
+          "defaultValue": "",
+          "isList": false,
+          "prompts": [
+            {
+              "lang": "en",
+              "value": "Could you please provide your order ID?"
+            }
+          ],
+          "promptMessages": [],
+          "noMatchPrompts": [],
+          "noInputPrompts": [],
+          "outputDialogContexts": []
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": "Let me check your order status for you. Please wait a moment while I retrieve the information."
+        }
+      ],
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "fallbackIntent": false,
+  "events": [],
+  "conditionalResponses": [],
+  "condition": "",
+  "conditionalFollowupEvents": []
+}

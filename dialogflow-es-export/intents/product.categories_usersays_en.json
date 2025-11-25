@@ -1,0 +1,100 @@
+[
+  {
+    "id": "product_categories_1",
+    "data": [
+      {
+        "text": "What products do you sell?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "product_categories_2",
+    "data": [
+      {
+        "text": "Product categories",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "product_categories_3",
+    "data": [
+      {
+        "text": "Show me ",
+        "userDefined": false
+      },
+      {
+        "text": "Electronics",
+        "alias": "product-category",
+        "meta": "@product-category",
+        "userDefined": false
+      },
+      {
+        "text": " products",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "product_categories_4",
+    "data": [
+      {
+        "text": "Browse products",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "product_categories_5",
+    "data": [
+      {
+        "text": "What's available?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "product_categories_6",
+    "data": [
+      {
+        "text": "Show me ",
+        "userDefined": false
+      },
+      {
+        "text": "Mobile",
+        "alias": "product-category",
+        "meta": "@product-category",
+        "userDefined": false
+      },
+      {
+        "text": " items",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  }
+]

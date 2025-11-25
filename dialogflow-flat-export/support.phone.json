@@ -1,0 +1,35 @@
+{
+  "id": "aa4b5276-e29d-4e96-bd1a-e18ddcac0003",
+  "name": "support.phone",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "support.phone",
+      "affectedContexts": [
+        {
+          "name": "support_context",
+          "lifespan": 3
+        }
+      ],
+      "parameters": [],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": "I'll provide you with our phone support information. Our customer service representatives are available to assist you."
+        }
+      ],
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "fallbackIntent": false,
+  "events": [],
+  "conditionalResponses": [],
+  "condition": "",
+  "conditionalFollowupEvents": []
+}

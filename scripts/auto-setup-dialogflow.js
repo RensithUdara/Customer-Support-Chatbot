@@ -94,6 +94,58 @@ const INTENTS = [
     },
 
     {
+        displayName: 'order.items',
+        trainingPhrases: [
+            'What items are in order 1210',
+            'What products are in my order 1234',
+            'Show me items in order 5678',
+            'List items for order 9999',
+            'What did I order in 1111',
+            'Show order contents for 2222',
+            'whts item in order 1210',
+            'what items in my order',
+            'show me what I ordered',
+            'list products in order',
+            'order items for 1234',
+            'what products in order 5678'
+        ],
+        parameters: [
+            {
+                displayName: 'order-id',
+                entityTypeDisplayName: '@order-id',
+                isList: false,
+                mandatory: false
+            }
+        ]
+    },
+
+    {
+        displayName: 'order.details',
+        trainingPhrases: [
+            'Order details for 1234',
+            'Show me full details of order 5678',
+            'Complete order information for 9999',
+            'Tell me everything about order 1111',
+            'Full order info 2222',
+            'Order details',
+            'Complete order details',
+            'Full order information',
+            'Show me order details',
+            'Detailed order info',
+            'Everything about my order',
+            'Complete order summary'
+        ],
+        parameters: [
+            {
+                displayName: 'order-id',
+                entityTypeDisplayName: '@order-id',
+                isList: false,
+                mandatory: false
+            }
+        ]
+    },
+
+    {
         displayName: 'support.whatsapp',
         trainingPhrases: [
             'WhatsApp support',

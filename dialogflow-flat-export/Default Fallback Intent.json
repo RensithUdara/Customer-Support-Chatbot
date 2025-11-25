@@ -1,0 +1,34 @@
+{
+  "id": "aa4b5276-e29d-4e96-bd1a-e18ddcac9999",
+  "name": "Default Fallback Intent",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "input.unknown",
+      "affectedContexts": [],
+      "parameters": [],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": [
+            "I didn't quite understand that. I can help you with order tracking, product information, payment methods, or support contacts. Could you please rephrase your question?",
+            "Sorry, I'm not sure what you're asking. You can ask me about order status, products, payments, or contact information. What would you like to know?",
+            "I'm here to help with customer support questions. Try asking about your order, our products, payment options, or how to contact us."
+          ]
+        }
+      ],
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "fallbackIntent": true,
+  "events": [],
+  "conditionalResponses": [],
+  "condition": "",
+  "conditionalFollowupEvents": []
+}

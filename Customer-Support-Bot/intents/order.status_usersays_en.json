@@ -1,0 +1,111 @@
+[
+  {
+    "id": "0e336c2d-ada7-44d1-a511-4a871d576447",
+    "data": [
+      {
+        "text": "Track package for ORD",
+        "userDefined": false
+      },
+      {
+        "text": "900",
+        "meta": "@sys.number",
+        "alias": "number",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "5194743c-5bfc-4385-be2c-b4776344dd17",
+    "data": [
+      {
+        "text": "I want to know order status",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "9d9d22a5-ce41-4732-a242-264b3d756b13",
+    "data": [
+      {
+        "text": "Check order ORD",
+        "userDefined": false
+      },
+      {
+        "text": "001",
+        "meta": "@sys.number",
+        "alias": "number",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "823e070e-6091-4b39-9a9f-296b61060879",
+    "data": [
+      {
+        "text": "Order status for ORD",
+        "userDefined": false
+      },
+      {
+        "text": "789",
+        "meta": "@sys.number",
+        "alias": "number",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "127a8088-d96b-4d6b-8f3e-e62790a7a681",
+    "data": [
+      {
+        "text": "Where is my order?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "8b870ed6-66c5-4dc7-8d2a-a86c7fdf18eb",
+    "data": [
+      {
+        "text": "Track my order ORD456",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "7dba36ac-e3da-4a22-b8e5-9d786f6ba262",
+    "data": [
+      {
+        "text": "What is the status of my order ORD123?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  }
+]

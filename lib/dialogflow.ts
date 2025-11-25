@@ -57,18 +57,20 @@ function mapDialogflowToCustomIntent(dialogflowIntent: string): string {
     const intentMapping: Record<string, string> = {
         // Order related
         'order.status': 'ORDER_STATUS',
+        'order.items': 'ORDER_ITEMS',
+        'order.details': 'ORDER_DETAILS',
         'order.track': 'ORDER_STATUS',
         'order.inquiry': 'ORDER_STATUS',
 
-        // Support related  
-        'support.general': 'DATABASE_QUERY',
-        'support.whatsapp': 'DATABASE_QUERY',
-        'support.phone': 'DATABASE_QUERY',
-        'support.email': 'DATABASE_QUERY',
-        'support.chat': 'DATABASE_QUERY',
-        'support.technical': 'DATABASE_QUERY',
-        'support.returns': 'DATABASE_QUERY',
-        'customer.support': 'DATABASE_QUERY',
+        // Support related - Map to specific intents  
+        'support.general': 'SPECIFIC_SUPPORT',
+        'support.whatsapp': 'SPECIFIC_SUPPORT',
+        'support.phone': 'SPECIFIC_SUPPORT',
+        'support.email': 'SPECIFIC_SUPPORT',
+        'support.chat': 'SPECIFIC_SUPPORT',
+        'support.technical': 'SPECIFIC_SUPPORT',
+        'support.returns': 'RETURN_POLICIES',
+        'customer.support': 'SPECIFIC_SUPPORT',
 
         // Delivery related
         'delivery.methods': 'DELIVERY_METHODS',
@@ -81,8 +83,8 @@ function mapDialogflowToCustomIntent(dialogflowIntent: string): string {
         'refund.policy': 'RETURN_POLICIES',
 
         // Payment related
-        'payment.methods': 'DATABASE_QUERY',
-        'payment.options': 'DATABASE_QUERY',
+        'payment.methods': 'PAYMENT_METHODS',
+        'payment.options': 'PAYMENT_METHODS',
 
         // Product recommendations
         'product.recommend': 'PRODUCT_RECOMMENDATION',
@@ -91,9 +93,13 @@ function mapDialogflowToCustomIntent(dialogflowIntent: string): string {
         // Database queries
         'data.query': 'DATABASE_QUERY',
         'info.request': 'DATABASE_QUERY',
-        'warranty.info': 'DATABASE_QUERY',
         'promotion.info': 'DATABASE_QUERY',
         'shipping.zones': 'DATABASE_QUERY',
+
+        // Warranty specific
+        'warranty.info': 'WARRANTY_INFO',
+        'warranty.policy': 'WARRANTY_INFO',
+        'warranty.claim': 'WARRANTY_INFO',
 
         // Policy inquiries
         'policy.inquiry': 'POLICY',
@@ -148,14 +154,26 @@ export function extractEntitiesFromDialogflow(
         priceRange: null
     };
 
-    // Order ID extraction
+    // Order ID extraction (match database format)
     if (parameters['order-id']) {
-        entities.orderId = parameters['order-id'];
+        // Remove any ORD prefix to match database format
+        let extractedId = parameters['order-id'].toString().replace(/^ORD/i, '');
+        entities.orderId = extractedId;
     } else {
-        // Fallback regex for order patterns
-        const orderMatch = message.match(/(?:ORD|ORDER)[-\s]*(\d+)/i);
-        if (orderMatch) {
-            entities.orderId = `ORD${orderMatch[1]}`;
+        // Enhanced regex patterns for various order ID formats
+        const patterns = [
+            /(?:ORD|ORDER)[-\s]*(\d+)/i,  // ORD123, ORDER 123
+            /\border\s+(\d+)/i,           // "order 1010"
+            /\b(\d{4})\b/,                // Just 4-digit numbers
+            /\b(\d{3,5})\b/               // 3-5 digit numbers
+        ];
+
+        for (const pattern of patterns) {
+            const match = message.match(pattern);
+            if (match && match[1]) {
+                entities.orderId = match[1];
+                break;
+            }
         }
     }
 

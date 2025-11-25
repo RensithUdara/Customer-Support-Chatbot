@@ -1,7 +1,7 @@
 // Intent detection logic with Dialogflow integration
 import { detectIntentWithDialogflow, extractEntitiesFromDialogflow, testDialogflowConnection } from './dialogflow';
 
-export type Intent = 'ORDER_STATUS' | 'POLICY' | 'PRODUCT_RECOMMENDATION' | 'DELIVERY_METHODS' | 'RETURN_POLICIES' | 'DATABASE_QUERY' | 'OTHER';
+export type Intent = 'ORDER_STATUS' | 'ORDER_ITEMS' | 'ORDER_DETAILS' | 'POLICY' | 'PRODUCT_RECOMMENDATION' | 'DELIVERY_METHODS' | 'RETURN_POLICIES' | 'DATABASE_QUERY' | 'SPECIFIC_SUPPORT' | 'PAYMENT_METHODS' | 'WARRANTY_INFO' | 'OTHER';
 
 export interface IntentResult {
     intent: Intent;
@@ -93,11 +93,21 @@ export const detectIntentOriginal = (message: string): IntentResult => {
         lowercaseMessage.includes('return') && lowercaseMessage.includes(cat)
     );
 
+    // Warranty-specific keywords (specific warranty inquiries)
+    const warrantyKeywords = [
+        'computer warranty', 'laptop warranty', 'phone warranty', 'mobile warranty',
+        'electronics warranty', 'smartphone warranty', 'tablet warranty', 'warranty for',
+        'warranty on', 'warranty policy', 'warranty coverage', 'warranty period',
+        'warranty claim', 'warranty info', 'warranty information'
+    ];
+    const hasWarrantyKeywords = warrantyKeywords.some(keyword => lowercaseMessage.includes(keyword)) ||
+        (lowercaseMessage.includes('warranty') && (lowercaseMessage.includes('computer') || lowercaseMessage.includes('laptop') || lowercaseMessage.includes('phone') || lowercaseMessage.includes('mobile') || lowercaseMessage.includes('electronics')));
+
     // Database query keywords (questions about data/information)
     const databaseQueryKeywords = [
         'how many', 'what are', 'list all', 'show me', 'tell me about', 'information about',
         'details about', 'all products', 'all orders', 'customer support', 'contact info',
-        'support topics', 'warranty', 'promotions', 'shipping zones', 'payment methods',
+        'support topics', 'promotions', 'shipping zones', 'payment methods',
         'available products', 'product categories', 'support contact', 'warranty policy',
         'current promotions', 'active promotions', 'payment options', 'shipping areas',
         'what payment', 'show payment', 'payment types', 'payment ways', 'ways to pay',
@@ -153,6 +163,14 @@ export const detectIntentOriginal = (message: string): IntentResult => {
         return {
             intent: 'RETURN_POLICIES',
             confidence: 0.9
+        };
+    }
+
+    if (hasWarrantyKeywords) {
+        return {
+            intent: 'WARRANTY_INFO',
+            confidence: 0.9,
+            extractedData: { category: foundCategory || 'general' }
         };
     }
 

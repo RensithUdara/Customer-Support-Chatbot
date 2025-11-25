@@ -1,0 +1,158 @@
+[
+  {
+    "id": "whatsapp_support_1",
+    "data": [
+      {
+        "text": "WhatsApp support",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "whatsapp_support_2",
+    "data": [
+      {
+        "text": "WhatsApp contact",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "whatsapp_support_3",
+    "data": [
+      {
+        "text": "Contact via WhatsApp",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "whatsapp_support_4",
+    "data": [
+      {
+        "text": "I need WhatsApp help",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "whatsapp_support_5",
+    "data": [
+      {
+        "text": "WhatsApp customer service",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "whatsapp_support_6",
+    "data": [
+      {
+        "text": "Can I chat on WhatsApp?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "whatsapp_support_7",
+    "data": [
+      {
+        "text": "WhatsApp number for support",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "whatsapp_support_8",
+    "data": [
+      {
+        "text": "Help me via WhatsApp",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "whatsapp_support_9",
+    "data": [
+      {
+        "text": "WhatsApp business support",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "whatsapp_support_10",
+    "data": [
+      {
+        "text": "Message on WhatsApp",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "whatsapp_support_11",
+    "data": [
+      {
+        "text": "WhatsApp number eka denn",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  },
+  {
+    "id": "whatsapp_support_12",
+    "data": [
+      {
+        "text": "Call me on WhatsApp",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "lang": "en",
+    "updated": 0
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "id": "aa4b5276-e29d-4e96-bd1a-e18ddcac0002",
+  "name": "support.whatsapp",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "support.whatsapp",
+      "affectedContexts": [
+        {
+          "name": "support_context",
+          "lifespan": 3
+        }
+      ],
+      "parameters": [],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": "I'll provide you with WhatsApp support information. Our WhatsApp support is available 24/7 for your convenience."
+        }
+      ],
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "fallbackIntent": false,
+  "events": [],
+  "conditionalResponses": [],
+  "condition": "",
+  "conditionalFollowupEvents": []
+}

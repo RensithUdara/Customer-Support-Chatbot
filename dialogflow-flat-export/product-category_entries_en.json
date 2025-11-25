@@ -1,0 +1,106 @@
+[
+  {
+    "value": "Electronics",
+    "synonyms": [
+      "Electronics",
+      "electronic devices",
+      "gadgets",
+      "tech",
+      "technology"
+    ]
+  },
+  {
+    "value": "Fashion",
+    "synonyms": [
+      "Fashion",
+      "clothes",
+      "apparel",
+      "clothing",
+      "garments",
+      "wear"
+    ]
+  },
+  {
+    "value": "Home Appliances",
+    "synonyms": [
+      "Home Appliances",
+      "home goods",
+      "household",
+      "appliances",
+      "home electronics"
+    ]
+  },
+  {
+    "value": "Books",
+    "synonyms": [
+      "Books",
+      "literature",
+      "reading",
+      "novels",
+      "textbooks",
+      "ebooks"
+    ]
+  },
+  {
+    "value": "Sports",
+    "synonyms": [
+      "Sports",
+      "fitness",
+      "exercise",
+      "outdoor",
+      "athletic",
+      "gym equipment"
+    ]
+  },
+  {
+    "value": "Beauty",
+    "synonyms": [
+      "Beauty",
+      "cosmetics",
+      "skincare",
+      "makeup",
+      "personal care",
+      "health"
+    ]
+  },
+  {
+    "value": "Laptop",
+    "synonyms": [
+      "Laptop",
+      "laptops",
+      "notebooks",
+      "computers",
+      "pc"
+    ]
+  },
+  {
+    "value": "Mobile",
+    "synonyms": [
+      "Mobile",
+      "mobiles",
+      "phones",
+      "smartphones",
+      "cell phones"
+    ]
+  },
+  {
+    "value": "Garden",
+    "synonyms": [
+      "Garden",
+      "gardening",
+      "plants",
+      "outdoor",
+      "landscaping"
+    ]
+  },
+  {
+    "value": "Automotive",
+    "synonyms": [
+      "Automotive",
+      "car",
+      "vehicle",
+      "auto parts",
+      "car accessories"
+    ]
+  }
+]

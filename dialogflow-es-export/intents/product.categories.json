@@ -1,0 +1,50 @@
+{
+  "id": "aa4b5276-e29d-4e96-bd1a-e18ddcac0004",
+  "name": "product.categories",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "action": "product.categories",
+      "affectedContexts": [
+        {
+          "name": "product_context",
+          "lifespan": 5
+        }
+      ],
+      "parameters": [
+        {
+          "id": "cc4b5276-e29d-4e96-bd1a-e18ddcac0002",
+          "name": "product-category",
+          "required": false,
+          "dataType": "@product-category",
+          "value": "$product-category",
+          "defaultValue": "",
+          "isList": false,
+          "prompts": [],
+          "promptMessages": [],
+          "noMatchPrompts": [],
+          "noInputPrompts": [],
+          "outputDialogContexts": []
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "lang": "en",
+          "speech": "I'll show you our available product categories and help you find what you're looking for."
+        }
+      ],
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "fallbackIntent": false,
+  "events": [],
+  "conditionalResponses": [],
+  "condition": "",
+  "conditionalFollowupEvents": []
+}
