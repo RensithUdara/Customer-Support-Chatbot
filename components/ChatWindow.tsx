@@ -81,18 +81,29 @@ export default function ChatWindow() {
         setMessages([welcomeMessage]);
     }, []);
 
-    const sendMessage = async () => {
-        if (!inputValue.trim() || isLoading) return;
+    const handleSuggestionClick = (suggestion: string) => {
+        setInputValue(suggestion);
+        setSelectedSuggestion(suggestion);
+        // Auto-send the suggestion
+        setTimeout(() => {
+            sendMessage(suggestion);
+        }, 100);
+    };
+
+    const sendMessage = async (messageText?: string) => {
+        const textToSend = messageText || inputValue;
+        if (!textToSend.trim() || isLoading) return;
 
         const userMessage: Message = {
             id: Date.now().toString(),
-            text: inputValue,
+            text: textToSend,
             sender: 'user',
             timestamp: new Date()
         };
 
         setMessages(prev => [...prev, userMessage]);
         setInputValue('');
+        setSelectedSuggestion(null);
         setIsLoading(true);
 
         try {
@@ -118,8 +129,19 @@ export default function ChatWindow() {
                 text: data.reply || "I apologize, but I couldn't process your request properly. Please try again.",
                 sender: 'bot',
                 timestamp: new Date(),
-                intent: data.intent
+                intent: data.intent,
+                confidence: data.confidence,
+                suggestions: data.suggestions || [],
+                followUpQuestions: data.followUpQuestions || [],
+                metadata: data.metadata
             };
+            
+            // Update conversation context
+            setConversationContext({
+                lastIntent: data.intent,
+                hasHistory: data.conversationContext?.hasHistory || false,
+                messageCount: data.conversationContext?.messageCount || 0
+            });
 
             setMessages(prev => [...prev, botMessage]);
         } catch (error) {
