@@ -408,11 +408,34 @@ export async function POST(request: NextRequest) {
             replyLength: botReply?.length
         });
 
+        // Generate enhanced response if using LLM
+        let enhancedResponse = null;
+        if (systemPrompt) {
+            try {
+                enhancedResponse = await callLLM({
+                    systemPrompt,
+                    userMessage: message,
+                    context,
+                    intent: intentResult.intent,
+                    userPreferences: { responseStyle: 'friendly', technicalLevel: 'basic' }
+                });
+            } catch (error) {
+                console.error('LLM Enhancement Error:', error);
+            }
+        }
+
         return NextResponse.json({
             reply: botReply || "I apologize, but I couldn't generate a proper response. Please try again.",
             intent: intentResult.intent,
             confidence: intentResult.confidence,
-            sessionId
+            sessionId,
+            suggestions: enhancedResponse?.suggestions || [],
+            followUpQuestions: enhancedResponse?.followUpQuestions || [],
+            metadata: enhancedResponse?.metadata || {
+                processingTime: Date.now() - Date.now(),
+                dataSourcesUsed: ['database'],
+                confidenceFactors: ['intent_match']
+            }
         });
 
     } catch (error) {
