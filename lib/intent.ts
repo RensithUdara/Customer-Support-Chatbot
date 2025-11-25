@@ -25,18 +25,18 @@ export const detectIntent = async (message: string): Promise<IntentResult> => {
     try {
         // Try Dialogflow first
         const isDialogflowAvailable = await testDialogflowConnection();
-        
+
         if (isDialogflowAvailable) {
             const dialogflowResult = await detectIntentWithDialogflow(message);
-            
+
             // Use Dialogflow result if confidence is high enough
             if (dialogflowResult.confidence >= 0.6) {
                 const entities = extractEntitiesFromDialogflow(
-                    dialogflowResult.parameters, 
-                    message, 
+                    dialogflowResult.parameters,
+                    message,
                     dialogflowResult.originalIntent
                 );
-                
+
                 return {
                     intent: dialogflowResult.intent as Intent,
                     confidence: dialogflowResult.confidence,
@@ -58,7 +58,7 @@ export const detectIntent = async (message: string): Promise<IntentResult> => {
     } catch (error) {
         console.log('Dialogflow unavailable, using fallback detection:', error?.message);
     }
-    
+
     // Fallback to original rule-based detection
     return detectIntentOriginal(message);
 };
