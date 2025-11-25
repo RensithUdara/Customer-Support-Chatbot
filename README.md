@@ -16,6 +16,32 @@
 
 ---
 
+## 📁 **Clean Project Structure**
+
+```
+customer-support-chatbot/
+├── 📁 app/                    # Next.js 14 App Router
+│   ├── api/                   # API routes
+│   │   ├── analytics/         # Analytics endpoints  
+│   │   └── chat/             # Main chat API
+│   ├── analytics/            # Analytics dashboard
+│   ├── chat/                 # Chat interface page
+│   └── globals.css           # Global styles
+├── 📁 components/            # React components
+│   ├── ChatWindow.tsx        # Advanced chat interface
+│   ├── FloatingChatWidget.tsx # Floating chat widget
+│   ├── ChatContext.tsx       # Context provider
+│   └── ChatNotification.tsx  # Notifications
+├── 📁 data/                  # Database & data
+│   ├── ecommerce.db          # SQLite database (1100+ records)
+│   └── *.json               # Data seeds
+├── 📁 lib/                   # Core business logic
+│   ├── db.ts                 # Database operations
+│   ├── llm.ts               # AI/LLM integration
+│   └── intent.ts            # Intent detection
+└── 📁 public/               # Static assets
+```
+
 ## 🌟 **Live Demo & Features**
 
 <div align="center">

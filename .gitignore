@@ -39,3 +39,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# temporary files
+check-*.js
+test-*.js
+
+# database files (keep only the main one in data/)
+*.db
+!data/ecommerce.db
+
+# documentation drafts
+*_TESTING.md
+*_RESOLVED.md
+*_GUIDE.md
+PROJECT_*.md

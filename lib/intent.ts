@@ -100,7 +100,7 @@ export const detectIntent = (message: string): IntentResult => {
     const policyKeywords = ['return', 'refund', 'policy', 'shipping', 'delivery charge', 'cash on delivery', 'cod', 'warranty', 'exchange', 'payment', 'pay', 'emi', 'card', 'credit', 'debit', 'wallet', 'upi', 'invoice', 'fee', 'charge', 'secure', 'account', 'login', 'password', 'profile'];
     const hasPolicyKeywords = policyKeywords.some(keyword => lowercaseMessage.includes(keyword));
 
-    // Enhanced Product recommendation detection
+    // Advanced Product recommendation detection
     const productKeywords = ['recommend', 'suggest', 'best', 'good', 'under', 'budget', 'cheap', 'phone', 'laptop', 'mobile'];
     const hasProductKeywords = productKeywords.some(keyword => lowercaseMessage.includes(keyword));
 
@@ -175,7 +175,7 @@ export const detectIntent = (message: string): IntentResult => {
         };
     }
 
-    // Enhanced product recommendation detection
+    // Advanced product recommendation detection
     if (hasProductKeywords || budget || hasBrandName || hasProductType || foundCategory) {
         let confidence = 0.7;
         

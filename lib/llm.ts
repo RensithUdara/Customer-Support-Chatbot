@@ -1,5 +1,5 @@
-// Enhanced LLM API wrapper with advanced features
-// Supports multiple LLM providers and sophisticated response generation
+// Advanced LLM API wrapper with multiple provider support
+// Supports sophisticated response generation and intelligent fallback
 
 export interface LLMRequest {
     systemPrompt: string;
@@ -106,8 +106,8 @@ const analyzeConversationContext = (request: LLMRequest): PreviousContext => {
     return context;
 };
 
-// Enhanced LLM response generation with advanced features  
-// This function now includes OpenAI integration with intelligent fallback
+// Advanced LLM response generation with multiple provider support
+// Includes OpenAI integration with intelligent fallback system
 export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
     // Try OpenAI first if enabled and API key is available
     if (USE_REAL_LLM && process.env.OPENAI_API_KEY) {
@@ -137,7 +137,7 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
     const complexity = calculateComplexity(userMessage, context);
     await new Promise(resolve => setTimeout(resolve, 800 + complexity * 500 + Math.random() * 1000));
 
-    // Enhanced context analysis
+    // Advanced context analysis
     const analysisResult = analyzeContext(systemPrompt, userMessage, context, intent);
 
     // Generate sophisticated responses based on analysis
@@ -153,13 +153,13 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
             dataSourcesUsed.push('orders_database');
             confidenceFactors.push('exact_order_match');
 
-            // Enhanced order status with smart insights
+            // Advanced order status with smart insights
             const statusEmoji = getStatusEmoji(order.status);
             const timeInsight = getDeliveryTimeInsight(order);
 
             reply = `${statusEmoji} **Order #${order.orderId || order.id}** - ${order.status}\n\n`;
 
-            // Product details with enhanced formatting
+            // Product details with advanced formatting
             if (order.product_name || order.items) {
                 reply += `📦 **Product:** ${order.product_name || parseOrderItems(order.items)}\n`;
             }
@@ -175,7 +175,7 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
                 reply += `\n⏰ **${timeInsight}**\n`;
             }
 
-            // Enhanced financial info
+            // Advanced financial info
             if (order.totalAmount) {
                 reply += `\n💰 **Order Total:** Rs.${order.totalAmount.toLocaleString()}`;
             }
@@ -202,7 +202,7 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
             dataSourcesUsed.push('faq_database');
             confidenceFactors.push('faq_match');
 
-            // Enhanced FAQ response with formatting
+            // Advanced FAQ response with formatting
             reply = `📋 **${primaryFaq.category || 'Policy Information'}**\n\n${primaryFaq.answer}`;
 
             // Add related FAQs if available
@@ -302,7 +302,7 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
             dataSourcesUsed.push('product_categories');
         }
     } else {
-        // Enhanced general response with smart suggestions
+        // Advanced general response with smart suggestions
         reply = `👋 **Welcome to ShopEasy Support!**\n\n` +
             `I'm your AI assistant, ready to help with:\n\n` +
             `🔍 **Order Tracking** - Real-time status updates\n` +
@@ -325,7 +325,7 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
         dataSourcesUsed.push('general_assistance');
     }
 
-    // Enhanced safety check with smart fallback
+    // Advanced safety check with smart fallback
     if (!reply || reply.trim() === '') {
         reply = "🤔 I encountered a processing issue. Let me help you differently:\n\n" +
             "• **Rephrase your question** for better understanding\n" +
@@ -355,7 +355,7 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
     };
 };
 
-// Helper functions for enhanced LLM functionality
+// Helper functions for advanced LLM functionality
 const calculateComplexity = (message: string, context: any): number => {
     let complexity = 0;
     if (message.length > 100) complexity += 1;
@@ -767,7 +767,7 @@ export const callLLMWithFallback = async (request: LLMRequest): Promise<LLMRespo
     return await callLLM(request);
 };
 
-// 🎯 Helper Functions for Enhanced LLM Integration
+// 🎯 Helper Functions for Advanced LLM Integration
 async function generateSmartSuggestions(context: string, userMessage: string, prevContext?: PreviousContext): Promise<string[]> {
     const suggestions = [];
     const lowerMessage = userMessage.toLowerCase();
@@ -843,5 +843,5 @@ async function generateSmartSuggestions(context: string, userMessage: string, pr
 // ✅ Real LLM integration ready (just uncomment and add API keys)
 // ✅ Multiple provider support (OpenAI, Anthropic, Groq)
 // ✅ Automatic fallback system
-// ✅ Enhanced features: suggestions, confidence, metadata
+// ✅ Advanced features: suggestions, confidence, metadata
 // ✅ Cost optimization and error handling

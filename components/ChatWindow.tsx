@@ -52,7 +52,7 @@ export default function ChatWindow() {
         scrollToBottom();
     }, [messages]);
 
-    // Initialize with enhanced welcome message
+    // Initialize with welcome message
     useEffect(() => {
         const welcomeMessage: Message = {
             id: 'welcome',
