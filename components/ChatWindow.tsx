@@ -301,7 +301,7 @@ export default function ChatWindow() {
                         rows={1}
                     />
                     <button
-                        onClick={sendMessage}
+                        onClick={() => sendMessage()}
                         disabled={!inputValue.trim() || isLoading}
                         className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                     >
