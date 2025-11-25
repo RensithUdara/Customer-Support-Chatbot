@@ -174,15 +174,20 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
 
             // Smart recommendation header with criteria summary
             const criteria = extractCriteria(userMessage);
-            reply = `🛍️ **Perfect Matches for You!**\n\n`;
+            reply = `🛍️ **Product Search Results**\n\n`;
 
-            if (criteria.budget) {
-                reply += `💰 Budget: ${criteria.budget}\n`;
+            // Show what we're searching for
+            const searchTerms = [];
+            if (criteria.brand) searchTerms.push(`🏷️ Brand: ${criteria.brand}`);
+            if (criteria.productType) searchTerms.push(`🔧 Type: ${criteria.productType}`);
+            if (criteria.category) searchTerms.push(`📂 Category: ${criteria.category}`);
+            if (criteria.budget) searchTerms.push(`💰 Budget: ${criteria.budget}`);
+            
+            if (searchTerms.length > 0) {
+                reply += `**Searching for:** ${searchTerms.join(', ')}\n\n`;
             }
-            if (criteria.category) {
-                reply += `📂 Category: ${criteria.category}\n`;
-            }
-            reply += `\n**Top ${products.length} Recommendations:**\n\n`;
+            
+            reply += `**Found ${products.length} Matching Products:**\n\n`;
 
             products.forEach((product: any, index: number) => {
                 const emoji = getCategoryEmoji(product.category);
@@ -450,6 +455,7 @@ const generateRatingText = (rating: number): string => {
 
 const extractCriteria = (message: string) => {
     const criteria: any = {};
+    const lowerMessage = message.toLowerCase();
 
     // Extract budget
     const budgetMatch = message.match(/(under|below|less than|up to)\s*(\d+)/i);
@@ -457,9 +463,23 @@ const extractCriteria = (message: string) => {
         criteria.budget = `Under Rs.${parseInt(budgetMatch[2]).toLocaleString()}`;
     }
 
+    // Extract brand
+    const brandNames = ['acer', 'asus', 'hp', 'dell', 'lenovo', 'apple', 'samsung', 'lg', 'sony'];
+    const foundBrand = brandNames.find(brand => lowerMessage.includes(brand));
+    if (foundBrand) {
+        criteria.brand = foundBrand.charAt(0).toUpperCase() + foundBrand.slice(1);
+    }
+
+    // Extract product type
+    const productTypes = ['inspiron', 'pavilion', 'thinkpad', 'macbook', 'ryzen', 'core', 'gaming'];
+    const foundType = productTypes.find(type => lowerMessage.includes(type));
+    if (foundType) {
+        criteria.productType = foundType.charAt(0).toUpperCase() + foundType.slice(1);
+    }
+
     // Extract category
     const categories = ['phone', 'laptop', 'mobile', 'computer', 'tablet', 'watch', 'headphone'];
-    const foundCategory = categories.find(cat => message.toLowerCase().includes(cat));
+    const foundCategory = categories.find(cat => lowerMessage.includes(cat));
     if (foundCategory) {
         criteria.category = foundCategory.charAt(0).toUpperCase() + foundCategory.slice(1);
     }
