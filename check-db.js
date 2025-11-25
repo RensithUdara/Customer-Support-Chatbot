@@ -1,5 +1,6 @@
 const Database = require('better-sqlite3');
-const db = new Database('./ecommerce.db');
+const path = require('path');
+const db = new Database(path.join(process.cwd(), 'data', 'ecommerce.db'));
 
 console.log('Checking database tables...');
 const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
