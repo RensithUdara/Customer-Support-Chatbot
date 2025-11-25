@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { detectIntent, extractKeywords } from '@/lib/intent';
-import { searchFAQs, getOrderById, searchProducts, saveConversation, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs, smartDatabaseQuery } from '@/lib/db';
+import { detectIntent, detectIntentWithContext, extractKeywords } from '@/lib/intent';
+import { searchFAQs, getOrderById, searchProducts, saveConversation, getConversationHistory, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs, smartDatabaseQuery } from '@/lib/db';
 import { callLLM } from '@/lib/llm';
 
 // Type definitions for database entities
