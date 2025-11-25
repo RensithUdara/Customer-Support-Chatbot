@@ -178,7 +178,7 @@ export const searchFAQs = (keywords: string[]) => {
   return db.prepare(`SELECT * FROM faqs WHERE ${query} LIMIT 3`).all();
 };
 
-// Enhanced FAQ search that returns best exact match
+// Advanced FAQ search that returns best exact match
 export const searchBestFAQ = (message: string, keywords: string[]) => {
   // First try exact question match
   const exactMatch = db.prepare('SELECT * FROM faqs WHERE question = ?').get(message);
