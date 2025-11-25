@@ -412,10 +412,10 @@ export class DatabaseQueryHandler {
     // Format response for order items
     private static formatOrderItemsResponse(orderData: any, orderId: string): string {
         const items = orderData.items || orderData.order_items || orderData.products;
-        
+
         if (items && Array.isArray(items)) {
             let response = `📦 **Items in Order #${orderId}**\n\n`;
-            
+
             items.forEach((item: any, index: number) => {
                 response += `${index + 1}. **${item.product_name || item.name}**\n`;
                 response += `   • Quantity: ${item.quantity || 1}\n`;
@@ -450,20 +450,20 @@ export class DatabaseQueryHandler {
     // Format comprehensive order details
     private static formatOrderDetailsResponse(orderData: any, orderId: string): string {
         let response = `📋 **Complete Order Details - #${orderId}**\n\n`;
-        
+
         // Basic order info
         response += `🎯 **Status:** ${orderData.status || orderData.order_status || 'Unknown'}\n`;
         response += `👤 **Customer:** ${orderData.customerName || orderData.customer_name || 'N/A'}\n`;
         response += `📅 **Order Date:** ${orderData.orderDate || orderData.order_date || 'Unknown'}\n`;
         response += `💰 **Total Amount:** Rs.${(orderData.totalAmount || orderData.total_amount || 0).toLocaleString()}\n`;
         response += `💳 **Payment Method:** ${orderData.paymentMethod || orderData.payment_method || 'N/A'}\n\n`;
-        
+
         // Shipping info
         response += `🚚 **Shipping Information:**\n`;
         response += `   • Tracking Number: ${orderData.trackingNumber || orderData.tracking_number || 'Pending'}\n`;
         response += `   • Estimated Delivery: ${orderData.estimatedDelivery || orderData.estimated_delivery || 'Processing'}\n`;
         response += `   • Shipping Address: ${orderData.shippingAddress || orderData.shipping_address || 'On file'}\n\n`;
-        
+
         // Items if available
         const items = orderData.items || orderData.order_items || orderData.products;
         if (items && Array.isArray(items)) {
@@ -472,7 +472,7 @@ export class DatabaseQueryHandler {
                 response += `   ${index + 1}. ${item.product_name || item.name} (Qty: ${item.quantity || 1})\n`;
             });
         }
-        
+
         return response;
     }
 }
