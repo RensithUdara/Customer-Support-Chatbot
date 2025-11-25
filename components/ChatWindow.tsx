@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Loader2, ArrowLeft } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Send, Bot, User, Loader2 } from 'lucide-react';
 
 interface Message {
     id: string;
@@ -33,7 +32,6 @@ interface TypingIndicator {
 }
 
 export default function ChatWindow() {
-    const router = useRouter();
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -207,16 +205,7 @@ export default function ChatWindow() {
                     <div className="absolute top-8 -left-8 w-16 h-16 bg-white rounded-full animate-bounce" style={{animationDelay: '1s'}}></div>
                 </div>
                 
-                {/* Back Button */}
-                <button
-                    onClick={() => router.push('/')}
-                    className="absolute top-4 left-4 bg-white bg-opacity-20 hover:bg-opacity-30 p-2 rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110 z-20 group"
-                    title="Back to Home"
-                >
-                    <ArrowLeft className="w-5 h-5 text-white group-hover:text-blue-100" />
-                </button>
-                
-                <div className="flex items-center space-x-4 relative z-10 ml-12">
+                <div className="flex items-center space-x-4 relative z-10">
                     <div className="bg-white bg-opacity-20 p-3 rounded-xl backdrop-blur-sm">
                         <Bot className="w-8 h-8 text-white" />
                     </div>
