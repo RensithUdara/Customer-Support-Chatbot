@@ -9,6 +9,21 @@ export interface LLMRequest {
     intent?: string;
     userPreferences?: UserPreferences;
     responseFormat?: 'text' | 'structured' | 'markdown';
+    sessionId?: string;
+    previousContext?: PreviousContext;
+}
+
+export interface PreviousContext {
+    lastIntent?: string;
+    lastTopic?: string;
+    mentionedProducts?: string[];
+    mentionedOrders?: string[];
+    userPreferences?: {
+        budget?: number;
+        category?: string;
+        brand?: string;
+    };
+    conversationFlow?: 'product_search' | 'order_inquiry' | 'policy_question' | 'general';
 }
 
 export interface LLMResponse {
@@ -25,6 +40,9 @@ export interface ConversationMessage {
     content: string;
     timestamp: Date;
     intent?: string;
+    context?: any;
+    followUpSuggestions?: string[];
+    relatedTopics?: string[];
 }
 
 export interface UserPreferences {
@@ -39,6 +57,54 @@ export interface ResponseMetadata {
     confidenceFactors: string[];
     recommendedActions?: string[];
 }
+
+// Analyze conversation context for better responses
+const analyzeConversationContext = (request: LLMRequest): PreviousContext => {
+    const context: PreviousContext = {
+        mentionedProducts: [],
+        mentionedOrders: [],
+        userPreferences: {}
+    };
+    
+    if (request.conversationHistory && request.conversationHistory.length > 0) {
+        const recentMessages = request.conversationHistory.slice(-4); // Last 4 messages
+        
+        // Extract mentioned products
+        recentMessages.forEach(msg => {
+            const content = msg.content.toLowerCase();
+            // Extract product names, brands, etc.
+            const productKeywords = ['acer', 'hp', 'dell', 'asus', 'laptop', 'phone', 'tablet'];
+            productKeywords.forEach(keyword => {
+                if (content.includes(keyword)) {
+                    context.mentionedProducts?.push(keyword);
+                }
+            });
+            
+            // Extract order numbers
+            const orderMatch = content.match(/\b\d{4}\b/);
+            if (orderMatch) {
+                context.mentionedOrders?.push(orderMatch[0]);
+            }
+            
+            // Determine conversation flow
+            if (content.includes('order') || content.includes('track')) {
+                context.conversationFlow = 'order_inquiry';
+            } else if (content.includes('product') || content.includes('recommend')) {
+                context.conversationFlow = 'product_search';
+            } else if (content.includes('policy') || content.includes('return')) {
+                context.conversationFlow = 'policy_question';
+            }
+        });
+        
+        // Set last intent and topic
+        const lastMessage = recentMessages[recentMessages.length - 1];
+        if (lastMessage.intent) {
+            context.lastIntent = lastMessage.intent;
+        }
+    }
+    
+    return context;
+};
 
 // Enhanced LLM response generation with advanced features  
 // This function now includes OpenAI integration with intelligent fallback
@@ -702,48 +768,77 @@ export const callLLMWithFallback = async (request: LLMRequest): Promise<LLMRespo
 };
 
 // 🎯 Helper Functions for Enhanced LLM Integration
-async function generateSmartSuggestions(context: string, userMessage: string): Promise<string[]> {
+async function generateSmartSuggestions(context: string, userMessage: string, prevContext?: PreviousContext): Promise<string[]> {
     const suggestions = [];
-
-    // Order-related suggestions
-    if (userMessage.toLowerCase().includes('order')) {
-        suggestions.push("Can you provide your order number?", "Would you like to check your order status?", "Need help with order changes?");
+    const lowerMessage = userMessage.toLowerCase();
+    
+    // Context-aware suggestions based on conversation flow
+    if (prevContext?.conversationFlow === 'product_search') {
+        if (prevContext.mentionedProducts?.length > 0) {
+            suggestions.push(`Compare with other ${prevContext.mentionedProducts[0]} products`);
+            suggestions.push("Check availability and shipping");
+            suggestions.push("See customer reviews");
+        } else {
+            suggestions.push("Refine your search criteria", "View similar products", "Check product specifications");
+        }
+    } else if (prevContext?.conversationFlow === 'order_inquiry') {
+        if (prevContext.mentionedOrders?.length > 0) {
+            suggestions.push("Track package location", "Modify delivery address", "Contact courier service");
+        } else {
+            suggestions.push("Provide order number for tracking", "Check recent orders", "Order history");
+        }
+    } else {
+        // Order-related suggestions
+        if (lowerMessage.includes('order')) {
+            suggestions.push("Can you provide your order number?", "Would you like to check your order status?", "Need help with order changes?");
+        }
+        
+        // Product-related suggestions
+        if (lowerMessage.includes('product') || lowerMessage.includes('item')) {
+            suggestions.push("Would you like product specifications?", "Need help with product comparison?", "Looking for similar products?");
+        }
+        
+        // General support suggestions
+        if (suggestions.length === 0) {
+            suggestions.push("How can I further assist you?", "Would you like to speak with a specialist?", "Any other questions?");
+        }
     }
-
-    // Product-related suggestions
-    if (userMessage.toLowerCase().includes('product') || userMessage.toLowerCase().includes('item')) {
-        suggestions.push("Would you like product specifications?", "Need help with product comparison?", "Looking for similar products?");
-    }
-
-    // General support suggestions
-    if (suggestions.length === 0) {
-        suggestions.push("How can I further assist you?", "Would you like to speak with a specialist?", "Any other questions?");
-    }
-
+    
     return suggestions.slice(0, 3);
-}
-
-async function generateFollowUpQuestions(response: string, context: string): Promise<string[]> {
+}async function generateFollowUpQuestions(response: string, context: string, prevContext?: PreviousContext): Promise<string[]> {
     const questions = [];
-
-    // Based on response content
-    if (response.includes('order')) {
-        questions.push("Is there anything else about your order?");
+    
+    // Context-aware follow-up questions
+    if (prevContext?.conversationFlow === 'product_search') {
+        questions.push("Would you like to see more details about any of these products?");
+        questions.push("Need help comparing these options?");
+        if (prevContext.mentionedProducts?.length > 0) {
+            questions.push(`Looking for accessories for ${prevContext.mentionedProducts[0]}?`);
+        }
+    } else if (prevContext?.conversationFlow === 'order_inquiry') {
+        questions.push("Do you need help with delivery arrangements?");
+        questions.push("Any concerns about your order?");
+    } else {
+        // Based on response content
+        if (response.includes('order')) {
+            questions.push("Is there anything else about your order?");
+        }
+        if (response.includes('product')) {
+            questions.push("Would you like to see similar products?");
+            questions.push("Need product comparison or reviews?");
+        }
+        if (response.includes('shipping')) {
+            questions.push("Do you have questions about delivery?");
+        }
     }
-    if (response.includes('product')) {
-        questions.push("Would you like to see similar products?");
-    }
-    if (response.includes('shipping')) {
-        questions.push("Do you have questions about delivery?");
-    }
-
+    
     // Default follow-up
-    questions.push("Is there anything else I can help you with?");
-
+    if (questions.length === 0) {
+        questions.push("Is there anything else I can help you with?");
+    }
+    
     return questions.slice(0, 2);
-}
-
-// 🎯 Current Implementation Status:
+}// 🎯 Current Implementation Status:
 // ✅ Advanced simulated LLM with 94%+ accuracy (NO API KEY NEEDED)
 // ✅ Real LLM integration ready (just uncomment and add API keys)
 // ✅ Multiple provider support (OpenAI, Anthropic, Groq)
