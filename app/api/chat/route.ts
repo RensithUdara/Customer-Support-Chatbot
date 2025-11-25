@@ -3,6 +3,51 @@ import { detectIntent, extractKeywords } from '@/lib/intent';
 import { searchFAQs, getOrderById, searchProducts, saveConversation, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs, smartDatabaseQuery } from '@/lib/db';
 import { callLLM } from '@/lib/llm';
 
+// Type definitions for database entities
+interface Order {
+    id?: number;
+    orderId: string;
+    customerId?: string;
+    customerName: string;
+    customerEmail?: string;
+    customerPhone?: string;
+    status: string;
+    orderDate: string;
+    totalAmount?: number;
+    paymentMethod?: string;
+    shippingAddress?: string;
+    trackingNumber?: string;
+    estimatedDelivery?: string;
+    items?: string;
+}
+
+interface FAQ {
+    id: number;
+    question: string;
+    answer: string;
+    category: string;
+    tags?: string;
+}
+
+interface ReturnPolicy {
+    id: number;
+    policy_name?: string;
+    product_category?: string;
+    return_period: number;
+    condition_required: string;
+    return_shipping: string;
+    refund_method: string;
+    processing_time: number;
+    exchange_allowed: boolean;
+    restocking_fee: number;
+}
+
+interface DatabaseQueryResult {
+    type: string;
+    data: any[] | null;
+    supportType?: string;
+}
+
 export async function POST(request: NextRequest) {
     try {
         const { message, sessionId = 'anonymous' } = await request.json();
@@ -25,7 +70,8 @@ export async function POST(request: NextRequest) {
         switch (intentResult.intent) {
             case 'ORDER_STATUS':
                 if (intentResult.extractedData?.orderId) {
-                    const order = await getOrderById(intentResult.extractedData.orderId.toString());
+                    const orderResult = await getOrderById(intentResult.extractedData.orderId.toString());
+                    const order = orderResult as Order | undefined;
 
                     if (order) {
                         // Check if user is asking for detailed information or just basic tracking
@@ -100,7 +146,7 @@ export async function POST(request: NextRequest) {
                 // Check if user is asking for category-specific return policy
                 const categories = ['electronics', 'fashion', 'home', 'kitchen', 'sports', 'toys', 'health', 'books', 'beauty'];
                 const messageWords = message.toLowerCase().split(' ');
-                const foundCategory = categories.find(cat => messageWords.some(word => word.includes(cat)));
+                const foundCategory = categories.find(cat => messageWords.some((word: string) => word.includes(cat)));
 
                 // Find the most relevant FAQ for their specific question
                 const bestReturnFAQ = searchBestFAQ(message, extractKeywords(message));
@@ -112,7 +158,7 @@ export async function POST(request: NextRequest) {
                     // Show category-specific return policies
                     returnPolicies = getReturnPoliciesByCategory(foundCategory);
                     if (returnPolicies.length > 0) {
-                        const policy = returnPolicies[0];
+                        const policy = returnPolicies[0] as ReturnPolicy;
                         returnPolicyText = `📋 **Return Policy for ${foundCategory.charAt(0).toUpperCase() + foundCategory.slice(1)} Products:**\n\n`;
                         returnPolicyText += `⏰ **Return Period:** ${policy.return_period} days\n`;
                         returnPolicyText += `📦 **Condition Required:** ${policy.condition_required}\n`;
@@ -136,22 +182,23 @@ export async function POST(request: NextRequest) {
                 }
 
                 // Only add FAQ if it's truly relevant and doesn't conflict with policy
-                if (bestReturnFAQ && bestReturnFAQ.question && bestReturnFAQ.answer && foundCategory) {
+                const faqResult = bestReturnFAQ as FAQ | undefined;
+                if (faqResult && faqResult.question && faqResult.answer && foundCategory) {
                     // Don't show generic return policy FAQ if we already showed specific category policy
-                    const isConflictingFAQ = bestReturnFAQ.answer.includes('14 days') ||
-                        bestReturnFAQ.answer.includes('Items may be returned within') ||
-                        bestReturnFAQ.question.includes('What is your return policy');
+                    const isConflictingFAQ = faqResult.answer.includes('14 days') ||
+                        faqResult.answer.includes('Items may be returned within') ||
+                        faqResult.question.includes('What is your return policy');
 
                     if (!isConflictingFAQ) {
                         returnPolicyText += `\n❓ **Additional Info:**\n\n`;
-                        returnPolicyText += `**Q: ${bestReturnFAQ.question}**\n`;
-                        returnPolicyText += `A: ${bestReturnFAQ.answer}\n`;
+                        returnPolicyText += `**Q: ${faqResult.question}**\n`;
+                        returnPolicyText += `A: ${faqResult.answer}\n`;
                     }
-                } else if (!foundCategory && bestReturnFAQ && bestReturnFAQ.question && bestReturnFAQ.answer) {
+                } else if (!foundCategory && faqResult && faqResult.question && faqResult.answer) {
                     // For general queries, show the FAQ
                     returnPolicyText += `\n❓ **Related FAQ:**\n\n`;
-                    returnPolicyText += `**Q: ${bestReturnFAQ.question}**\n`;
-                    returnPolicyText += `A: ${bestReturnFAQ.answer}\n`;
+                    returnPolicyText += `**Q: ${faqResult.question}**\n`;
+                    returnPolicyText += `A: ${faqResult.answer}\n`;
                 }
 
                 returnPolicyText += '\n💡 Need more help? Contact our support team!';
@@ -162,14 +209,16 @@ export async function POST(request: NextRequest) {
                 // Return exact database answer for policy questions
                 const keywords = extractKeywords(message);
                 const bestMatch = await searchBestFAQ(message, keywords);
+                const policyFaq = bestMatch as FAQ | undefined;
 
-                if (bestMatch && bestMatch.answer) {
-                    botReply = bestMatch.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                if (policyFaq && policyFaq.answer) {
+                    botReply = policyFaq.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
                 } else {
                     // Fallback to general search
                     const relevantFAQs = await searchFAQs(keywords);
                     if (relevantFAQs.length > 0) {
-                        botReply = relevantFAQs[0].answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                        const firstFaq = relevantFAQs[0] as FAQ;
+                        botReply = firstFaq.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
                     } else {
                         botReply = "I'd be happy to help you with policy information. Could you please be more specific about what you'd like to know about our shipping, returns, payments, or other policies?";
                     }
@@ -178,13 +227,13 @@ export async function POST(request: NextRequest) {
 
             case 'DATABASE_QUERY':
                 // Handle comprehensive database queries for any table data
-                const queryResult = smartDatabaseQuery(message);
+                const queryResult = smartDatabaseQuery(message) as DatabaseQueryResult;
                 let databaseResponse = '';
 
                 switch (queryResult.type) {
                     case 'payment_methods':
                         databaseResponse = '💳 **Available Payment Methods:**\n\n';
-                        queryResult.data.forEach((method: any, index: number) => {
+                        queryResult.data?.forEach((method: any, index: number) => {
                             databaseResponse += `**${index + 1}. ${method.type}** (${method.provider})\n`;
                             databaseResponse += `   💰 Processing Fee: ${method.processing_fee}%\n`;
                             databaseResponse += `   ⚡ Processing Time: ${method.processing_time}\n`;
@@ -197,7 +246,7 @@ export async function POST(request: NextRequest) {
 
                     case 'warranty':
                         databaseResponse = '🛡️ **Warranty Policies:**\n\n';
-                        queryResult.data.forEach((warranty: any, index: number) => {
+                        queryResult.data?.forEach((warranty: any, index: number) => {
                             databaseResponse += `**${index + 1}. ${warranty.product_category}**\n`;
                             databaseResponse += `   ⏰ Warranty Period: ${warranty.warranty_period} months\n`;
                             databaseResponse += `   📋 Coverage: ${warranty.coverage_details}\n`;
@@ -211,7 +260,7 @@ export async function POST(request: NextRequest) {
 
                     case 'shipping_zones':
                         databaseResponse = '📍 **Shipping Zones & Areas:**\n\n';
-                        queryResult.data.forEach((zone: any, index: number) => {
+                        queryResult.data?.forEach((zone: any, index: number) => {
                             databaseResponse += `**${index + 1}. ${zone.zone_name}**\n`;
                             databaseResponse += `   🌍 Regions: ${zone.regions}\n`;
                             databaseResponse += `   💰 Standard Cost: Rs.${zone.standard_cost} | Express: Rs.${zone.express_cost}\n`;
@@ -223,7 +272,7 @@ export async function POST(request: NextRequest) {
 
                     case 'promotions':
                         databaseResponse = '🎉 **Current Promotions & Offers:**\n\n';
-                        queryResult.data.forEach((promo: any, index: number) => {
+                        queryResult.data?.forEach((promo: any, index: number) => {
                             databaseResponse += `**${index + 1}. ${promo.promo_name}**\n`;
                             databaseResponse += `   🏷️ Code: ${promo.promo_code}\n`;
                             databaseResponse += `   💰 Discount: ${promo.discount_percentage}% or Rs.${promo.discount_amount}\n`;
@@ -235,7 +284,7 @@ export async function POST(request: NextRequest) {
 
                     case 'customer_support':
                         databaseResponse = '🆘 **Customer Support Contacts:**\n\n';
-                        queryResult.data.forEach((support: any, index: number) => {
+                        queryResult.data?.forEach((support: any, index: number) => {
                             databaseResponse += `**${index + 1}. ${support.support_type}** (${support.department})\n`;
                             databaseResponse += `   📞 ${support.contact_method}: ${support.contact_info}\n`;
                             databaseResponse += `   ⏰ Available: ${support.availability}\n`;
@@ -249,7 +298,7 @@ export async function POST(request: NextRequest) {
 
                     case 'specific_support':
                         databaseResponse = `🆘 **${queryResult.supportType || 'Specific Support'} Information:**\n\n`;
-                        if (queryResult.data.length === 0) {
+                        if (!queryResult.data || queryResult.data.length === 0) {
                             databaseResponse += '❌ No specific support method found matching your query.\n\n';
                             databaseResponse += '💡 Try asking for: "customer support info" to see all available methods.';
                         } else {
@@ -268,7 +317,7 @@ export async function POST(request: NextRequest) {
 
                     case 'support_topics':
                         databaseResponse = '📚 **Available Support Topics:**\n\n';
-                        queryResult.data.forEach((topic: any, index: number) => {
+                        queryResult.data?.forEach((topic: any, index: number) => {
                             databaseResponse += `**${index + 1}. ${topic.topic_name}**\n`;
                             databaseResponse += `   📋 Description: ${topic.description}\n`;
                             if (topic.category) {
@@ -280,7 +329,7 @@ export async function POST(request: NextRequest) {
 
                     case 'product_categories':
                         databaseResponse = '🛍️ **Available Product Categories:**\n\n';
-                        queryResult.data.forEach((cat: any, index: number) => {
+                        queryResult.data?.forEach((cat: any, index: number) => {
                             databaseResponse += `${index + 1}. ${cat.category}\n`;
                         });
                         databaseResponse += '\n💡 Ask about specific categories for product recommendations!';
@@ -288,7 +337,7 @@ export async function POST(request: NextRequest) {
 
                     case 'order_statistics':
                         databaseResponse = '📊 **Order Statistics:**\n\n';
-                        queryResult.data.forEach((stat: any) => {
+                        queryResult.data?.forEach((stat: any) => {
                             databaseResponse += `📦 **${stat.status}:** ${stat.count} orders (Avg: Rs.${Math.round(stat.avg_amount)})\n`;
                         });
                         break;
@@ -329,13 +378,15 @@ export async function POST(request: NextRequest) {
                 // Try to find relevant FAQs for general questions and return exact answers
                 const generalKeywords = extractKeywords(message);
                 const generalBestMatch = await searchBestFAQ(message, generalKeywords);
+                const generalFaq = generalBestMatch as FAQ | undefined;
 
-                if (generalBestMatch && generalBestMatch.answer) {
-                    botReply = generalBestMatch.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                if (generalFaq && generalFaq.answer) {
+                    botReply = generalFaq.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
                 } else {
                     const generalFAQs = await searchFAQs(generalKeywords);
                     if (generalFAQs.length > 0) {
-                        botReply = generalFAQs[0].answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                        const firstGeneralFaq = generalFAQs[0] as FAQ;
+                        botReply = firstGeneralFaq.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
                     } else {
                         botReply = "Hello! I'm here to help you with:\n\n" +
                             "🔍 **Order Tracking** - Check your order status (e.g., 'Where is order 1012?')\n" +
