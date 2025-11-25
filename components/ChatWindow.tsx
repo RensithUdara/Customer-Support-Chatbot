@@ -81,18 +81,29 @@ export default function ChatWindow() {
         setMessages([welcomeMessage]);
     }, []);
 
-    const sendMessage = async () => {
-        if (!inputValue.trim() || isLoading) return;
+    const handleSuggestionClick = (suggestion: string) => {
+        setInputValue(suggestion);
+        setSelectedSuggestion(suggestion);
+        // Auto-send the suggestion
+        setTimeout(() => {
+            sendMessage(suggestion);
+        }, 100);
+    };
+
+    const sendMessage = async (messageText?: string) => {
+        const textToSend = messageText || inputValue;
+        if (!textToSend.trim() || isLoading) return;
 
         const userMessage: Message = {
             id: Date.now().toString(),
-            text: inputValue,
+            text: textToSend,
             sender: 'user',
             timestamp: new Date()
         };
 
         setMessages(prev => [...prev, userMessage]);
         setInputValue('');
+        setSelectedSuggestion(null);
         setIsLoading(true);
 
         try {
@@ -118,8 +129,19 @@ export default function ChatWindow() {
                 text: data.reply || "I apologize, but I couldn't process your request properly. Please try again.",
                 sender: 'bot',
                 timestamp: new Date(),
-                intent: data.intent
+                intent: data.intent,
+                confidence: data.confidence,
+                suggestions: data.suggestions || [],
+                followUpQuestions: data.followUpQuestions || [],
+                metadata: data.metadata
             };
+            
+            // Update conversation context
+            setConversationContext({
+                lastIntent: data.intent,
+                hasHistory: data.conversationContext?.hasHistory || false,
+                messageCount: data.conversationContext?.messageCount || 0
+            });
 
             setMessages(prev => [...prev, botMessage]);
         } catch (error) {
@@ -203,6 +225,37 @@ export default function ChatWindow() {
                                         }}
                                         className="leading-relaxed"
                                     />
+                                    
+                                    {/* Suggestions */}
+                                    {message.sender === 'bot' && message.suggestions && message.suggestions.length > 0 && (
+                                        <div className="mt-3 flex flex-wrap gap-2">
+                                            {message.suggestions.map((suggestion, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handleSuggestionClick(suggestion)}
+                                                    className="px-3 py-1 text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full border border-blue-200 transition-colors"
+                                                >
+                                                    💡 {suggestion}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                    
+                                    {/* Follow-up Questions */}
+                                    {message.sender === 'bot' && message.followUpQuestions && message.followUpQuestions.length > 0 && (
+                                        <div className="mt-2 space-y-1">
+                                            {message.followUpQuestions.map((question, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handleSuggestionClick(question)}
+                                                    className="block w-full text-left px-2 py-1 text-xs text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                                >
+                                                    ❓ {question}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                    
                                     <div className="flex items-center justify-between mt-2">
                                         <span className="text-xs opacity-70">
                                             {message.timestamp.toLocaleTimeString([], {
@@ -248,7 +301,7 @@ export default function ChatWindow() {
                         rows={1}
                     />
                     <button
-                        onClick={sendMessage}
+                        onClick={() => sendMessage()}
                         disabled={!inputValue.trim() || isLoading}
                         className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                     >
