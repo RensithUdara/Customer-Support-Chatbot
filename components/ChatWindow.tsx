@@ -9,6 +9,11 @@ interface Message {
     sender: 'user' | 'bot';
     timestamp: Date;
     intent?: string;
+    confidence?: number;
+    suggestions?: string[];
+    followUpQuestions?: string[];
+    isTyping?: boolean;
+    metadata?: any;
 }
 
 interface ChatResponse {
@@ -16,6 +21,14 @@ interface ChatResponse {
     intent: string;
     confidence: number;
     sessionId: string;
+    suggestions?: string[];
+    followUpQuestions?: string[];
+    metadata?: any;
+}
+
+interface TypingIndicator {
+    isVisible: boolean;
+    message: string;
 }
 
 export default function ChatWindow() {
@@ -23,7 +36,12 @@ export default function ChatWindow() {
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [sessionId] = useState(() => 'session_' + Date.now());
+    const [typingIndicator, setTypingIndicator] = useState<TypingIndicator>({ isVisible: false, message: 'AI is thinking...' });
+    const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
+    const [conversationContext, setConversationContext] = useState<any>({});
+    const [userPreferences, setUserPreferences] = useState({ responseStyle: 'friendly', technicalLevel: 'basic' });
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLTextAreaElement>(null);
 
     // Auto-scroll to bottom when new messages are added
     const scrollToBottom = () => {
@@ -34,22 +52,31 @@ export default function ChatWindow() {
         scrollToBottom();
     }, [messages]);
 
-    // Initialize with welcome message
+    // Initialize with enhanced welcome message
     useEffect(() => {
         const welcomeMessage: Message = {
             id: 'welcome',
-            text: "🎉 Welcome to ShopEasy Customer Support! I'm your AI assistant ready to help with:\n\n" +
-                "📦 **Order Tracking** - Real-time status for orders 1001-1030\n" +
-                "📋 **Policies & Support** - 50+ FAQs on shipping, returns, payments\n" +
-                "🛍️ **Smart Recommendations** - 40+ products across all categories\n" +
-                "💡 **Expert Advice** - Warranty, EMI plans, delivery options\n\n" +
-                "✨ **Try these popular queries:**\n" +
-                "• \"Where is my order 1015?\" (Laptop - Shipped)\n" +
-                "• \"What are your delivery times?\"\n" +
-                "• \"Best Samsung mobile under 100000\"\n" +
-                "• \"Do you offer EMI plans?\"",
+            text: "🎉 **Welcome to ShopEasy Support!** I'm your AI assistant with advanced capabilities:\n\n" +
+                "🚀 **What I can do:**\n" +
+                "📦 **Smart Order Tracking** - Real-time updates for orders 1001-1030\n" +
+                "📋 **Intelligent FAQ System** - 50+ policies with context-aware answers\n" +
+                "🛍️ **AI Product Recommendations** - 40+ products with smart filtering\n" +
+                "💡 **Expert Insights** - Warranty, EMI, delivery optimization\n\n" +
+                "⚡ **Quick Start - Try these:**\n" +
+                "• \"Track my order 1015\" (Laptop - Express shipped)\n" +
+                "• \"Gaming laptop under 200000\"\n" +
+                "• \"Return policy for electronics\"\n" +
+                "• \"EMI options available?\"\n\n" +
+                "💬 **Pro Tip:** I learn from our conversation to give you better answers!",
             sender: 'bot',
-            timestamp: new Date()
+            timestamp: new Date(),
+            confidence: 1.0,
+            suggestions: ['Track Order', 'Product Search', 'Policies', 'Payment Info'],
+            followUpQuestions: [
+                "Looking for a specific product category?",
+                "Need help with an existing order?",
+                "Want to know about our policies?"
+            ]
         };
         setMessages([welcomeMessage]);
     }, []);
