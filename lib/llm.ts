@@ -40,8 +40,30 @@ export interface ResponseMetadata {
     recommendedActions?: string[];
 }
 
-// Enhanced LLM response generation with advanced features
+// Enhanced LLM response generation with advanced features  
+// This function now includes OpenAI integration with intelligent fallback
 export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
+    // Try OpenAI first if enabled and API key is available
+    if (USE_REAL_LLM && process.env.OPENAI_API_KEY) {
+        try {
+            const openAIResponse = await callOpenAI(request);
+            // Enhance OpenAI response with our advanced features
+            return {
+                ...openAIResponse,
+                suggestions: generateSmartSuggestions(request.userMessage, request.intent),
+                followUpQuestions: generateFollowUpQuestions(request.intent),
+                metadata: {
+                    ...openAIResponse.metadata,
+                    llmProvider: 'openai',
+                    enhancedFeatures: true
+                }
+            };
+        } catch (error) {
+            console.error('OpenAI failed, using advanced fallback:', error);
+        }
+    }
+
+    // Advanced fallback system (works without API keys)
     const startTime = Date.now();
     const { systemPrompt, userMessage, context, intent, userPreferences, responseFormat = 'text' } = request;
 
@@ -486,14 +508,12 @@ const generateRecommendedActions = (analysis: any, context: any): string[] => {
     return actions;
 };
 
-// 🚀 REAL LLM INTEGRATION - Ready to use when API keys are available
-// Uncomment any of these functions and set the corresponding environment variables
+// 🚀 REAL LLM INTEGRATION - OpenAI Integration Enabled
 
-/*
 // === OpenAI Integration ===
 export const callOpenAI = async (request: LLMRequest): Promise<LLMResponse> => {
     const startTime = Date.now();
-    
+
     if (!process.env.OPENAI_API_KEY) {
         throw new Error('OpenAI API key not found. Add OPENAI_API_KEY to your .env.local file');
     }
@@ -527,7 +547,7 @@ export const callOpenAI = async (request: LLMRequest): Promise<LLMResponse> => {
 
     const data = await response.json();
     const processingTime = Date.now() - startTime;
-    
+
     return {
         reply: data.choices[0].message.content,
         confidence: 0.92,
@@ -543,7 +563,7 @@ export const callOpenAI = async (request: LLMRequest): Promise<LLMResponse> => {
 // === Anthropic Claude Integration ===
 export const callAnthropic = async (request: LLMRequest): Promise<LLMResponse> => {
     const startTime = Date.now();
-    
+
     if (!process.env.ANTHROPIC_API_KEY) {
         throw new Error('Anthropic API key not found. Add ANTHROPIC_API_KEY to your .env.local file');
     }
@@ -570,7 +590,7 @@ export const callAnthropic = async (request: LLMRequest): Promise<LLMResponse> =
 
     const data = await response.json();
     const processingTime = Date.now() - startTime;
-    
+
     return {
         reply: data.content[0].text,
         confidence: 0.94,
@@ -586,7 +606,7 @@ export const callAnthropic = async (request: LLMRequest): Promise<LLMResponse> =
 // === Groq Integration (Fast & Affordable) ===
 export const callGroq = async (request: LLMRequest): Promise<LLMResponse> => {
     const startTime = Date.now();
-    
+
     if (!process.env.GROQ_API_KEY) {
         throw new Error('Groq API key not found. Add GROQ_API_KEY to your .env.local file');
     }
@@ -614,7 +634,7 @@ export const callGroq = async (request: LLMRequest): Promise<LLMResponse> => {
 
     const data = await response.json();
     const processingTime = Date.now() - startTime;
-    
+
     return {
         reply: data.choices[0].message.content,
         confidence: 0.90,
@@ -630,7 +650,7 @@ export const callGroq = async (request: LLMRequest): Promise<LLMResponse> => {
 // === Unified LLM Caller ===
 export const callRealLLM = async (request: LLMRequest): Promise<LLMResponse> => {
     const provider = process.env.LLM_PROVIDER || 'openai';
-    
+
     switch (provider) {
         case 'openai':
             return await callOpenAI(request);
@@ -644,8 +664,8 @@ export const callRealLLM = async (request: LLMRequest): Promise<LLMResponse> => 
 };
 
 // === Easy Switch Function ===
-// To enable real LLM, just change USE_REAL_LLM to true and add your API keys
-const USE_REAL_LLM = false;
+// OpenAI LLM is now ENABLED - add your OPENAI_API_KEY to .env.local
+const USE_REAL_LLM = true;
 
 export const callLLMWithFallback = async (request: LLMRequest): Promise<LLMResponse> => {
     if (USE_REAL_LLM && (process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || process.env.GROQ_API_KEY)) {
@@ -656,11 +676,10 @@ export const callLLMWithFallback = async (request: LLMRequest): Promise<LLMRespo
             return await callLLM(request);
         }
     }
-    
+
     // Use the current excellent simulated LLM
     return await callLLM(request);
 };
-*/
 
 // 🎯 Current Implementation Status:
 // ✅ Advanced simulated LLM with 94%+ accuracy (NO API KEY NEEDED)
