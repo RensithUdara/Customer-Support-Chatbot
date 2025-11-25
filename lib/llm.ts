@@ -681,6 +681,48 @@ export const callLLMWithFallback = async (request: LLMRequest): Promise<LLMRespo
     return await callLLM(request);
 };
 
+// 🎯 Helper Functions for Enhanced LLM Integration
+async function generateSmartSuggestions(context: string, userMessage: string): Promise<string[]> {
+    const suggestions = [];
+    
+    // Order-related suggestions
+    if (userMessage.toLowerCase().includes('order')) {
+        suggestions.push("Can you provide your order number?", "Would you like to check your order status?", "Need help with order changes?");
+    }
+    
+    // Product-related suggestions
+    if (userMessage.toLowerCase().includes('product') || userMessage.toLowerCase().includes('item')) {
+        suggestions.push("Would you like product specifications?", "Need help with product comparison?", "Looking for similar products?");
+    }
+    
+    // General support suggestions
+    if (suggestions.length === 0) {
+        suggestions.push("How can I further assist you?", "Would you like to speak with a specialist?", "Any other questions?");
+    }
+    
+    return suggestions.slice(0, 3);
+}
+
+async function generateFollowUpQuestions(response: string, context: string): Promise<string[]> {
+    const questions = [];
+    
+    // Based on response content
+    if (response.includes('order')) {
+        questions.push("Is there anything else about your order?");
+    }
+    if (response.includes('product')) {
+        questions.push("Would you like to see similar products?");
+    }
+    if (response.includes('shipping')) {
+        questions.push("Do you have questions about delivery?");
+    }
+    
+    // Default follow-up
+    questions.push("Is there anything else I can help you with?");
+    
+    return questions.slice(0, 2);
+}
+
 // 🎯 Current Implementation Status:
 // ✅ Advanced simulated LLM with 94%+ accuracy (NO API KEY NEEDED)
 // ✅ Real LLM integration ready (just uncomment and add API keys)
