@@ -33,6 +33,11 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# Dialogflow credentials (NEVER commit these!)
+config/dialogflow-service-account.json
+config/*.json
+!config/README.md
+
 # vercel
 .vercel
 
