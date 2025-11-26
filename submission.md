@@ -178,11 +178,166 @@ sequenceDiagram
 
 ### 3.3 Data Flow Architecture
 
+```mermaid
+graph TD
+    subgraph "User Interaction Layer"
+        A[User Input Message]
+        B[Chat Interface]
+        C[Session Context]
+    end
+    
+    subgraph "Processing Pipeline"
+        D[Message Preprocessing]
+        E[Intent Detection Engine]
+        F[Confidence Assessment]
+    end
+    
+    subgraph "Decision Logic"
+        G{Intent Confidence}
+        H{Response Strategy}
+    end
+    
+    subgraph "Data Retrieval Layer"
+        I[Database Query Engine]
+        J[Product Search]
+        K[Order Lookup]
+        L[FAQ Retrieval]
+        M[Policy Search]
+    end
+    
+    subgraph "AI Processing Layer"
+        N[LLM Context Builder]
+        O[OpenAI API Call]
+        P[Response Processing]
+    end
+    
+    subgraph "Response Generation"
+        Q[Response Formatter]
+        R[Suggestion Generator]
+        S[Context Updater]
+    end
+    
+    subgraph "Output Layer"
+        T[Formatted Response]
+        U[Smart Suggestions]
+        V[Updated UI State]
+    end
+    
+    subgraph "Analytics & Monitoring"
+        W[Performance Tracking]
+        X[Intent Analytics]
+        Y[User Behavior Logging]
+    end
+    
+    %% Main Flow
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    
+    %% High Confidence Path
+    G -->|High ≥ 0.8| H
+    H -->|Database Query| I
+    I --> J
+    I --> K
+    I --> L
+    I --> M
+    
+    %% Low Confidence Path
+    G -->|Low < 0.8| N
+    N --> O
+    O --> P
+    
+    %% Convergence
+    J --> Q
+    K --> Q
+    L --> Q
+    M --> Q
+    P --> Q
+    
+    %% Final Output
+    Q --> T
+    Q --> R
+    R --> U
+    T --> S
+    S --> V
+    
+    %% Analytics Integration
+    F --> W
+    G --> X
+    V --> Y
+    
+    %% Styling
+    classDef userLayer fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef processLayer fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef decisionLayer fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef dataLayer fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef aiLayer fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef responseLayer fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+    classDef outputLayer fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    classDef analyticsLayer fill:#fafafa,stroke:#424242,stroke-width:2px
+    
+    class A,B,C userLayer
+    class D,E,F processLayer
+    class G,H decisionLayer
+    class I,J,K,L,M dataLayer
+    class N,O,P aiLayer
+    class Q,R,S responseLayer
+    class T,U,V outputLayer
+    class W,X,Y analyticsLayer
 ```
-User Input → Intent Detection → Context Retrieval → Response Generation → UI Update
-    ↓              ↓                ↓                    ↓
-Query Analysis → Database Query → LLM Processing → Formatted Response
+
+#### Detailed Data Flow Process
+
+**Stage 1: Input Processing (User → System)**
+1. **Message Reception**: User input captured through chat interface
+2. **Session Management**: Context retrieval and conversation history loading
+3. **Preprocessing**: Text normalization, cleanup, and tokenization
+
+**Stage 2: Intelligence Layer (Analysis)**
+1. **Intent Detection**: Multi-stage classification algorithm execution
+2. **Entity Extraction**: Brand, product, order ID, and price range identification
+3. **Confidence Scoring**: Dynamic confidence calculation based on multiple factors
+
+**Stage 3: Decision Matrix (Routing)**
+```mermaid
+graph LR
+    A[Confidence Score] --> B{≥ 0.8}
+    B -->|High| C[Database Route]
+    B -->|Low| D[AI Route]
+    
+    C --> E[Structured Query]
+    D --> F[LLM Processing]
+    
+    E --> G[Fast Response]
+    F --> H[Intelligent Response]
+    
+    classDef high fill:#4caf50,color:#fff
+    classDef low fill:#ff9800,color:#fff
+    classDef route fill:#2196f3,color:#fff
+    
+    class C,E,G high
+    class D,F,H low
+    class A,B route
 ```
+
+**Stage 4: Data Retrieval (Context Gathering)**
+- **Product Search**: Brand-based filtering, specification matching
+- **Order Lookup**: ID validation, status retrieval, tracking information
+- **FAQ Retrieval**: Category-based search, priority ranking
+- **Policy Search**: Context-aware policy section identification
+
+**Stage 5: Response Construction (Output Generation)**
+1. **Content Formatting**: Structured response assembly
+2. **Suggestion Generation**: Context-aware follow-up recommendations
+3. **UI State Updates**: Interface state management and history updates
+
+**Stage 6: Analytics Integration (Monitoring)**
+- **Performance Metrics**: Response time, accuracy tracking
+- **Intent Analytics**: Classification success rate monitoring
+- **User Behavior**: Interaction pattern analysis and improvement insights
 
 ### 3.4 Database Schema Design
 
