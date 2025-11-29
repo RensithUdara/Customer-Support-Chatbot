@@ -95,45 +95,40 @@ The Customer Support Chatbot is a comprehensive AI-powered system built using Ne
 graph TD
     subgraph "Frontend Layer"
         A[Chat Interface]
-        B[Analytics Dashboard]
-        C[Floating Widget]
+        B[Floating Widget]
     end
     
     subgraph "API Layer"
-        D[Chat API]
-        E[Analytics API]
-        F[Intent Router]
+        C[Chat API]
+        D[Intent Router]
     end
     
     subgraph "Business Logic"
-        G[Intent Detection]
-        H[Context Manager]
-        I[Response Generator]
+        E[Intent Detection]
+        F[Context Manager]
+        G[Response Generator]
     end
     
     subgraph "Data Layer"
-        J[Database Manager]
-        K[LLM Integration]
-        L[Cache Layer]
+        H[Database Manager]
+        I[LLM Integration]
     end
     
     subgraph "External Services"
-        M[OpenAI API]
-        N[SQLite Database]
+        J[OpenAI API]
+        K[SQLite Database]
     end
     
-    A --> D
-    B --> E
+    A --> C
+    B --> C
     C --> D
-    D --> F
+    D --> E
+    E --> F
     F --> G
     G --> H
-    H --> I
+    G --> I
     I --> J
-    I --> K
-    K --> M
-    J --> N
-    J --> L
+    H --> K
 ```
 
 ### 3.2 Request Flow Architecture
@@ -223,12 +218,6 @@ graph TD
         V[Updated UI State]
     end
     
-    subgraph "Analytics & Monitoring"
-        W[Performance Tracking]
-        X[Intent Analytics]
-        Y[User Behavior Logging]
-    end
-    
     A --> B
     B --> C
     C --> D
@@ -258,10 +247,6 @@ graph TD
     R --> U
     T --> S
     S --> V
-    
-    F --> W
-    G --> X
-    V --> Y
 ```
 
 #### Detailed Data Flow Process
@@ -309,10 +294,7 @@ graph LR
 2. **Suggestion Generation**: Context-aware follow-up recommendations
 3. **UI State Updates**: Interface state management and history updates
 
-**Stage 6: Analytics Integration (Monitoring)**
-- **Performance Metrics**: Response time, accuracy tracking
-- **Intent Analytics**: Classification success rate monitoring
-- **User Behavior**: Interaction pattern analysis and improvement insights
+
 
 ### 3.4 Database Schema Design
 
@@ -619,13 +601,7 @@ const ChatWindow = () => {
 - **Context-Aware Responses**: Situation-specific information
 - **Policy Updates**: Dynamic policy information
 
-### 5.4 Analytics and Monitoring
-- **Usage Analytics**: Comprehensive usage tracking
-- **Performance Metrics**: Response time and accuracy monitoring
-- **Intent Analysis**: Query pattern analysis
-- **Conversation Insights**: Customer interaction analysis
-
-### 5.5 Advanced AI Capabilities
+### 5.4 Advanced AI Capabilities
 - **Natural Language Processing**: Sophisticated query understanding
 - **Context Retention**: Conversation history maintenance
 - **Multi-turn Conversations**: Complex query handling
@@ -701,7 +677,6 @@ graph LR
   - Coverage: 95%+ of component logic paths
 - **API Testing**: Endpoint response validation and error handling
   - Chat API: Request/response validation, error scenarios
-  - Analytics API: Data aggregation, filtering, export functions
   - Coverage: 100% of API endpoints and error cases
 - **Database Testing**: Query performance and accuracy measurement
   - CRUD operations: Create, Read, Update, Delete validation
@@ -1168,8 +1143,8 @@ radar
 ### Key Metrics
 - **Codebase**: 2000+ lines of TypeScript
 - **Database Tables**: 13 interconnected tables
-- **API Endpoints**: 5+ RESTful endpoints
-- **UI Components**: 8 React components
+- **API Endpoints**: 1 main chat endpoint
+- **UI Components**: 5 React components
 - **Test Coverage**: Comprehensive unit and integration tests
 
 ### Performance Benchmarks
