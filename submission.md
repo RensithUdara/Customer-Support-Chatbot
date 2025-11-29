@@ -92,7 +92,6 @@ The Customer Support Chatbot is a comprehensive AI-powered system built using Ne
 ### 3.1 High-Level System Architecture
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 graph TD
     subgraph "Frontend Layer"
         A[Chat Interface]
@@ -140,7 +139,6 @@ graph TD
 ### 3.2 Request Flow Architecture
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 sequenceDiagram
     participant U as User
     participant UI as Chat UI
@@ -181,7 +179,6 @@ sequenceDiagram
 ### 3.3 Data Flow Architecture
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 graph TD
     subgraph "User Interaction Layer"
         A[User Input Message]
@@ -281,7 +278,6 @@ graph TD
 
 **Stage 3: Decision Matrix (Routing)**
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 graph LR
     A[Confidence Score] --> B{≥ 0.8}
     B -->|High| C[Database Route]
@@ -321,7 +317,6 @@ graph LR
 ### 3.4 Database Schema Design
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 erDiagram
     PRODUCTS {
         int id PK
@@ -430,7 +425,6 @@ erDiagram
 #### Algorithm Design and Flow
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 flowchart TD
     A[User Message] --> B{Extract Keywords}
     B --> C[Brand Detection]
@@ -638,7 +632,6 @@ const ChatWindow = () => {
 #### Testing Strategy Overview
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 pyramid
     title Testing Pyramid
     
@@ -650,7 +643,6 @@ pyramid
 #### Detailed Testing Framework
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 graph LR
     subgraph "Unit Testing Layer"
         A[Component Tests]
@@ -732,7 +724,6 @@ graph LR
 #### Performance Metrics Dashboard
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 xychart-beta
     title "System Performance Metrics"
     x-axis ["Response Time", "Accuracy", "Throughput", "Availability"]
@@ -761,7 +752,6 @@ xychart-beta
 #### Load Testing Results
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 xychart-beta
     title "Load Testing: Response Time vs Concurrent Users"
     x-axis ["1 User", "10 Users", "50 Users", "100 Users", "200 Users"]
@@ -778,7 +768,6 @@ xychart-beta
 #### User Experience Metrics Deep Dive
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 pie title User Satisfaction Breakdown
     "Excellent (5/5)" : 45
     "Good (4/5)" : 35
@@ -849,7 +838,6 @@ pie title User Satisfaction Breakdown
 #### Development Roadmap Timeline
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 timeline
     title Customer Support Chatbot Enhancement Roadmap
     
@@ -893,7 +881,6 @@ timeline
 #### Technical Architecture Evolution
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 graph TD
     subgraph "Current Architecture (v1.0)"
         A1[Next.js Frontend]
@@ -933,7 +920,6 @@ graph TD
 
 **1. Voice Integration Architecture**
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 graph LR
     A[User Voice] --> B[Speech-to-Text]
     B --> C[Intent Detection]
@@ -960,7 +946,6 @@ graph LR
 
 **3. Machine Learning Pipeline**
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 flowchart TD
     A[User Interactions] --> B[Data Collection]
     B --> C[Feature Engineering]
@@ -987,7 +972,6 @@ flowchart TD
 
 **Microservices Architecture (v3.0)**
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 graph TB
     subgraph "API Gateway"
         A[Load Balancer]
@@ -1045,7 +1029,6 @@ graph TB
 #### ROI Calculation Model
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 flowchart TD
     A["Initial Investment: $50,000"] --> B[Development Costs]
     A --> C[Infrastructure Costs]
@@ -1088,7 +1071,6 @@ flowchart TD
 #### Customer Impact Metrics
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 xychart-beta
     title "Customer Satisfaction Improvement"
     x-axis ["Response Time", "Availability", "Accuracy", "Overall Satisfaction"]
@@ -1106,7 +1088,6 @@ xychart-beta
 #### Revenue Impact Analysis
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 pie title Revenue Impact Distribution
     "Increased Sales" : 40
     "Customer Retention" : 35
@@ -1132,7 +1113,6 @@ pie title Revenue Impact Distribution
 
 **Competitive Positioning Analysis:**
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 radar
     title Competitive Advantage Matrix
     ["Customer Experience"]
@@ -1208,7 +1188,6 @@ radar
 ### 🎯 **Project Impact Summary**
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#f9f9f9', 'primaryTextColor': '#333333', 'primaryBorderColor': '#cccccc', 'lineColor': '#666666'}}}%%
 mindmap
   root((Project Impact))
     Technical Excellence
