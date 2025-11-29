@@ -229,7 +229,6 @@ graph TD
         Y[User Behavior Logging]
     end
     
-    %% Main Flow
     A --> B
     B --> C
     C --> D
@@ -237,7 +236,6 @@ graph TD
     E --> F
     F --> G
     
-    %% High Confidence Path
     G -->|High ≥ 0.8| H
     H -->|Database Query| I
     I --> J
@@ -245,48 +243,25 @@ graph TD
     I --> L
     I --> M
     
-    %% Low Confidence Path
     G -->|Low < 0.8| N
     N --> O
     O --> P
     
-    %% Convergence
     J --> Q
     K --> Q
     L --> Q
     M --> Q
     P --> Q
     
-    %% Final Output
     Q --> T
     Q --> R
     R --> U
     T --> S
     S --> V
     
-    %% Analytics Integration
     F --> W
     G --> X
     V --> Y
-    
-    %% Styling
-    classDef userLayer fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef processLayer fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
-    classDef decisionLayer fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef dataLayer fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
-    classDef aiLayer fill:#fce4ec,stroke:#880e4f,stroke-width:2px
-    classDef responseLayer fill:#e0f2f1,stroke:#004d40,stroke-width:2px
-    classDef outputLayer fill:#f1f8e9,stroke:#33691e,stroke-width:2px
-    classDef analyticsLayer fill:#fafafa,stroke:#424242,stroke-width:2px
-    
-    class A,B,C userLayer
-    class D,E,F processLayer
-    class G,H decisionLayer
-    class I,J,K,L,M dataLayer
-    class N,O,P aiLayer
-    class Q,R,S responseLayer
-    class T,U,V outputLayer
-    class W,X,Y analyticsLayer
 ```
 
 #### Detailed Data Flow Process
