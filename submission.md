@@ -411,6 +411,9 @@ erDiagram
     ORDERS }o--|| SHIPPING_ZONES : "ships to"
     PRODUCTS }o--o{ PROMOTIONS : "eligible for"
     CONVERSATIONS ||--o{ FEEDBACK : "receives feedback"
+    
+    %%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
+    %%{config: {"theme": "base", "themeVariables": { "primaryColor": "#ffffff", "primaryTextColor": "#000000", "primaryBorderColor": "#000000", "lineColor": "#000000"}}}%%
 ```
 
 **Database Statistics:**
