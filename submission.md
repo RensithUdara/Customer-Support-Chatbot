@@ -328,8 +328,6 @@ erDiagram
         decimal rating
         text features
         string warranty
-        datetime created_at
-        datetime updated_at
     }
     
     ORDERS {
@@ -345,9 +343,6 @@ erDiagram
         string tracking_number
         date estimated_delivery
         json items
-        int shipping_zone_id FK
-        datetime created_at
-        datetime updated_at
     }
     
     FAQS {
@@ -357,9 +352,6 @@ erDiagram
         string category
         string tags
         int priority
-        int view_count
-        datetime created_at
-        datetime updated_at
     }
     
     CONVERSATIONS {
@@ -370,10 +362,6 @@ erDiagram
         datetime timestamp
         string intent
         decimal confidence
-        string response_type
-        int response_time_ms
-        int order_id FK
-        int product_id FK
     }
     
     CUSTOMER_SUPPORT {
@@ -383,8 +371,6 @@ erDiagram
         string contact_info
         string availability
         string response_time
-        string department
-        boolean is_active
     }
     
     WARRANTY_POLICIES {
@@ -394,8 +380,6 @@ erDiagram
         text description
         text coverage
         text claim_process
-        text exclusions
-        text contact_info
     }
     
     SHIPPING_ZONES {
@@ -406,8 +390,6 @@ erDiagram
         int express_days
         decimal standard_cost
         decimal express_cost
-        text restrictions
-        boolean is_active
     }
     
     PROMOTIONS {
@@ -418,72 +400,17 @@ erDiagram
         decimal discount_value
         date valid_from
         date valid_until
-        text applicable_categories
-        string promo_code
-        int usage_limit
-        int current_usage
         boolean is_active
     }
     
-    ANALYTICS_EVENTS {
-        int id PK
-        string event_type
-        string session_id
-        text user_agent
-        string ip_address
-        datetime timestamp
-        text event_data
-        string intent_detected
-        decimal confidence_score
-        int response_time_ms
-    }
-    
-    FEEDBACK {
-        int id PK
-        string session_id FK
-        int rating
-        text feedback_text
-        text improvement_suggestions
-        datetime timestamp
-        text chat_context
-        boolean is_resolved
-    }
-    
-    CATEGORIES {
-        int id PK
-        string name
-        string description
-        int parent_id FK
-        boolean is_active
-    }
-    
-    PRODUCT_PROMOTIONS {
-        int id PK
-        int product_id FK
-        int promotion_id FK
-        datetime applied_at
-        boolean is_active
-    }
-    
-    %% Primary Relationships
-    PRODUCTS ||--o{ WARRANTY_POLICIES : "category matches"
-    PRODUCTS ||--o{ CONVERSATIONS : "referenced in"
-    PRODUCTS ||--o{ PRODUCT_PROMOTIONS : "has promotions"
-    
+    PRODUCTS ||--o{ WARRANTY_POLICIES : "has warranty"
     ORDERS ||--o{ CONVERSATIONS : "generates queries"
+    PRODUCTS ||--o{ CONVERSATIONS : "referenced in"
+    FAQS ||--o{ CONVERSATIONS : "answers from"
+    CUSTOMER_SUPPORT ||--o{ CONVERSATIONS : "provides support"
     ORDERS }o--|| SHIPPING_ZONES : "ships to"
-    
-    CONVERSATIONS ||--o{ ANALYTICS_EVENTS : "tracks events"
+    PRODUCTS }o--o{ PROMOTIONS : "eligible for"
     CONVERSATIONS ||--o{ FEEDBACK : "receives feedback"
-    
-    PROMOTIONS ||--o{ PRODUCT_PROMOTIONS : "applied to products"
-    
-    CATEGORIES ||--o{ PRODUCTS : "categorizes"
-    CATEGORIES ||--o{ CATEGORIES : "parent-child"
-    
-    %% Analytics Relationships
-    ANALYTICS_EVENTS }o--|| CONVERSATIONS : "session_id"
-    FEEDBACK }o--|| CONVERSATIONS : "session_id"
 ```
 
 **Database Statistics:**
