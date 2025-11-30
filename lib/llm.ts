@@ -755,8 +755,9 @@ export const callRealLLM = async (request: LLMRequest): Promise<LLMResponse> => 
 };
 
 // === Easy Switch Function ===
-// OpenAI LLM is now ENABLED - add your OPENAI_API_KEY to .env.local
-const USE_REAL_LLM = true;
+// Real LLM usage is opt-in. Set `ENABLE_REAL_LLM=true` in your `.env.local` to enable.
+// Keep keys out of source control — use `.env.local` (ignored) and fill values from `.env.example`.
+const USE_REAL_LLM = process.env.ENABLE_REAL_LLM === 'true';
 
 export const callLLMWithFallback = async (request: LLMRequest): Promise<LLMResponse> => {
     if (USE_REAL_LLM && (process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || process.env.GROQ_API_KEY)) {
@@ -810,7 +811,7 @@ function generateSmartSuggestions(context: string, userMessage: string, prevCont
     }
 
     return suggestions.slice(0, 3);
-} function generateFollowUpQuestions(response: string, context: string, prevContext?: PreviousContext): string[] {
+} async function generateFollowUpQuestions(response: string, context: string, prevContext?: PreviousContext): Promise<string[]> {
     const questions = [];
 
     // Context-aware follow-up questions

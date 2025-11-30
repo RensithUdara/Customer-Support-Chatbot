@@ -95,45 +95,40 @@ The Customer Support Chatbot is a comprehensive AI-powered system built using Ne
 graph TD
     subgraph "Frontend Layer"
         A[Chat Interface]
-        B[Analytics Dashboard]
-        C[Floating Widget]
+        B[Floating Widget]
     end
     
     subgraph "API Layer"
-        D[Chat API]
-        E[Analytics API]
-        F[Intent Router]
+        C[Chat API]
+        D[Intent Router]
     end
     
     subgraph "Business Logic"
-        G[Intent Detection]
-        H[Context Manager]
-        I[Response Generator]
+        E[Intent Detection]
+        F[Context Manager]
+        G[Response Generator]
     end
     
     subgraph "Data Layer"
-        J[Database Manager]
-        K[LLM Integration]
-        L[Cache Layer]
+        H[Database Manager]
+        I[LLM Integration]
     end
     
     subgraph "External Services"
-        M[OpenAI API]
-        N[SQLite Database]
+        J[OpenAI API]
+        K[SQLite Database]
     end
     
-    A --> D
-    B --> E
+    A --> C
+    B --> C
     C --> D
-    D --> F
+    D --> E
+    E --> F
     F --> G
     G --> H
-    H --> I
+    G --> I
     I --> J
-    I --> K
-    K --> M
-    J --> N
-    J --> L
+    H --> K
 ```
 
 ### 3.2 Request Flow Architecture
@@ -223,12 +218,6 @@ graph TD
         V[Updated UI State]
     end
     
-    subgraph "Analytics & Monitoring"
-        W[Performance Tracking]
-        X[Intent Analytics]
-        Y[User Behavior Logging]
-    end
-    
     A --> B
     B --> C
     C --> D
@@ -258,10 +247,6 @@ graph TD
     R --> U
     T --> S
     S --> V
-    
-    F --> W
-    G --> X
-    V --> Y
 ```
 
 #### Detailed Data Flow Process
@@ -309,10 +294,7 @@ graph LR
 2. **Suggestion Generation**: Context-aware follow-up recommendations
 3. **UI State Updates**: Interface state management and history updates
 
-**Stage 6: Analytics Integration (Monitoring)**
-- **Performance Metrics**: Response time, accuracy tracking
-- **Intent Analytics**: Classification success rate monitoring
-- **User Behavior**: Interaction pattern analysis and improvement insights
+
 
 ### 3.4 Database Schema Design
 
@@ -406,6 +388,14 @@ erDiagram
     PRODUCTS ||--o{ WARRANTY_POLICIES : "has warranty"
     ORDERS ||--o{ CONVERSATIONS : "generates queries"
     PRODUCTS ||--o{ CONVERSATIONS : "referenced in"
+    FAQS ||--o{ CONVERSATIONS : "answers from"
+    CUSTOMER_SUPPORT ||--o{ CONVERSATIONS : "provides support"
+    ORDERS }o--|| SHIPPING_ZONES : "ships to"
+    PRODUCTS }o--o{ PROMOTIONS : "eligible for"
+    CONVERSATIONS ||--o{ FEEDBACK : "receives feedback"
+    
+    %%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
+    %%{config: {"theme": "base", "themeVariables": { "primaryColor": "#ffffff", "primaryTextColor": "#000000", "primaryBorderColor": "#000000", "lineColor": "#000000"}}}%%
 ```
 
 **Database Statistics:**
@@ -611,13 +601,7 @@ const ChatWindow = () => {
 - **Context-Aware Responses**: Situation-specific information
 - **Policy Updates**: Dynamic policy information
 
-### 5.4 Analytics and Monitoring
-- **Usage Analytics**: Comprehensive usage tracking
-- **Performance Metrics**: Response time and accuracy monitoring
-- **Intent Analysis**: Query pattern analysis
-- **Conversation Insights**: Customer interaction analysis
-
-### 5.5 Advanced AI Capabilities
+### 5.4 Advanced AI Capabilities
 - **Natural Language Processing**: Sophisticated query understanding
 - **Context Retention**: Conversation history maintenance
 - **Multi-turn Conversations**: Complex query handling
@@ -693,7 +677,6 @@ graph LR
   - Coverage: 95%+ of component logic paths
 - **API Testing**: Endpoint response validation and error handling
   - Chat API: Request/response validation, error scenarios
-  - Analytics API: Data aggregation, filtering, export functions
   - Coverage: 100% of API endpoints and error cases
 - **Database Testing**: Query performance and accuracy measurement
   - CRUD operations: Create, Read, Update, Delete validation
@@ -1160,8 +1143,8 @@ radar
 ### Key Metrics
 - **Codebase**: 2000+ lines of TypeScript
 - **Database Tables**: 13 interconnected tables
-- **API Endpoints**: 5+ RESTful endpoints
-- **UI Components**: 8 React components
+- **API Endpoints**: 1 main chat endpoint
+- **UI Components**: 5 React components
 - **Test Coverage**: Comprehensive unit and integration tests
 
 ### Performance Benchmarks
@@ -1258,3 +1241,26 @@ mindmap
 - **Documentation Excellence**: Comprehensive technical and business documentation
 
 *This report demonstrates the successful implementation of a sophisticated, production-ready AI-powered customer support chatbot system that delivers exceptional technical performance, significant business value, and outstanding user experience while establishing a solid foundation for future AI innovations.*
+
+---
+
+## Appendix: Environment & API Keys
+
+- The project supports optional real LLM providers (OpenAI, Anthropic, Groq). For local development, copy `.env.example` to `.env.local` and add your keys.
+- Keep `.env.local` out of version control. The repository includes `.env.example` with placeholders for the following variables:
+    - `OPENAI_API_KEY` — OpenAI API key
+    - `OPENAI_MODEL` — OpenAI model (optional override)
+    - `ANTHROPIC_API_KEY` — Anthropic API key (optional)
+    - `GROQ_API_KEY` — Groq API key (optional)
+    - `LLM_PROVIDER` — default provider (`openai`, `anthropic`, or `groq`)
+    - `ENABLE_REAL_LLM` — set to `true` to enable real provider calls; otherwise the built-in simulated LLM is used for offline development.
+
+Example (in `.env.local`):
+
+```
+OPENAI_API_KEY=sk-xxxxxxx
+LLM_PROVIDER=openai
+ENABLE_REAL_LLM=true
+```
+
+If no keys are present or `ENABLE_REAL_LLM` is not set to `true`, the system will use the safe simulated LLM fallback so the app remains functional without network calls or paid API usage.
