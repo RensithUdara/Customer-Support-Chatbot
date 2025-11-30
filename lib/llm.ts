@@ -56,6 +56,8 @@ export interface ResponseMetadata {
     dataSourcesUsed: string[];
     confidenceFactors: string[];
     recommendedActions?: string[];
+    llmProvider?: string;
+    enhancedFeatures?: boolean;
 }
 
 // Analyze conversation context for better responses
@@ -116,8 +118,8 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
             // Enhance OpenAI response with our advanced features
             return {
                 ...openAIResponse,
-                suggestions: generateSmartSuggestions(request.userMessage, request.intent),
-                followUpQuestions: generateFollowUpQuestions(request.intent),
+                suggestions: generateSmartSuggestions(request.userMessage, request.intent || 'OTHER'),
+                followUpQuestions: generateFollowUpQuestions('', request.userMessage || ''),
                 metadata: {
                     ...openAIResponse.metadata,
                     llmProvider: 'openai',
@@ -768,13 +770,13 @@ export const callLLMWithFallback = async (request: LLMRequest): Promise<LLMRespo
 };
 
 // 🎯 Helper Functions for Advanced LLM Integration
-async function generateSmartSuggestions(context: string, userMessage: string, prevContext?: PreviousContext): Promise<string[]> {
+function generateSmartSuggestions(context: string, userMessage: string, prevContext?: PreviousContext): string[] {
     const suggestions = [];
     const lowerMessage = userMessage.toLowerCase();
     
     // Context-aware suggestions based on conversation flow
     if (prevContext?.conversationFlow === 'product_search') {
-        if (prevContext.mentionedProducts?.length > 0) {
+        if (prevContext.mentionedProducts && prevContext.mentionedProducts.length > 0) {
             suggestions.push(`Compare with other ${prevContext.mentionedProducts[0]} products`);
             suggestions.push("Check availability and shipping");
             suggestions.push("See customer reviews");
@@ -782,7 +784,7 @@ async function generateSmartSuggestions(context: string, userMessage: string, pr
             suggestions.push("Refine your search criteria", "View similar products", "Check product specifications");
         }
     } else if (prevContext?.conversationFlow === 'order_inquiry') {
-        if (prevContext.mentionedOrders?.length > 0) {
+        if (prevContext.mentionedOrders && prevContext.mentionedOrders.length > 0) {
             suggestions.push("Track package location", "Modify delivery address", "Contact courier service");
         } else {
             suggestions.push("Provide order number for tracking", "Check recent orders", "Order history");
@@ -805,14 +807,14 @@ async function generateSmartSuggestions(context: string, userMessage: string, pr
     }
     
     return suggestions.slice(0, 3);
-}async function generateFollowUpQuestions(response: string, context: string, prevContext?: PreviousContext): Promise<string[]> {
+} function generateFollowUpQuestions(response: string, context: string, prevContext?: PreviousContext): string[] {
     const questions = [];
     
     // Context-aware follow-up questions
     if (prevContext?.conversationFlow === 'product_search') {
         questions.push("Would you like to see more details about any of these products?");
         questions.push("Need help comparing these options?");
-        if (prevContext.mentionedProducts?.length > 0) {
+        if (prevContext.mentionedProducts && prevContext.mentionedProducts.length > 0) {
             questions.push(`Looking for accessories for ${prevContext.mentionedProducts[0]}?`);
         }
     } else if (prevContext?.conversationFlow === 'order_inquiry') {
