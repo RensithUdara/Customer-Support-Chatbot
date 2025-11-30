@@ -811,7 +811,7 @@ function generateSmartSuggestions(context: string, userMessage: string, prevCont
     }
 
     return suggestions.slice(0, 3);
-} async function generateFollowUpQuestions(response: string, context: string, prevContext?: PreviousContext): Promise<string[]> {
+} function generateFollowUpQuestions(response: string, context: string, prevContext?: PreviousContext): string[] {
     const questions = [];
 
     // Context-aware follow-up questions
