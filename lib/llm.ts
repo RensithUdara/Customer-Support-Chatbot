@@ -65,10 +65,10 @@ const analyzeConversationContext = (request: LLMRequest): PreviousContext => {
         mentionedOrders: [],
         userPreferences: {}
     };
-    
+
     if (request.conversationHistory && request.conversationHistory.length > 0) {
         const recentMessages = request.conversationHistory.slice(-4); // Last 4 messages
-        
+
         // Extract mentioned products
         recentMessages.forEach(msg => {
             const content = msg.content.toLowerCase();
@@ -79,13 +79,13 @@ const analyzeConversationContext = (request: LLMRequest): PreviousContext => {
                     context.mentionedProducts?.push(keyword);
                 }
             });
-            
+
             // Extract order numbers
             const orderMatch = content.match(/\b\d{4}\b/);
             if (orderMatch) {
                 context.mentionedOrders?.push(orderMatch[0]);
             }
-            
+
             // Determine conversation flow
             if (content.includes('order') || content.includes('track')) {
                 context.conversationFlow = 'order_inquiry';
@@ -95,14 +95,14 @@ const analyzeConversationContext = (request: LLMRequest): PreviousContext => {
                 context.conversationFlow = 'policy_question';
             }
         });
-        
+
         // Set last intent and topic
         const lastMessage = recentMessages[recentMessages.length - 1];
         if (lastMessage.intent) {
             context.lastIntent = lastMessage.intent;
         }
     }
-    
+
     return context;
 };
 
@@ -248,11 +248,11 @@ export const callLLM = async (request: LLMRequest): Promise<LLMResponse> => {
             if (criteria.productType) searchTerms.push(`🔧 Type: ${criteria.productType}`);
             if (criteria.category) searchTerms.push(`📂 Category: ${criteria.category}`);
             if (criteria.budget) searchTerms.push(`💰 Budget: ${criteria.budget}`);
-            
+
             if (searchTerms.length > 0) {
                 reply += `**Searching for:** ${searchTerms.join(', ')}\n\n`;
             }
-            
+
             reply += `**Found ${products.length} Matching Products:**\n\n`;
 
             products.forEach((product: any, index: number) => {
@@ -772,7 +772,7 @@ export const callLLMWithFallback = async (request: LLMRequest): Promise<LLMRespo
 async function generateSmartSuggestions(context: string, userMessage: string, prevContext?: PreviousContext): Promise<string[]> {
     const suggestions = [];
     const lowerMessage = userMessage.toLowerCase();
-    
+
     // Context-aware suggestions based on conversation flow
     if (prevContext?.conversationFlow === 'product_search') {
         if (prevContext.mentionedProducts?.length > 0) {
@@ -793,22 +793,22 @@ async function generateSmartSuggestions(context: string, userMessage: string, pr
         if (lowerMessage.includes('order')) {
             suggestions.push("Can you provide your order number?", "Would you like to check your order status?", "Need help with order changes?");
         }
-        
+
         // Product-related suggestions
         if (lowerMessage.includes('product') || lowerMessage.includes('item')) {
             suggestions.push("Would you like product specifications?", "Need help with product comparison?", "Looking for similar products?");
         }
-        
+
         // General support suggestions
         if (suggestions.length === 0) {
             suggestions.push("How can I further assist you?", "Would you like to speak with a specialist?", "Any other questions?");
         }
     }
-    
+
     return suggestions.slice(0, 3);
-}async function generateFollowUpQuestions(response: string, context: string, prevContext?: PreviousContext): Promise<string[]> {
+} async function generateFollowUpQuestions(response: string, context: string, prevContext?: PreviousContext): Promise<string[]> {
     const questions = [];
-    
+
     // Context-aware follow-up questions
     if (prevContext?.conversationFlow === 'product_search') {
         questions.push("Would you like to see more details about any of these products?");
@@ -832,12 +832,12 @@ async function generateSmartSuggestions(context: string, userMessage: string, pr
             questions.push("Do you have questions about delivery?");
         }
     }
-    
+
     // Default follow-up
     if (questions.length === 0) {
         questions.push("Is there anything else I can help you with?");
     }
-    
+
     return questions.slice(0, 2);
 }// 🎯 Current Implementation Status:
 // ✅ Advanced simulated LLM with 94%+ accuracy (NO API KEY NEEDED)
