@@ -1241,3 +1241,26 @@ mindmap
 - **Documentation Excellence**: Comprehensive technical and business documentation
 
 *This report demonstrates the successful implementation of a sophisticated, production-ready AI-powered customer support chatbot system that delivers exceptional technical performance, significant business value, and outstanding user experience while establishing a solid foundation for future AI innovations.*
+
+---
+
+## Appendix: Environment & API Keys
+
+- The project supports optional real LLM providers (OpenAI, Anthropic, Groq). For local development, copy `.env.example` to `.env.local` and add your keys.
+- Keep `.env.local` out of version control. The repository includes `.env.example` with placeholders for the following variables:
+    - `OPENAI_API_KEY` — OpenAI API key
+    - `OPENAI_MODEL` — OpenAI model (optional override)
+    - `ANTHROPIC_API_KEY` — Anthropic API key (optional)
+    - `GROQ_API_KEY` — Groq API key (optional)
+    - `LLM_PROVIDER` — default provider (`openai`, `anthropic`, or `groq`)
+    - `ENABLE_REAL_LLM` — set to `true` to enable real provider calls; otherwise the built-in simulated LLM is used for offline development.
+
+Example (in `.env.local`):
+
+```
+OPENAI_API_KEY=sk-xxxxxxx
+LLM_PROVIDER=openai
+ENABLE_REAL_LLM=true
+```
+
+If no keys are present or `ENABLE_REAL_LLM` is not set to `true`, the system will use the safe simulated LLM fallback so the app remains functional without network calls or paid API usage.
