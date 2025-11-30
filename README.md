@@ -681,3 +681,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   <p><strong>🌟 Star this repository if you find it helpful!</strong></p>
   <p>📧 Contact: <a href="mailto:your.email@example.com">your.email@example.com</a> | 🌐 Portfolio: <a href="https://your-portfolio.com">your-portfolio.com</a></p>
 </div>
+
+---
+
+## 🔐 Environment Variables
+
+- Copy `.env.example` to `.env.local` and populate your provider API keys.
+- Keep `.env.local` out of version control (it is already ignored by `.gitignore`).
+- To enable real LLM calls (OpenAI/Anthropic/Groq), set `ENABLE_REAL_LLM=true` in `.env.local`.
+- Example variables in `.env.example`:
+  - `OPENAI_API_KEY` — your OpenAI API key
+  - `OPENAI_MODEL` — model name (default provided)
+  - `ANTHROPIC_API_KEY` — your Anthropic key (optional)
+  - `GROQ_API_KEY` — your Groq key (optional)
+  - `LLM_PROVIDER` — choose `openai`, `anthropic`, or `groq`
+
+If you don't enable real LLMs or don't provide keys, the project will fall back to its built-in simulated LLM for offline testing and development.
