@@ -290,8 +290,8 @@ const ChatPopup: React.FC = () => {
                                                             >
                                                                 <Star
                                                                     className="w-3 h-3 cursor-pointer"
-                                                                    fill="#fbbf24"
-                                                                    color="#fbbf24"
+                                                                    fill="none"
+                                                                    color="#d4d4d8"
                                                                 />
                                                             </button>
                                                         ))}
