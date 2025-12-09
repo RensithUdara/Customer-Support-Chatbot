@@ -136,7 +136,7 @@ export default function ChatWindow() {
                 followUpQuestions: data.followUpQuestions || [],
                 metadata: data.metadata
             };
-            
+
             // Update conversation context
             setConversationContext({
                 lastIntent: data.intent,
@@ -239,9 +239,9 @@ export default function ChatWindow() {
                 {/* Animated background pattern */}
                 <div className="absolute inset-0 opacity-10">
                     <div className="absolute -top-4 -right-4 w-24 h-24 bg-white rounded-full animate-pulse"></div>
-                    <div className="absolute top-8 -left-8 w-16 h-16 bg-white rounded-full animate-bounce" style={{animationDelay: '1s'}}></div>
+                    <div className="absolute top-8 -left-8 w-16 h-16 bg-white rounded-full animate-bounce" style={{ animationDelay: '1s' }}></div>
                 </div>
-                
+
                 <div className="flex items-center space-x-4 relative z-10">
                     <div className="bg-white bg-opacity-20 p-3 rounded-xl backdrop-blur-sm">
                         <Bot className="w-8 h-8 text-white" />
@@ -267,11 +267,10 @@ export default function ChatWindow() {
                         style={{ animationDelay: `${index * 0.1}s` }}
                     >
                         <div
-                            className={`max-w-[85%] relative group ${
-                                message.sender === 'user'
+                            className={`max-w-[85%] relative group ${message.sender === 'user'
                                     ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-200 rounded-t-2xl rounded-bl-2xl rounded-br-sm'
                                     : 'bg-white text-gray-800 shadow-lg shadow-gray-200 border border-gray-100 rounded-t-2xl rounded-br-2xl rounded-bl-sm'
-                            } transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl`}
+                                } transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl`}
                         >
                             <div className="p-4">
                                 {/* Avatar for bot messages */}
@@ -280,14 +279,14 @@ export default function ChatWindow() {
                                         <Bot className="w-5 h-5 text-white" />
                                     </div>
                                 )}
-                                
+
                                 {/* Avatar for user messages */}
                                 {message.sender === 'user' && (
                                     <div className="absolute -right-4 -top-2 w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg border-3 border-white">
                                         <User className="w-5 h-5 text-white" />
                                     </div>
                                 )}
-                                
+
                                 <div className="flex-1">
                                     <div
                                         dangerouslySetInnerHTML={{
@@ -295,7 +294,7 @@ export default function ChatWindow() {
                                         }}
                                         className="leading-relaxed text-sm lg:text-base"
                                     />
-                                    
+
                                     {/* Suggestions */}
                                     {message.sender === 'bot' && message.suggestions && message.suggestions.length > 0 && (
                                         <div className="mt-4 flex flex-wrap gap-2">
@@ -311,7 +310,7 @@ export default function ChatWindow() {
                                             ))}
                                         </div>
                                     )}
-                                    
+
                                     {/* Follow-up Questions */}
                                     {message.sender === 'bot' && message.followUpQuestions && message.followUpQuestions.length > 0 && (
                                         <div className="mt-3 space-y-2 border-t border-gray-100 pt-3">
@@ -327,7 +326,7 @@ export default function ChatWindow() {
                                             ))}
                                         </div>
                                     )}
-                                    
+
                                     <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
                                         <span className="text-xs opacity-60 flex items-center space-x-1">
                                             <span>🕒</span>
@@ -341,17 +340,16 @@ export default function ChatWindow() {
                                                 </span>
                                             )}
                                         </span>
-                                        
+
                                         {/* Feedback buttons for bot messages */}
                                         {message.sender === 'bot' && (
                                             <div className="flex items-center space-x-2">
                                                 <button
                                                     onClick={() => handleFeedback(message.id, 'like')}
-                                                    className={`p-1.5 rounded transition-all duration-200 ${
-                                                        message.feedback === 'like'
+                                                    className={`p-1.5 rounded transition-all duration-200 ${message.feedback === 'like'
                                                             ? 'bg-green-100 text-green-600'
                                                             : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
-                                                    }`}
+                                                        }`}
                                                     title="This answer was helpful"
                                                     aria-label="Like"
                                                 >
@@ -359,11 +357,10 @@ export default function ChatWindow() {
                                                 </button>
                                                 <button
                                                     onClick={() => handleFeedback(message.id, 'dislike')}
-                                                    className={`p-1.5 rounded transition-all duration-200 ${
-                                                        message.feedback === 'dislike'
+                                                    className={`p-1.5 rounded transition-all duration-200 ${message.feedback === 'dislike'
                                                             ? 'bg-red-100 text-red-600'
                                                             : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
-                                                    }`}
+                                                        }`}
                                                     title="This answer was not helpful"
                                                     aria-label="Dislike"
                                                 >
@@ -371,7 +368,7 @@ export default function ChatWindow() {
                                                 </button>
                                             </div>
                                         )}
-                                        
+
                                         {message.intent && message.sender === 'bot' && (
                                             <span className={`text-xs px-3 py-1 rounded-full font-semibold shadow-sm ${getIntentColor(message.intent)}`}>
                                                 {getIntentLabel(message.intent)}
@@ -391,9 +388,9 @@ export default function ChatWindow() {
                                 <Bot className="w-5 h-5 text-white" />
                             </div>
                             <div className="flex space-x-1">
-                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                             </div>
                             <span className="text-gray-600 font-medium">AI is thinking...</span>
                         </div>
