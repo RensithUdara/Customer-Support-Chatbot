@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Loader2, Minimize2, ExternalLink, ThumbsUp, ThumbsDown, Star } from 'lucide-react';
+import { Send, Bot, User, Loader2, Minimize2, ExternalLink, ThumbsUp, ThumbsDown } from 'lucide-react';
 import Link from 'next/link';
 import { useChatContext } from './ChatContext';
 
