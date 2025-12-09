@@ -345,8 +345,8 @@ export default function ChatWindow() {
                                                     <button
                                                         onClick={() => handleFeedback(message.id, 'like')}
                                                         className={`p-1.5 rounded transition-all duration-200 ${message.feedback === 'like'
-                                                                ? 'bg-green-100 text-green-600'
-                                                                : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
+                                                            ? 'bg-green-100 text-green-600'
+                                                            : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
                                                             }`}
                                                         title="This answer was helpful"
                                                         aria-label="Like"
@@ -356,8 +356,8 @@ export default function ChatWindow() {
                                                     <button
                                                         onClick={() => handleFeedback(message.id, 'dislike')}
                                                         className={`p-1.5 rounded transition-all duration-200 ${message.feedback === 'dislike'
-                                                                ? 'bg-red-100 text-red-600'
-                                                                : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
+                                                            ? 'bg-red-100 text-red-600'
+                                                            : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
                                                             }`}
                                                         title="This answer was not helpful"
                                                         aria-label="Dislike"
@@ -365,49 +365,6 @@ export default function ChatWindow() {
                                                         <ThumbsDown className="w-4 h-4" />
                                                     </button>
                                                 </div>
-
-                                                {/* 5-star rating prompt */}
-                                                {message.ratingPrompt && !message.rating && (
-                                                    <div className="flex items-center gap-2 bg-blue-50 p-2 rounded-lg text-sm">
-                                                        <span className="text-gray-600">Rate:</span>
-                                                        <div className="flex gap-1">
-                                                            {[1, 2, 3, 4, 5].map(star => (
-                                                                <button
-                                                                    key={star}
-                                                                    onClick={() => handleRating(message.id, star)}
-                                                                    className="transition-transform hover:scale-125"
-                                                                    title={`${star} star${star !== 1 ? 's' : ''}`}
-                                                                >
-                                                                    <Star
-                                                                        className="w-4 h-4 cursor-pointer"
-                                                                        fill="none"
-                                                                        color="#d4d4d8"
-                                                                    />
-                                                                </button>
-                                                            ))}
-                                                        </div>
-                                                        <button
-                                                            onClick={() => skipRating(message.id)}
-                                                            className="ml-2 text-xs text-gray-500 hover:text-gray-700 underline"
-                                                        >
-                                                            Skip
-                                                        </button>
-                                                    </div>
-                                                )}
-
-                                                {/* Show selected rating */}
-                                                {message.rating && (
-                                                    <div className="flex items-center gap-1 text-sm text-amber-600">
-                                                        {[1, 2, 3, 4, 5].map(star => (
-                                                            <Star
-                                                                key={star}
-                                                                className="w-3 h-3"
-                                                                fill={star <= message.rating! ? '#fbbf24' : '#e5e7eb'}
-                                                                color={star <= message.rating! ? '#fbbf24' : '#e5e7eb'}
-                                                            />
-                                                        ))}
-                                                    </div>
-                                                )}
                                             </div>
                                         )}
 
