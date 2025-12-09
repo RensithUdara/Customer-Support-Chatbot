@@ -167,6 +167,20 @@ export const initDatabase = () => {
     )
   `);
 
+  // Create feedback summary table for real-time statistics
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS feedback_summary (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      intent TEXT UNIQUE,
+      like_count INTEGER DEFAULT 0,
+      dislike_count INTEGER DEFAULT 0,
+      total_count INTEGER DEFAULT 0,
+      like_percentage REAL DEFAULT 0,
+      dislike_percentage REAL DEFAULT 0,
+      last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   // Create promotions table
   db.exec(`
     CREATE TABLE IF NOT EXISTS promotions (
@@ -563,6 +577,9 @@ export const saveFeedback = (feedback: FeedbackData): boolean => {
       timestamp
     );
 
+    // Update feedback_summary table with real-time statistics
+    updateFeedbackSummary(feedback.intent || 'unknown');
+
     return true;
   } catch (error) {
     console.error('Error saving feedback:', error);
@@ -571,8 +588,142 @@ export const saveFeedback = (feedback: FeedbackData): boolean => {
 };
 
 /**
- * Get feedback statistics for a session
+ * Update feedback summary statistics for an intent (called automatically when feedback is saved)
  */
+const updateFeedbackSummary = (intent: string): void => {
+  try {
+    // Get current feedback counts for this intent
+    const feedbackStats = db.prepare(`
+      SELECT 
+        feedback_type,
+        COUNT(*) as count
+      FROM feedback
+      WHERE intent = ?
+      GROUP BY feedback_type
+    `).all(intent) as any[];
+
+    let likeCount = 0;
+    let dislikeCount = 0;
+
+    feedbackStats.forEach((row: any) => {
+      if (row.feedback_type === 'like') {
+        likeCount = row.count;
+      } else if (row.feedback_type === 'dislike') {
+        dislikeCount = row.count;
+      }
+    });
+
+    const totalCount = likeCount + dislikeCount;
+    const likePercentage = totalCount > 0 ? (likeCount / totalCount) * 100 : 0;
+    const dislikePercentage = totalCount > 0 ? (dislikeCount / totalCount) * 100 : 0;
+
+    // Check if intent already exists in summary
+    const existing = db.prepare('SELECT id FROM feedback_summary WHERE intent = ?').get(intent);
+
+    if (existing) {
+      // Update existing record
+      db.prepare(`
+        UPDATE feedback_summary
+        SET 
+          like_count = ?,
+          dislike_count = ?,
+          total_count = ?,
+          like_percentage = ?,
+          dislike_percentage = ?,
+          last_updated = CURRENT_TIMESTAMP
+        WHERE intent = ?
+      `).run(
+        likeCount,
+        dislikeCount,
+        totalCount,
+        parseFloat(likePercentage.toFixed(2)),
+        parseFloat(dislikePercentage.toFixed(2)),
+        intent
+      );
+    } else {
+      // Insert new record
+      db.prepare(`
+        INSERT INTO feedback_summary (
+          intent,
+          like_count,
+          dislike_count,
+          total_count,
+          like_percentage,
+          dislike_percentage
+        ) VALUES (?, ?, ?, ?, ?, ?)
+      `).run(
+        intent,
+        likeCount,
+        dislikeCount,
+        totalCount,
+        parseFloat(likePercentage.toFixed(2)),
+        parseFloat(dislikePercentage.toFixed(2))
+      );
+    }
+  } catch (error) {
+    console.error('Error updating feedback summary:', error);
+  }
+};
+
+/**
+ * Get feedback summary for all intents or a specific intent
+ */
+export const getFeedbackSummary = (intent?: string) => {
+  try {
+    if (intent) {
+      const stmt = db.prepare('SELECT * FROM feedback_summary WHERE intent = ?');
+      return stmt.get(intent);
+    } else {
+      const stmt = db.prepare(`
+        SELECT * FROM feedback_summary 
+        ORDER BY total_count DESC, last_updated DESC
+      `);
+      return stmt.all();
+    }
+  } catch (error) {
+    console.error('Error getting feedback summary:', error);
+    return intent ? null : [];
+  }
+};
+
+/**
+ * Get overall feedback statistics across all intents
+ */
+export const getOverallFeedbackStats = () => {
+  try {
+    const stmt = db.prepare(`
+      SELECT 
+        SUM(like_count) as total_likes,
+        SUM(dislike_count) as total_dislikes,
+        SUM(total_count) as total_feedback
+      FROM feedback_summary
+    `);
+    const result = stmt.get() as any;
+    
+    const totalLikes = result.total_likes || 0;
+    const totalDislikes = result.total_dislikes || 0;
+    const totalFeedback = result.total_feedback || 0;
+    
+    return {
+      total_likes: totalLikes,
+      total_dislikes: totalDislikes,
+      total_feedback: totalFeedback,
+      overall_like_percentage: totalFeedback > 0 ? parseFloat(((totalLikes / totalFeedback) * 100).toFixed(2)) : 0,
+      overall_dislike_percentage: totalFeedback > 0 ? parseFloat(((totalDislikes / totalFeedback) * 100).toFixed(2)) : 0
+    };
+  } catch (error) {
+    console.error('Error getting overall feedback stats:', error);
+    return {
+      total_likes: 0,
+      total_dislikes: 0,
+      total_feedback: 0,
+      overall_like_percentage: 0,
+      overall_dislike_percentage: 0
+    };
+  }
+};
+
+
 export const getFeedbackStats = (sessionId?: string) => {
   try {
     let query = 'SELECT feedback_type, COUNT(*) as count FROM feedback';
