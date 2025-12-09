@@ -17,8 +17,6 @@ const ChatPopup: React.FC = () => {
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [messageFeedback, setMessageFeedback] = useState<{ [key: string]: 'like' | 'dislike' }>({});
-    const [messageRating, setMessageRating] = useState<{ [key: string]: number }>({});
-    const [messageRatingPrompt, setMessageRatingPrompt] = useState<{ [key: string]: boolean }>({});
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll to bottom when new messages are added
