@@ -397,8 +397,8 @@ export default function ChatWindow() {
                                                     <button
                                                         onClick={() => handleFeedback(message.id, 'like')}
                                                         className={`p-1.5 rounded transition-all duration-200 ${message.feedback === 'like'
-                                                                ? 'bg-green-100 text-green-600'
-                                                                : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
+                                                            ? 'bg-green-100 text-green-600'
+                                                            : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
                                                             }`}
                                                         title="This answer was helpful"
                                                         aria-label="Like"
@@ -408,8 +408,8 @@ export default function ChatWindow() {
                                                     <button
                                                         onClick={() => handleFeedback(message.id, 'dislike')}
                                                         className={`p-1.5 rounded transition-all duration-200 ${message.feedback === 'dislike'
-                                                                ? 'bg-red-100 text-red-600'
-                                                                : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
+                                                            ? 'bg-red-100 text-red-600'
+                                                            : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
                                                             }`}
                                                         title="This answer was not helpful"
                                                         aria-label="Dislike"
