@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Loader2 } from 'lucide-react';
+import { Send, Bot, User, Loader2, ThumbsUp, ThumbsDown } from 'lucide-react';
 
 interface Message {
     id: string;
@@ -14,6 +14,7 @@ interface Message {
     followUpQuestions?: string[];
     isTyping?: boolean;
     metadata?: any;
+    feedback?: 'like' | 'dislike' | null;
 }
 
 interface ChatResponse {
@@ -164,6 +165,42 @@ export default function ChatWindow() {
         }
     };
 
+    const handleFeedback = async (messageId: string, feedbackType: 'like' | 'dislike') => {
+        try {
+            // Update message with feedback
+            setMessages(prevMessages =>
+                prevMessages.map(msg =>
+                    msg.id === messageId ? { ...msg, feedback: feedbackType } : msg
+                )
+            );
+
+            // Find the message to get additional data
+            const message = messages.find(m => m.id === messageId);
+
+            // Send feedback to API
+            const response = await fetch('/api/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    message_id: messageId,
+                    bot_response: message?.text,
+                    feedback_type: feedbackType,
+                    intent: message?.intent,
+                    confidence: message?.confidence
+                })
+            });
+
+            if (!response.ok) {
+                console.error('Failed to save feedback');
+            }
+        } catch (error) {
+            console.error('Error sending feedback:', error);
+        }
+    };
+
     const formatMessage = (text: string) => {
         // Convert markdown-like formatting to HTML
         return text
@@ -304,6 +341,37 @@ export default function ChatWindow() {
                                                 </span>
                                             )}
                                         </span>
+                                        
+                                        {/* Feedback buttons for bot messages */}
+                                        {message.sender === 'bot' && (
+                                            <div className="flex items-center space-x-2">
+                                                <button
+                                                    onClick={() => handleFeedback(message.id, 'like')}
+                                                    className={`p-1.5 rounded transition-all duration-200 ${
+                                                        message.feedback === 'like'
+                                                            ? 'bg-green-100 text-green-600'
+                                                            : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
+                                                    }`}
+                                                    title="This answer was helpful"
+                                                    aria-label="Like"
+                                                >
+                                                    <ThumbsUp className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleFeedback(message.id, 'dislike')}
+                                                    className={`p-1.5 rounded transition-all duration-200 ${
+                                                        message.feedback === 'dislike'
+                                                            ? 'bg-red-100 text-red-600'
+                                                            : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
+                                                    }`}
+                                                    title="This answer was not helpful"
+                                                    aria-label="Dislike"
+                                                >
+                                                    <ThumbsDown className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        )}
+                                        
                                         {message.intent && message.sender === 'bot' && (
                                             <span className={`text-xs px-3 py-1 rounded-full font-semibold shadow-sm ${getIntentColor(message.intent)}`}>
                                                 {getIntentLabel(message.intent)}
