@@ -25,6 +25,10 @@ interface ChatResponse {
     suggestions?: string[];
     followUpQuestions?: string[];
     metadata?: any;
+    conversationContext?: {
+        hasHistory?: boolean;
+        messageCount?: number;
+    };
 }
 
 interface TypingIndicator {
