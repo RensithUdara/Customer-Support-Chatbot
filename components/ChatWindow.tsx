@@ -317,8 +317,8 @@ export default function ChatWindow() {
                     >
                         <div
                             className={`max-w-[85%] relative group ${message.sender === 'user'
-                                    ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-200 rounded-t-2xl rounded-bl-2xl rounded-br-sm'
-                                    : 'bg-white text-gray-800 shadow-lg shadow-gray-200 border border-gray-100 rounded-t-2xl rounded-br-2xl rounded-bl-sm'
+                                ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-200 rounded-t-2xl rounded-bl-2xl rounded-br-sm'
+                                : 'bg-white text-gray-800 shadow-lg shadow-gray-200 border border-gray-100 rounded-t-2xl rounded-br-2xl rounded-bl-sm'
                                 } transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl`}
                         >
                             <div className="p-4">
@@ -396,11 +396,10 @@ export default function ChatWindow() {
                                                 <div className="flex items-center space-x-2">
                                                     <button
                                                         onClick={() => handleFeedback(message.id, 'like')}
-                                                        className={`p-1.5 rounded transition-all duration-200 ${
-                                                            message.feedback === 'like'
+                                                        className={`p-1.5 rounded transition-all duration-200 ${message.feedback === 'like'
                                                                 ? 'bg-green-100 text-green-600'
                                                                 : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
-                                                        }`}
+                                                            }`}
                                                         title="This answer was helpful"
                                                         aria-label="Like"
                                                     >
@@ -408,11 +407,10 @@ export default function ChatWindow() {
                                                     </button>
                                                     <button
                                                         onClick={() => handleFeedback(message.id, 'dislike')}
-                                                        className={`p-1.5 rounded transition-all duration-200 ${
-                                                            message.feedback === 'dislike'
+                                                        className={`p-1.5 rounded transition-all duration-200 ${message.feedback === 'dislike'
                                                                 ? 'bg-red-100 text-red-600'
                                                                 : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
-                                                        }`}
+                                                            }`}
                                                         title="This answer was not helpful"
                                                         aria-label="Dislike"
                                                     >
