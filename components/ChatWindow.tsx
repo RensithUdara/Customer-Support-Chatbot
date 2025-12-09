@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Loader2, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Send, Bot, User, Loader2, ThumbsUp, ThumbsDown, Mic, MicOff } from 'lucide-react';
 
 interface Message {
     id: string;
@@ -45,8 +45,11 @@ export default function ChatWindow() {
     const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
     const [conversationContext, setConversationContext] = useState<any>({});
     const [userPreferences, setUserPreferences] = useState({ responseStyle: 'friendly', technicalLevel: 'basic' });
+    const [isListening, setIsListening] = useState(false);
+    const [voiceSupported, setVoiceSupported] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
+    const recognitionRef = useRef<any>(null);
 
     // Auto-scroll to bottom when new messages are added
     const scrollToBottom = () => {
@@ -56,6 +59,59 @@ export default function ChatWindow() {
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    // Initialize voice recognition
+    useEffect(() => {
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            setVoiceSupported(true);
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.language = 'en-US';
+
+            recognition.onstart = () => {
+                setIsListening(true);
+            };
+
+            recognition.onend = () => {
+                setIsListening(false);
+            };
+
+            recognition.onresult = (event: any) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                if (transcript) {
+                    setInputValue(transcript);
+                    // Auto-send the voice input after a short delay
+                    setTimeout(() => {
+                        sendMessage(transcript);
+                    }, 500);
+                }
+            };
+
+            recognition.onerror = (event: any) => {
+                console.error('Speech recognition error:', event.error);
+                setIsListening(false);
+            };
+
+            recognitionRef.current = recognition;
+        }
+    }, []);
+
+    const toggleVoiceInput = () => {
+        if (!recognitionRef.current) return;
+
+        if (isListening) {
+            recognitionRef.current.stop();
+            setIsListening(false);
+        } else {
+            setInputValue('');
+            recognitionRef.current.start();
+        }
+    };
 
     // Initialize with welcome message
     useEffect(() => {
@@ -417,8 +473,22 @@ export default function ChatWindow() {
                             disabled={isLoading}
                             rows={1}
                         />
-                        <div className="absolute right-3 top-3 text-gray-400">
+                        <div className="absolute right-3 top-3 text-gray-400 flex items-center space-x-2">
                             <span className="text-sm">✨</span>
+                            {voiceSupported && (
+                                <button
+                                    onClick={toggleVoiceInput}
+                                    className={`p-2 rounded-lg transition-all duration-200 ${
+                                        isListening
+                                            ? 'bg-red-100 text-red-600 animate-pulse'
+                                            : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
+                                    }`}
+                                    title={isListening ? 'Stop listening' : 'Start voice input'}
+                                    aria-label={isListening ? 'Stop listening' : 'Start voice input'}
+                                >
+                                    {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                                </button>
+                            )}
                         </div>
                     </div>
                     <button
