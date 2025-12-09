@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Loader2, Minimize2, ExternalLink } from 'lucide-react';
+import { Send, Bot, User, Loader2, Minimize2, ExternalLink, ThumbsUp, ThumbsDown } from 'lucide-react';
 import Link from 'next/link';
 import { useChatContext } from './ChatContext';
 
@@ -16,6 +16,7 @@ const ChatPopup: React.FC = () => {
     const { isPopupOpen, setIsPopupOpen, messages, setMessages, sessionId } = useChatContext();
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [messageFeedback, setMessageFeedback] = useState<{[key: string]: 'like' | 'dislike'}>({});
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll to bottom when new messages are added
@@ -103,6 +104,41 @@ const ChatPopup: React.FC = () => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             sendMessage();
+        }
+    };
+
+    const handleFeedback = async (messageId: string, feedbackType: 'like' | 'dislike') => {
+        try {
+            // Update local state
+            setMessageFeedback(prev => ({
+                ...prev,
+                [messageId]: prev[messageId] === feedbackType ? undefined : feedbackType
+            }));
+
+            // Get message details
+            const message = messages.find(m => m.id === messageId);
+
+            // Send feedback to API
+            const response = await fetch('/api/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    message_id: messageId,
+                    bot_response: message?.text,
+                    feedback_type: feedbackType,
+                    intent: message?.intent,
+                    confidence: message?.confidence
+                })
+            });
+
+            if (!response.ok) {
+                console.error('Failed to save feedback');
+            }
+        } catch (error) {
+            console.error('Error sending feedback:', error);
         }
     };
 
