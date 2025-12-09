@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Loader2, Minimize2, ExternalLink, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Send, Bot, User, Loader2, Minimize2, ExternalLink, ThumbsUp, ThumbsDown, Mic, MicOff } from 'lucide-react';
 import Link from 'next/link';
 import { useChatContext } from './ChatContext';
 
@@ -17,7 +17,10 @@ const ChatPopup: React.FC = () => {
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [messageFeedback, setMessageFeedback] = useState<{ [key: string]: 'like' | 'dislike' }>({});
+    const [isListening, setIsListening] = useState(false);
+    const [voiceSupported, setVoiceSupported] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const recognitionRef = useRef<any>(null);
 
     // Auto-scroll to bottom when new messages are added
     const scrollToBottom = () => {
@@ -27,6 +30,69 @@ const ChatPopup: React.FC = () => {
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    // Initialize voice recognition
+    useEffect(() => {
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            setVoiceSupported(true);
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.language = 'en-US';
+
+            recognition.onstart = () => {
+                setIsListening(true);
+            };
+
+            recognition.onend = () => {
+                setIsListening(false);
+            };
+
+            recognition.onresult = (event: any) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                if (transcript) {
+                    setInputValue(transcript);
+                    // Auto-send the voice input after a short delay
+                    setTimeout(() => {
+                        // Set inputValue and trigger send message
+                        const newInputValue = transcript;
+                        // Create a user message directly
+                        const userMessage = {
+                            id: Date.now().toString(),
+                            text: transcript,
+                            sender: 'user' as const,
+                            timestamp: new Date()
+                        };
+                        setMessages((prev: any) => [...prev, userMessage]);
+                        setInputValue('');
+                    }, 500);
+                }
+            };
+
+            recognition.onerror = (event: any) => {
+                console.error('Speech recognition error:', event.error);
+                setIsListening(false);
+            };
+
+            recognitionRef.current = recognition;
+        }
+    }, []);
+
+    const toggleVoiceInput = () => {
+        if (!recognitionRef.current) return;
+
+        if (isListening) {
+            recognitionRef.current.stop();
+            setIsListening(false);
+        } else {
+            setInputValue('');
+            recognitionRef.current.start();
+        }
+    };
 
     // Initialize with welcome message when popup first opens
     useEffect(() => {
@@ -253,13 +319,13 @@ const ChatPopup: React.FC = () => {
                 {/* Input Area */}
                 <div className="border-t border-gray-200 p-3 bg-white">
                     <div className="flex items-end space-x-2">
-                        <div className="flex-1">
+                        <div className="flex-1 relative">
                             <textarea
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyPress={handleKeyPress}
                                 placeholder="Type your message..."
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900 placeholder-gray-500"
+                                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900 placeholder-gray-500"
                                 rows={1}
                                 style={{
                                     minHeight: '36px',
@@ -267,6 +333,19 @@ const ChatPopup: React.FC = () => {
                                 }}
                                 disabled={isLoading}
                             />
+                            {voiceSupported && (
+                                <button
+                                    onClick={toggleVoiceInput}
+                                    className={`absolute right-2 top-2 p-1.5 rounded transition-all duration-200 ${isListening
+                                            ? 'bg-red-100 text-red-600 animate-pulse'
+                                            : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
+                                        }`}
+                                    title={isListening ? 'Stop listening' : 'Start voice input'}
+                                    aria-label={isListening ? 'Stop listening' : 'Start voice input'}
+                                >
+                                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                                </button>
+                            )}
                         </div>
                         <button
                             onClick={sendMessage}
