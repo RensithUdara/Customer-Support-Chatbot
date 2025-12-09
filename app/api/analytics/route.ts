@@ -44,14 +44,14 @@ export async function GET(request: NextRequest) {
                 SELECT COUNT(DISTINCT session_id) as total 
                 FROM conversations 
                 WHERE timestamp >= ?
-            `).get(startDate.toISOString());
+            `).get(startDate.toISOString()) as { total: number } | undefined;
 
             // Total messages
             const totalMessages = db.prepare(`
                 SELECT COUNT(*) as total 
                 FROM conversations 
                 WHERE timestamp >= ?
-            `).get(startDate.toISOString());
+            `).get(startDate.toISOString()) as { total: number } | undefined;
 
             // Average conversation length
             const avgConversationLength = db.prepare(`
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
                     WHERE timestamp >= ?
                     GROUP BY session_id
                 )
-            `).get(startDate.toISOString());
+            `).get(startDate.toISOString()) as { avg_length: number } | undefined;
 
             analytics.overview = {
                 totalConversations: totalConversations?.total || 0,
