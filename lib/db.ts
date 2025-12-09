@@ -150,6 +150,23 @@ export const initDatabase = () => {
     )
   `);
 
+  // Create feedback table for chatbot responses
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS feedback (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      session_id TEXT NOT NULL,
+      message_id TEXT NOT NULL,
+      bot_response TEXT,
+      feedback_type TEXT NOT NULL,
+      feedback_rating INTEGER,
+      user_comment TEXT,
+      intent TEXT,
+      confidence REAL,
+      timestamp TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   // Create promotions table
   db.exec(`
     CREATE TABLE IF NOT EXISTS promotions (
@@ -497,6 +514,133 @@ export const smartDatabaseQuery = (message: string) => {
 
   // Default: return general store info
   return { type: 'general_info', data: null };
+};
+
+// ============================================
+// Feedback Management Functions
+// ============================================
+
+export interface FeedbackData {
+  session_id: string;
+  message_id: string;
+  bot_response?: string;
+  feedback_type: 'like' | 'dislike';
+  feedback_rating?: number;
+  user_comment?: string;
+  intent?: string;
+  confidence?: number;
+}
+
+/**
+ * Save user feedback for a chatbot response
+ */
+export const saveFeedback = (feedback: FeedbackData): boolean => {
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO feedback (
+        session_id, 
+        message_id, 
+        bot_response, 
+        feedback_type, 
+        feedback_rating, 
+        user_comment, 
+        intent, 
+        confidence,
+        timestamp
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    const timestamp = new Date().toISOString();
+    stmt.run(
+      feedback.session_id,
+      feedback.message_id,
+      feedback.bot_response || null,
+      feedback.feedback_type,
+      feedback.feedback_rating || null,
+      feedback.user_comment || null,
+      feedback.intent || null,
+      feedback.confidence || null,
+      timestamp
+    );
+
+    return true;
+  } catch (error) {
+    console.error('Error saving feedback:', error);
+    return false;
+  }
+};
+
+/**
+ * Get feedback statistics for a session
+ */
+export const getFeedbackStats = (sessionId?: string) => {
+  try {
+    let query = 'SELECT feedback_type, COUNT(*) as count FROM feedback';
+    const params: any[] = [];
+
+    if (sessionId) {
+      query += ' WHERE session_id = ?';
+      params.push(sessionId);
+    }
+
+    query += ' GROUP BY feedback_type';
+
+    const stmt = db.prepare(query);
+    const results = stmt.all(...params) as any[];
+
+    const stats = {
+      likes: 0,
+      dislikes: 0,
+      total: 0
+    };
+
+    results.forEach((row: any) => {
+      if (row.feedback_type === 'like') {
+        stats.likes = row.count;
+      } else if (row.feedback_type === 'dislike') {
+        stats.dislikes = row.count;
+      }
+      stats.total += row.count;
+    });
+
+    return stats;
+  } catch (error) {
+    console.error('Error getting feedback stats:', error);
+    return { likes: 0, dislikes: 0, total: 0 };
+  }
+};
+
+/**
+ * Get all feedback for a session
+ */
+export const getSessionFeedback = (sessionId: string) => {
+  try {
+    const stmt = db.prepare(`
+      SELECT * FROM feedback 
+      WHERE session_id = ? 
+      ORDER BY created_at DESC
+    `);
+    return stmt.all(sessionId);
+  } catch (error) {
+    console.error('Error getting session feedback:', error);
+    return [];
+  }
+};
+
+/**
+ * Get feedback for a specific message
+ */
+export const getMessageFeedback = (messageId: string) => {
+  try {
+    const stmt = db.prepare(`
+      SELECT * FROM feedback 
+      WHERE message_id = ?
+    `);
+    return stmt.get(messageId);
+  } catch (error) {
+    console.error('Error getting message feedback:', error);
+    return null;
+  }
 };
 
 // Initialize database on module load
