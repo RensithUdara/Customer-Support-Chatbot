@@ -699,11 +699,11 @@ export const getOverallFeedbackStats = () => {
       FROM feedback_summary
     `);
     const result = stmt.get() as any;
-    
+
     const totalLikes = result.total_likes || 0;
     const totalDislikes = result.total_dislikes || 0;
     const totalFeedback = result.total_feedback || 0;
-    
+
     return {
       total_likes: totalLikes,
       total_dislikes: totalDislikes,
