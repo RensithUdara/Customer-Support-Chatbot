@@ -254,25 +254,70 @@ const ChatPopup: React.FC = () => {
                                         {message.text}
                                     </p>
                                     {message.sender === 'bot' && (
-                                        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-200">
-                                            <button
-                                                onClick={() => handleFeedback(message.id, 'like')}
-                                                className={`p-1 rounded hover:bg-green-100 transition-colors ${messageFeedback[message.id] === 'like'
-                                                    ? 'bg-green-100 text-green-600'
-                                                    : 'text-gray-400 hover:text-green-600'
-                                                    }`}
-                                            >
-                                                <ThumbsUp className="w-3 h-3" />
-                                            </button>
-                                            <button
-                                                onClick={() => handleFeedback(message.id, 'dislike')}
-                                                className={`p-1 rounded hover:bg-red-100 transition-colors ${messageFeedback[message.id] === 'dislike'
-                                                    ? 'bg-red-100 text-red-600'
-                                                    : 'text-gray-400 hover:text-red-600'
-                                                    }`}
-                                            >
-                                                <ThumbsDown className="w-3 h-3" />
-                                            </button>
+                                        <div className="flex flex-col items-start gap-2 mt-2 pt-2 border-t border-gray-200">
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() => handleFeedback(message.id, 'like')}
+                                                    className={`p-1 rounded hover:bg-green-100 transition-colors ${messageFeedback[message.id] === 'like'
+                                                        ? 'bg-green-100 text-green-600'
+                                                        : 'text-gray-400 hover:text-green-600'
+                                                        }`}
+                                                >
+                                                    <ThumbsUp className="w-3 h-3" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleFeedback(message.id, 'dislike')}
+                                                    className={`p-1 rounded hover:bg-red-100 transition-colors ${messageFeedback[message.id] === 'dislike'
+                                                        ? 'bg-red-100 text-red-600'
+                                                        : 'text-gray-400 hover:text-red-600'
+                                                        }`}
+                                                >
+                                                    <ThumbsDown className="w-3 h-3" />
+                                                </button>
+                                            </div>
+
+                                            {/* 5-star rating prompt */}
+                                            {messageRatingPrompt[message.id] && !messageRating[message.id] && (
+                                                <div className="flex items-center gap-1.5 bg-blue-50 px-2 py-1.5 rounded text-xs">
+                                                    <span className="text-gray-600">Rate:</span>
+                                                    <div className="flex gap-0.5">
+                                                        {[1, 2, 3, 4, 5].map(star => (
+                                                            <button
+                                                                key={star}
+                                                                onClick={() => handleRating(message.id, star)}
+                                                                className="transition-transform hover:scale-110"
+                                                                title={`${star} star${star !== 1 ? 's' : ''}`}
+                                                            >
+                                                                <Star
+                                                                    className="w-3 h-3 cursor-pointer"
+                                                                    fill="#fbbf24"
+                                                                    color="#fbbf24"
+                                                                />
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                    <button
+                                                        onClick={() => skipRating(message.id)}
+                                                        className="ml-1 text-xs text-gray-500 hover:text-gray-700 underline"
+                                                    >
+                                                        Skip
+                                                    </button>
+                                                </div>
+                                            )}
+
+                                            {/* Show selected rating */}
+                                            {messageRating[message.id] && (
+                                                <div className="flex items-center gap-0.5 text-amber-600">
+                                                    {[1, 2, 3, 4, 5].map(star => (
+                                                        <Star
+                                                            key={star}
+                                                            className="w-2.5 h-2.5"
+                                                            fill={star <= messageRating[message.id] ? '#fbbf24' : '#e5e7eb'}
+                                                            color={star <= messageRating[message.id] ? '#fbbf24' : '#e5e7eb'}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
