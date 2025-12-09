@@ -328,8 +328,8 @@ export default function ChatAnalyticsDashboard() {
                                         <Star
                                             key={star}
                                             className={`w-6 h-6 ${star <= Math.round(analyticsData.userSatisfaction.overallRating)
-                                                    ? 'text-yellow-400 fill-current'
-                                                    : 'text-gray-300'
+                                                ? 'text-yellow-400 fill-current'
+                                                : 'text-gray-300'
                                                 }`}
                                         />
                                     ))}
