@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Loader2, ThumbsUp, ThumbsDown, Star } from 'lucide-react';
+import { Send, Bot, User, Loader2, ThumbsUp, ThumbsDown } from 'lucide-react';
 
 interface Message {
     id: string;
@@ -15,8 +15,6 @@ interface Message {
     isTyping?: boolean;
     metadata?: any;
     feedback?: 'like' | 'dislike' | null;
-    rating?: number | null;
-    ratingPrompt?: boolean;
 }
 
 interface ChatResponse {
@@ -169,17 +167,14 @@ export default function ChatWindow() {
 
     const handleFeedback = async (messageId: string, feedbackType: 'like' | 'dislike') => {
         try {
-            // Update message with feedback and show rating prompt
             setMessages(prevMessages =>
                 prevMessages.map(msg =>
-                    msg.id === messageId ? { ...msg, feedback: feedbackType, ratingPrompt: true } : msg
+                    msg.id === messageId ? { ...msg, feedback: feedbackType } : msg
                 )
             );
 
-            // Find the message to get additional data
             const message = messages.find(m => m.id === messageId);
 
-            // Send feedback to API (without rating initially)
             const response = await fetch('/api/feedback', {
                 method: 'POST',
                 headers: {
@@ -191,8 +186,7 @@ export default function ChatWindow() {
                     bot_response: message?.text,
                     feedback_type: feedbackType,
                     intent: message?.intent,
-                    confidence: message?.confidence,
-                    feedback_rating: null
+                    confidence: message?.confidence
                 })
             });
 
@@ -202,52 +196,6 @@ export default function ChatWindow() {
         } catch (error) {
             console.error('Error sending feedback:', error);
         }
-    };
-
-    const handleRating = async (messageId: string, rating: number) => {
-        try {
-            // Update message with rating
-            setMessages(prevMessages =>
-                prevMessages.map(msg =>
-                    msg.id === messageId ? { ...msg, rating, ratingPrompt: false } : msg
-                )
-            );
-
-            // Find the message to get additional data
-            const message = messages.find(m => m.id === messageId);
-
-            // Send rating to API
-            const response = await fetch('/api/feedback', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    session_id: sessionId,
-                    message_id: messageId,
-                    bot_response: message?.text,
-                    feedback_type: message?.feedback,
-                    intent: message?.intent,
-                    confidence: message?.confidence,
-                    feedback_rating: rating
-                })
-            });
-
-            if (!response.ok) {
-                console.error('Failed to save rating');
-            }
-        } catch (error) {
-            console.error('Error sending rating:', error);
-        }
-    };
-
-    const skipRating = (messageId: string) => {
-        // Hide rating prompt without saving rating
-        setMessages(prevMessages =>
-            prevMessages.map(msg =>
-                msg.id === messageId ? { ...msg, ratingPrompt: false } : msg
-            )
-        );
     };
 
     const formatMessage = (text: string) => {
@@ -397,8 +345,8 @@ export default function ChatWindow() {
                                                     <button
                                                         onClick={() => handleFeedback(message.id, 'like')}
                                                         className={`p-1.5 rounded transition-all duration-200 ${message.feedback === 'like'
-                                                            ? 'bg-green-100 text-green-600'
-                                                            : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
+                                                                ? 'bg-green-100 text-green-600'
+                                                                : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
                                                             }`}
                                                         title="This answer was helpful"
                                                         aria-label="Like"
@@ -408,8 +356,8 @@ export default function ChatWindow() {
                                                     <button
                                                         onClick={() => handleFeedback(message.id, 'dislike')}
                                                         className={`p-1.5 rounded transition-all duration-200 ${message.feedback === 'dislike'
-                                                            ? 'bg-red-100 text-red-600'
-                                                            : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
+                                                                ? 'bg-red-100 text-red-600'
+                                                                : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
                                                             }`}
                                                         title="This answer was not helpful"
                                                         aria-label="Dislike"
