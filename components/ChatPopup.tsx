@@ -129,6 +129,40 @@ const ChatPopup: React.FC = () => {
                     message_id: messageId,
                     bot_response: message?.text,
                     feedback_type: feedbackType,
+                    intent: message?.intent
+                })
+            });
+
+            if (!response.ok) {
+                console.error('Failed to save feedback');
+            }
+        } catch (error) {
+            console.error('Error sending feedback:', error);
+        }
+    };
+
+    const handleFeedback = async (messageId: string, feedbackType: 'like' | 'dislike') => {
+        try {
+            // Update local state
+            setMessageFeedback(prev => ({
+                ...prev,
+                [messageId]: prev[messageId] === feedbackType ? undefined : feedbackType
+            }));
+
+            // Get message details
+            const message = messages.find(m => m.id === messageId);
+
+            // Send feedback to API
+            const response = await fetch('/api/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    message_id: messageId,
+                    bot_response: message?.text,
+                    feedback_type: feedbackType,
                     intent: message?.intent,
                     confidence: message?.confidence
                 })
