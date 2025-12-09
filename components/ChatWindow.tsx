@@ -432,8 +432,8 @@ export default function ChatWindow() {
                                                                 >
                                                                     <Star
                                                                         className="w-4 h-4 cursor-pointer"
-                                                                        fill="#fbbf24"
-                                                                        color="#fbbf24"
+                                                                        fill="none"
+                                                                        color="#d4d4d8"
                                                                     />
                                                                 </button>
                                                             ))}
