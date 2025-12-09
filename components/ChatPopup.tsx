@@ -336,11 +336,10 @@ const ChatPopup: React.FC = () => {
                             {voiceSupported && (
                                 <button
                                     onClick={toggleVoiceInput}
-                                    className={`absolute right-2 top-2 p-1.5 rounded transition-all duration-200 ${
-                                        isListening
+                                    className={`absolute right-2 top-2 p-1.5 rounded transition-all duration-200 ${isListening
                                             ? 'bg-red-100 text-red-600 animate-pulse'
                                             : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
-                                    }`}
+                                        }`}
                                     title={isListening ? 'Stop listening' : 'Start voice input'}
                                     aria-label={isListening ? 'Stop listening' : 'Start voice input'}
                                 >
