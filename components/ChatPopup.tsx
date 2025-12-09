@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Loader2, Minimize2, ExternalLink, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Send, Bot, User, Loader2, Minimize2, ExternalLink, ThumbsUp, ThumbsDown, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useChatContext } from './ChatContext';
 
@@ -17,6 +17,8 @@ const ChatPopup: React.FC = () => {
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [messageFeedback, setMessageFeedback] = useState<{ [key: string]: 'like' | 'dislike' }>({});
+    const [messageRating, setMessageRating] = useState<{ [key: string]: number }>({});
+    const [messageRatingPrompt, setMessageRatingPrompt] = useState<{ [key: string]: boolean }>({});
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll to bottom when new messages are added
@@ -109,16 +111,17 @@ const ChatPopup: React.FC = () => {
 
     const handleFeedback = async (messageId: string, feedbackType: 'like' | 'dislike') => {
         try {
-            // Update local state
+            // Update feedback and show rating prompt
             setMessageFeedback(prev => ({
                 ...prev,
                 [messageId]: prev[messageId] === feedbackType ? undefined : feedbackType
             }));
+            setMessageRatingPrompt(prev => ({ ...prev, [messageId]: true }));
 
             // Get message details
             const message = messages.find(m => m.id === messageId);
 
-            // Send feedback to API
+            // Send feedback to API (without rating initially)
             const response = await fetch('/api/feedback', {
                 method: 'POST',
                 headers: {
@@ -129,7 +132,8 @@ const ChatPopup: React.FC = () => {
                     message_id: messageId,
                     bot_response: message?.text,
                     feedback_type: feedbackType,
-                    intent: message?.intent
+                    intent: message?.intent,
+                    feedback_rating: null
                 })
             });
 
@@ -139,6 +143,44 @@ const ChatPopup: React.FC = () => {
         } catch (error) {
             console.error('Error sending feedback:', error);
         }
+    };
+
+    const handleRating = async (messageId: string, rating: number) => {
+        try {
+            // Update rating state
+            setMessageRating(prev => ({ ...prev, [messageId]: rating }));
+            setMessageRatingPrompt(prev => ({ ...prev, [messageId]: false }));
+
+            // Get message details
+            const message = messages.find(m => m.id === messageId);
+
+            // Send rating to API
+            const response = await fetch('/api/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    message_id: messageId,
+                    bot_response: message?.text,
+                    feedback_type: messageFeedback[messageId],
+                    intent: message?.intent,
+                    feedback_rating: rating
+                })
+            });
+
+            if (!response.ok) {
+                console.error('Failed to save rating');
+            }
+        } catch (error) {
+            console.error('Error sending rating:', error);
+        }
+    };
+
+    const skipRating = (messageId: string) => {
+        // Hide rating prompt without saving rating
+        setMessageRatingPrompt(prev => ({ ...prev, [messageId]: false }));
     };
 
     if (!isPopupOpen) return null;
