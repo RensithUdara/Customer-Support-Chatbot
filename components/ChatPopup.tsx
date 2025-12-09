@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Loader2, Minimize2, ExternalLink, ThumbsUp, ThumbsDown, Star } from 'lucide-react';
+import { Send, Bot, User, Loader2, Minimize2, ExternalLink, ThumbsUp, ThumbsDown } from 'lucide-react';
 import Link from 'next/link';
 import { useChatContext } from './ChatContext';
 
@@ -17,8 +17,6 @@ const ChatPopup: React.FC = () => {
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [messageFeedback, setMessageFeedback] = useState<{ [key: string]: 'like' | 'dislike' }>({});
-    const [messageRating, setMessageRating] = useState<{ [key: string]: number }>({});
-    const [messageRatingPrompt, setMessageRatingPrompt] = useState<{ [key: string]: boolean }>({});
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll to bottom when new messages are added
@@ -111,17 +109,13 @@ const ChatPopup: React.FC = () => {
 
     const handleFeedback = async (messageId: string, feedbackType: 'like' | 'dislike') => {
         try {
-            // Update feedback and show rating prompt
             setMessageFeedback(prev => ({
                 ...prev,
-                [messageId]: prev[messageId] === feedbackType ? undefined : feedbackType
+                [messageId]: prev[messageId] === feedbackType ? (undefined as any) : feedbackType
             }));
-            setMessageRatingPrompt(prev => ({ ...prev, [messageId]: true }));
 
-            // Get message details
             const message = messages.find(m => m.id === messageId);
 
-            // Send feedback to API (without rating initially)
             const response = await fetch('/api/feedback', {
                 method: 'POST',
                 headers: {
@@ -132,8 +126,7 @@ const ChatPopup: React.FC = () => {
                     message_id: messageId,
                     bot_response: message?.text,
                     feedback_type: feedbackType,
-                    intent: message?.intent,
-                    feedback_rating: null
+                    intent: message?.intent
                 })
             });
 
@@ -143,44 +136,6 @@ const ChatPopup: React.FC = () => {
         } catch (error) {
             console.error('Error sending feedback:', error);
         }
-    };
-
-    const handleRating = async (messageId: string, rating: number) => {
-        try {
-            // Update rating state
-            setMessageRating(prev => ({ ...prev, [messageId]: rating }));
-            setMessageRatingPrompt(prev => ({ ...prev, [messageId]: false }));
-
-            // Get message details
-            const message = messages.find(m => m.id === messageId);
-
-            // Send rating to API
-            const response = await fetch('/api/feedback', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    session_id: sessionId,
-                    message_id: messageId,
-                    bot_response: message?.text,
-                    feedback_type: messageFeedback[messageId],
-                    intent: message?.intent,
-                    feedback_rating: rating
-                })
-            });
-
-            if (!response.ok) {
-                console.error('Failed to save rating');
-            }
-        } catch (error) {
-            console.error('Error sending rating:', error);
-        }
-    };
-
-    const skipRating = (messageId: string) => {
-        // Hide rating prompt without saving rating
-        setMessageRatingPrompt(prev => ({ ...prev, [messageId]: false }));
     };
 
     if (!isPopupOpen) return null;
@@ -254,70 +209,25 @@ const ChatPopup: React.FC = () => {
                                         {message.text}
                                     </p>
                                     {message.sender === 'bot' && (
-                                        <div className="flex flex-col items-start gap-2 mt-2 pt-2 border-t border-gray-200">
-                                            <div className="flex items-center gap-2">
-                                                <button
-                                                    onClick={() => handleFeedback(message.id, 'like')}
-                                                    className={`p-1 rounded hover:bg-green-100 transition-colors ${messageFeedback[message.id] === 'like'
-                                                        ? 'bg-green-100 text-green-600'
-                                                        : 'text-gray-400 hover:text-green-600'
-                                                        }`}
-                                                >
-                                                    <ThumbsUp className="w-3 h-3" />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleFeedback(message.id, 'dislike')}
-                                                    className={`p-1 rounded hover:bg-red-100 transition-colors ${messageFeedback[message.id] === 'dislike'
-                                                        ? 'bg-red-100 text-red-600'
-                                                        : 'text-gray-400 hover:text-red-600'
-                                                        }`}
-                                                >
-                                                    <ThumbsDown className="w-3 h-3" />
-                                                </button>
-                                            </div>
-
-                                            {/* 5-star rating prompt */}
-                                            {messageRatingPrompt[message.id] && !messageRating[message.id] && (
-                                                <div className="flex items-center gap-1.5 bg-blue-50 px-2 py-1.5 rounded text-xs">
-                                                    <span className="text-gray-600">Rate:</span>
-                                                    <div className="flex gap-0.5">
-                                                        {[1, 2, 3, 4, 5].map(star => (
-                                                            <button
-                                                                key={star}
-                                                                onClick={() => handleRating(message.id, star)}
-                                                                className="transition-transform hover:scale-110"
-                                                                title={`${star} star${star !== 1 ? 's' : ''}`}
-                                                            >
-                                                                <Star
-                                                                    className="w-3 h-3 cursor-pointer"
-                                                                    fill="none"
-                                                                    color="#d4d4d8"
-                                                                />
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                    <button
-                                                        onClick={() => skipRating(message.id)}
-                                                        className="ml-1 text-xs text-gray-500 hover:text-gray-700 underline"
-                                                    >
-                                                        Skip
-                                                    </button>
-                                                </div>
-                                            )}
-
-                                            {/* Show selected rating */}
-                                            {messageRating[message.id] && (
-                                                <div className="flex items-center gap-0.5 text-amber-600">
-                                                    {[1, 2, 3, 4, 5].map(star => (
-                                                        <Star
-                                                            key={star}
-                                                            className="w-2.5 h-2.5"
-                                                            fill={star <= messageRating[message.id] ? '#fbbf24' : '#e5e7eb'}
-                                                            color={star <= messageRating[message.id] ? '#fbbf24' : '#e5e7eb'}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            )}
+                                        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-200">
+                                            <button
+                                                onClick={() => handleFeedback(message.id, 'like')}
+                                                className={`p-1 rounded hover:bg-green-100 transition-colors ${messageFeedback[message.id] === 'like'
+                                                    ? 'bg-green-100 text-green-600'
+                                                    : 'text-gray-400 hover:text-green-600'
+                                                    }`}
+                                            >
+                                                <ThumbsUp className="w-3 h-3" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleFeedback(message.id, 'dislike')}
+                                                className={`p-1 rounded hover:bg-red-100 transition-colors ${messageFeedback[message.id] === 'dislike'
+                                                    ? 'bg-red-100 text-red-600'
+                                                    : 'text-gray-400 hover:text-red-600'
+                                                    }`}
+                                            >
+                                                <ThumbsDown className="w-3 h-3" />
+                                            </button>
                                         </div>
                                     )}
                                 </div>
