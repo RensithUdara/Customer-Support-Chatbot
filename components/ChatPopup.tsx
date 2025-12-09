@@ -183,7 +183,7 @@ const ChatPopup: React.FC = () => {
             {/* Chat Popup Container */}
             <div className="w-96 h-[600px] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
                 {/* Header - Match main chat design */}
-                <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-4 flex items-center justify-between">
+                <div className="bg-linear-to-r from-blue-600 to-blue-700 px-4 py-4 flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                             <Bot className="w-6 h-6 text-white" />
@@ -246,6 +246,30 @@ const ChatPopup: React.FC = () => {
                                     <p className="text-sm whitespace-pre-wrap leading-relaxed">
                                         {message.text}
                                     </p>
+                                    {message.sender === 'bot' && (
+                                        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-200">
+                                            <button
+                                                onClick={() => handleFeedback(message.id, 'like')}
+                                                className={`p-1 rounded hover:bg-green-100 transition-colors ${
+                                                    messageFeedback[message.id] === 'like'
+                                                        ? 'bg-green-100 text-green-600'
+                                                        : 'text-gray-400 hover:text-green-600'
+                                                }`}
+                                            >
+                                                <ThumbsUp className="w-3 h-3" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleFeedback(message.id, 'dislike')}
+                                                className={`p-1 rounded hover:bg-red-100 transition-colors ${
+                                                    messageFeedback[message.id] === 'dislike'
+                                                        ? 'bg-red-100 text-red-600'
+                                                        : 'text-gray-400 hover:text-red-600'
+                                                }`}
+                                            >
+                                                <ThumbsDown className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -297,7 +321,7 @@ const ChatPopup: React.FC = () => {
                     <div className="flex flex-wrap gap-2 mt-3">
                         <button
                             onClick={() => setInputValue('Where is my order 1015?')}
-                            className="flex items-center bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-200 shadow-sm"
+                            className="flex items-center bg-linear-to-r from-orange-500 to-orange-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-200 shadow-sm"
                             disabled={isLoading}
                         >
                             <span className="mr-1">📦</span>
@@ -305,7 +329,7 @@ const ChatPopup: React.FC = () => {
                         </button>
                         <button
                             onClick={() => setInputValue('What are your delivery times?')}
-                            className="flex items-center bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200 shadow-sm"
+                            className="flex items-center bg-linear-to-r from-green-500 to-green-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200 shadow-sm"
                             disabled={isLoading}
                         >
                             <span className="mr-1">🚚</span>
@@ -313,7 +337,7 @@ const ChatPopup: React.FC = () => {
                         </button>
                         <button
                             onClick={() => setInputValue('Do you offer EMI plans?')}
-                            className="flex items-center bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-sm"
+                            className="flex items-center bg-linear-to-r from-blue-500 to-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-sm"
                             disabled={isLoading}
                         >
                             <span className="mr-1">💳</span>
@@ -321,7 +345,7 @@ const ChatPopup: React.FC = () => {
                         </button>
                         <button
                             onClick={() => setInputValue('Best laptop under 200000')}
-                            className="flex items-center bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-purple-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-sm"
+                            className="flex items-center bg-linear-to-r from-purple-500 to-purple-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-purple-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-sm"
                             disabled={isLoading}
                         >
                             <span className="mr-1">💻</span>
@@ -329,7 +353,7 @@ const ChatPopup: React.FC = () => {
                         </button>
                         <button
                             onClick={() => setInputValue('How do I return an item?')}
-                            className="flex items-center bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all duration-200 shadow-sm"
+                            className="flex items-center bg-linear-to-r from-red-500 to-red-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all duration-200 shadow-sm"
                             disabled={isLoading}
                         >
                             <span className="mr-1">📋</span>
