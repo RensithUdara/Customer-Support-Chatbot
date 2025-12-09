@@ -141,41 +141,6 @@ const ChatPopup: React.FC = () => {
         }
     };
 
-    const handleFeedback = async (messageId: string, feedbackType: 'like' | 'dislike') => {
-        try {
-            // Update local state
-            setMessageFeedback(prev => ({
-                ...prev,
-                [messageId]: prev[messageId] === feedbackType ? undefined : feedbackType
-            }));
-
-            // Get message details
-            const message = messages.find(m => m.id === messageId);
-
-            // Send feedback to API
-            const response = await fetch('/api/feedback', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    session_id: sessionId,
-                    message_id: messageId,
-                    bot_response: message?.text,
-                    feedback_type: feedbackType,
-                    intent: message?.intent,
-                    confidence: message?.confidence
-                })
-            });
-
-            if (!response.ok) {
-                console.error('Failed to save feedback');
-            }
-        } catch (error) {
-            console.error('Error sending feedback:', error);
-        }
-    };
-
     if (!isPopupOpen) return null;
 
     return (
@@ -250,21 +215,19 @@ const ChatPopup: React.FC = () => {
                                         <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-200">
                                             <button
                                                 onClick={() => handleFeedback(message.id, 'like')}
-                                                className={`p-1 rounded hover:bg-green-100 transition-colors ${
-                                                    messageFeedback[message.id] === 'like'
-                                                        ? 'bg-green-100 text-green-600'
-                                                        : 'text-gray-400 hover:text-green-600'
-                                                }`}
+                                                className={`p-1 rounded hover:bg-green-100 transition-colors ${messageFeedback[message.id] === 'like'
+                                                    ? 'bg-green-100 text-green-600'
+                                                    : 'text-gray-400 hover:text-green-600'
+                                                    }`}
                                             >
                                                 <ThumbsUp className="w-3 h-3" />
                                             </button>
                                             <button
                                                 onClick={() => handleFeedback(message.id, 'dislike')}
-                                                className={`p-1 rounded hover:bg-red-100 transition-colors ${
-                                                    messageFeedback[message.id] === 'dislike'
-                                                        ? 'bg-red-100 text-red-600'
-                                                        : 'text-gray-400 hover:text-red-600'
-                                                }`}
+                                                className={`p-1 rounded hover:bg-red-100 transition-colors ${messageFeedback[message.id] === 'dislike'
+                                                    ? 'bg-red-100 text-red-600'
+                                                    : 'text-gray-400 hover:text-red-600'
+                                                    }`}
                                             >
                                                 <ThumbsDown className="w-3 h-3" />
                                             </button>
