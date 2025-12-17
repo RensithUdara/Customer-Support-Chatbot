@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
 
         // Get recent conversation history for context
         const conversationHistory = await getConversationHistory(sessionId, 6); // Last 6 messages
-        
+
         // Save user message to conversation history
         await saveConversation(sessionId, message, 'user');
 
