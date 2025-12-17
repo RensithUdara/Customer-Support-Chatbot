@@ -115,11 +115,20 @@ export const detectSmallTalk = (message: string): boolean => {
     return smallTalkKeywords.some(keyword => lowercaseMessage.includes(keyword));
 };
 
-// Order placement detection
+// Order placement detection - only for PLACING new orders, not checking existing ones
 export const detectOrderPlacement = (message: string): boolean => {
     const lowercaseMessage = message.toLowerCase();
-    const orderKeywords = ['place order', 'want to order', 'i want to buy', 'i would like to order', 'can i order', 'order', 'buy', 'purchase', 'checkout', 'make a purchase'];
-    return orderKeywords.some(keyword => lowercaseMessage.includes(keyword));
+    // Be specific - only trigger on phrases that clearly indicate placing a NEW order
+    const placeOrderKeywords = ['place order', 'want to order', 'i want to buy', 'i would like to order', 'can i order', 'i want to purchase', 'make a purchase', 'place a purchase', 'new order', 'ready to order'];
+    
+    // Exclude phrases that indicate checking existing orders
+    const excludeKeywords = ['where is', 'what is', 'status', 'track', 'when will', 'when is', 'how long'];
+    const isExcluded = excludeKeywords.some(keyword => lowercaseMessage.includes(keyword));
+    
+    // Only match if it has place/order/buy intent AND doesn't have tracking intent
+    const hasOrderIntent = placeOrderKeywords.some(keyword => lowercaseMessage.includes(keyword));
+    
+    return hasOrderIntent && !isExcluded;
 };
 
 // Extract name from message (e.g., "Hi, I'm John" or "My name is Sarah")
