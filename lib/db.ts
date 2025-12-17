@@ -794,6 +794,94 @@ export const getMessageFeedback = (messageId: string) => {
   }
 };
 
+// Save order to database
+export const saveOrder = (orderData: {
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  shippingAddress: string;
+  productName: string;
+  quantity: number;
+  paymentMethod: string;
+  deliveryMethod: string;
+}): { orderId: string; success: boolean } => {
+  try {
+    // Generate professional order ID: ORD-YYYYMMDD-XXXXX (where XXXXX is random)
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+    const randomNum = String(Math.floor(Math.random() * 100000)).padStart(5, '0');
+    const orderId = `ORD-${dateStr}-${randomNum}`;
+
+    // Generate tracking number
+    const trackingNumber = `TRK-${dateStr}-${String(Math.floor(Math.random() * 1000000)).padStart(6, '0')}`;
+
+    // Calculate estimated delivery based on delivery method
+    const deliveryDate = new Date(now);
+    if (orderData.deliveryMethod.includes('Standard')) {
+      deliveryDate.setDate(deliveryDate.getDate() + 6); // 5-7 days
+    } else if (orderData.deliveryMethod.includes('Express')) {
+      deliveryDate.setDate(deliveryDate.getDate() + 2); // 2-3 days
+    } else if (orderData.deliveryMethod.includes('Overnight')) {
+      deliveryDate.setDate(deliveryDate.getDate() + 1); // 1 day
+    }
+    const estimatedDelivery = deliveryDate.toISOString().slice(0, 10);
+
+    // Calculate total amount (using default pricing)
+    let totalAmount = 5000; // Base product price
+    if (orderData.deliveryMethod.includes('Standard')) {
+      totalAmount += 200;
+    } else if (orderData.deliveryMethod.includes('Express')) {
+      totalAmount += 500;
+    } else if (orderData.deliveryMethod.includes('Overnight')) {
+      totalAmount += 1000;
+    }
+    totalAmount *= orderData.quantity;
+
+    const stmt = db.prepare(`
+      INSERT INTO orders (
+        orderId,
+        customerName,
+        customerEmail,
+        customerPhone,
+        status,
+        orderDate,
+        totalAmount,
+        paymentMethod,
+        shippingAddress,
+        trackingNumber,
+        estimatedDelivery,
+        items
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(
+      orderId,
+      orderData.customerName,
+      orderData.customerEmail,
+      orderData.customerPhone,
+      'Processing',
+      now.toISOString(),
+      totalAmount,
+      orderData.paymentMethod,
+      orderData.shippingAddress,
+      trackingNumber,
+      estimatedDelivery,
+      JSON.stringify([{
+        name: orderData.productName,
+        quantity: orderData.quantity,
+        price: 5000,
+        category: 'Product'
+      }])
+    );
+
+    console.log(`Order saved: ${orderId}`);
+    return { orderId, success: true };
+  } catch (error) {
+    console.error('Error saving order:', error);
+    return { orderId: '', success: false };
+  }
+};
+
 // Initialize database on module load
 initDatabase();
 
