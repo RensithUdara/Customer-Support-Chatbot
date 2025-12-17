@@ -259,7 +259,7 @@ export async function POST(request: NextRequest) {
                     returnPolicyText += `A: ${faqResult.answer}\n`;
                 }
 
-                returnPolicyText += '\n💡 Need more help? Contact our support team!';
+                returnPolicyText += (userName ? `\n💡 ${userName}, need more help? Contact our support team!` : '\n💡 Need more help? Contact our support team!');
                 botReply = returnPolicyText;
                 break;
 
