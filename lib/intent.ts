@@ -309,19 +309,19 @@ export const detectIntent = (message: string): IntentResult => {
     );
 
     // Database query keywords (questions about data/information)
+    // IMPORTANT: More specific keywords that indicate actual data queries, not just FAQ questions
     const databaseQueryKeywords = [
-        'how many', 'what are', 'list all', 'show me', 'tell me about', 'information about',
-        'details about', 'all products', 'all orders', 'customer support', 'contact info',
-        'support topics', 'warranty', 'promotions', 'shipping zones', 'payment methods',
-        'available products', 'product categories', 'support contact', 'warranty policy',
-        'current promotions', 'active promotions', 'payment options', 'shipping areas',
-        'what payment', 'show payment', 'payment types', 'payment ways', 'ways to pay',
-        'show warranty', 'warranty info', 'show promotions', 'current offers',
-        'shipping options', 'delivery zones', 'support info', 'contact details',
-        'whatsapp support', 'phone support', 'email support', 'live chat', 'technical support',
-        'returns support', 'whatsapp contact', 'phone contact', 'email contact', 'chat support'
+        'how many', 'list all', 'show me all', 'tell me all', 'all products', 'all orders', 
+        'product categories', 'shipping zones', 'active promotions', 'current offers',
+        'shipping options', 'delivery zones', 'support topics', 'payment types', 'payment ways',
+        'product catalog', 'order statistics', 'store information'
     ];
-    const hasDatabaseQueryKeywords = databaseQueryKeywords.some(keyword => lowercaseMessage.includes(keyword));
+    
+    // Exclude FAQ-style questions from database queries
+    const faqQuestions = ['delivery times', 'return policy', 'warranty', 'payment method', 'delivery address', 'schedule delivery'];
+    const isFAQQuestion = faqQuestions.some(q => lowercaseMessage.includes(q));
+    
+    const hasDatabaseQueryKeywords = !isFAQQuestion && databaseQueryKeywords.some(keyword => lowercaseMessage.includes(keyword));
 
     // Policy/FAQ keywords
     const policyKeywords = ['return', 'refund', 'policy', 'shipping', 'delivery charge', 'cash on delivery', 'cod', 'warranty', 'exchange', 'payment', 'pay', 'emi', 'card', 'credit', 'debit', 'wallet', 'upi', 'invoice', 'fee', 'charge', 'secure', 'account', 'login', 'password', 'profile'];
