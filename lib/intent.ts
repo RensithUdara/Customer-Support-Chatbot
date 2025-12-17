@@ -149,7 +149,80 @@ export const extractNameFromMessage = (message: string): string | null => {
 
 // Rule-based intent detection
 export const detectIntent = (message: string): IntentResult => {
-    const lowercaseMessage = message.toLowerCase();
+    const lowercaseMessage = message.toLowerCase().trim();
+
+    // Check conversation patterns FIRST - these take priority over product/order queries
+    if (detectGreeting(message)) {
+        return {
+            intent: 'GREETING',
+            confidence: 0.95,
+            extractedData: {}
+        };
+    }
+
+    if (detectThanks(message)) {
+        return {
+            intent: 'GRATITUDE',
+            confidence: 0.95,
+            extractedData: {}
+        };
+    }
+
+    if (detectGoodbye(message)) {
+        return {
+            intent: 'GOODBYE',
+            confidence: 0.95,
+            extractedData: {}
+        };
+    }
+
+    if (detectHelpRequest(message)) {
+        return {
+            intent: 'HELP',
+            confidence: 0.9,
+            extractedData: {}
+        };
+    }
+
+    if (detectYes(message)) {
+        return {
+            intent: 'YES',
+            confidence: 0.9,
+            extractedData: {}
+        };
+    }
+
+    if (detectNo(message)) {
+        return {
+            intent: 'NO',
+            confidence: 0.9,
+            extractedData: {}
+        };
+    }
+
+    if (detectConfused(message)) {
+        return {
+            intent: 'CONFUSED',
+            confidence: 0.85,
+            extractedData: {}
+        };
+    }
+
+    if (detectApology(message)) {
+        return {
+            intent: 'APOLOGY',
+            confidence: 0.9,
+            extractedData: {}
+        };
+    }
+
+    if (detectSmallTalk(message)) {
+        return {
+            intent: 'SMALLTALK',
+            confidence: 0.8,
+            extractedData: {}
+        };
+    }
 
     // Extract numbers (potential order IDs)
     const numberMatch = message.match(/\b\d{4,6}\b/);
