@@ -50,6 +50,8 @@ export default function ChatWindow() {
     const [userName, setUserName] = useState<string | null>(null);
     const [hasGreeted, setHasGreeted] = useState(false);
     const [awaitingName, setAwaitingName] = useState(false);
+    const [orderStep, setOrderStep] = useState(0);
+    const [orderData, setOrderData] = useState<any>({});
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const recognitionRef = useRef<any>(null);
@@ -172,7 +174,9 @@ export default function ChatWindow() {
                 body: JSON.stringify({
                     message: textToSend,
                     sessionId,
-                    userName: userName
+                    userName: userName,
+                    orderStep: orderStep,
+                    orderData: orderData
                 })
             });
 
@@ -180,13 +184,21 @@ export default function ChatWindow() {
                 throw new Error('Failed to get response');
             }
 
-            const data: ChatResponse & { extractedName?: string } = await response.json();
+            const data: ChatResponse & { extractedName?: string; orderStep?: number; orderData?: any } = await response.json();
 
             // Extract name if provided by user
             if (data.extractedName && !userName) {
                 setUserName(data.extractedName);
                 setAwaitingName(false);
                 setHasGreeted(true);
+            }
+
+            // Update order step and data if in order placement flow
+            if (data.orderStep !== undefined) {
+                setOrderStep(data.orderStep);
+            }
+            if (data.orderData) {
+                setOrderData(data.orderData);
             }
 
             const botMessage: Message = {
