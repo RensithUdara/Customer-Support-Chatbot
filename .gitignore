@@ -32,7 +32,6 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 # Ignore local env files but allow committing the example file
-.env*
 !.env.example
 
 # vercel
@@ -55,3 +54,4 @@ test-*.js
 *_RESOLVED.md
 *_GUIDE.md
 PROJECT_*.md
+config.bat
