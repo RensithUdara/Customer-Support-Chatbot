@@ -47,6 +47,9 @@ export default function ChatWindow() {
     const [userPreferences, setUserPreferences] = useState({ responseStyle: 'friendly', technicalLevel: 'basic' });
     const [isListening, setIsListening] = useState(false);
     const [voiceSupported, setVoiceSupported] = useState(false);
+    const [userName, setUserName] = useState<string | null>(null);
+    const [hasGreeted, setHasGreeted] = useState(false);
+    const [awaitingName, setAwaitingName] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const recognitionRef = useRef<any>(null);
