@@ -116,8 +116,8 @@ export async function POST(request: NextRequest) {
                 confidence: 0.9,
                 extractedData: { orderStep }
             };
-        } else if (detectOrderPlacement(message)) {
-            // User initiated order placement
+        } else if (detectOrderPlacement(message) && orderStep === 0) {
+            // User explicitly initiated order placement (NOT when asking about existing orders)
             intentResult = {
                 intent: 'ORDER_PLACEMENT',
                 confidence: 0.95,
