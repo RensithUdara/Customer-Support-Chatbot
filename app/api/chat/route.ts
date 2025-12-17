@@ -470,6 +470,7 @@ export async function POST(request: NextRequest) {
             intent: intentResult.intent,
             confidence: intentResult.confidence,
             sessionId,
+            extractedName: extractedName, // Return extracted name if found
             suggestions: aiResponse?.suggestions || [],
             followUpQuestions: aiResponse?.followUpQuestions || [],
             metadata: aiResponse?.metadata || {
