@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { detectIntent, detectIntentWithContext, extractKeywords, detectGreeting, extractNameFromMessage, detectGratitude, detectGoodbye, detectHelpRequest, detectConfused, detectYes, detectNo, detectApology, detectSmallTalk, detectOrderPlacement } from '@/lib/intent';
-import { searchFAQs, getOrderById, searchProducts, saveConversation, getConversationHistory, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs, smartDatabaseQuery } from '@/lib/db';
+import { searchFAQs, getOrderById, searchProducts, saveConversation, getConversationHistory, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs, smartDatabaseQuery, saveOrder } from '@/lib/db';
 import { callLLM } from '@/lib/llm';
 
 // Type definitions for database entities
@@ -684,8 +684,20 @@ export async function POST(request: NextRequest) {
                     }
                 } else if (currentStep === 9) {
                     if (message.toLowerCase().includes('yes')) {
-                        const orderNumber = 2000 + Math.floor(Math.random() * 9000);
-                        botReply = `🎉 **ORDER CONFIRMED!**\n\n📦 **Order #${orderNumber}**\n✅ Status: Processing\n📧 Confirmation sent to **${newOrderData.email}**\n🚚 Delivery: **${newOrderData.deliveryMethod}**\n\nThank you! 🙏`;
+                        // Save order to database
+                        const orderResult = saveOrder({
+                            customerName: newOrderData.name || '',
+                            customerEmail: newOrderData.email || '',
+                            customerPhone: newOrderData.phone || '',
+                            shippingAddress: newOrderData.address || '',
+                            productName: newOrderData.productName || '',
+                            quantity: newOrderData.quantity || 1,
+                            paymentMethod: newOrderData.paymentMethod || '',
+                            deliveryMethod: newOrderData.deliveryMethod || ''
+                        });
+
+                        const orderId = orderResult.orderId;
+                        botReply = `🎉 **ORDER CONFIRMED!**\n\n📦 **Order #${orderId}**\n✅ Status: Processing\n📧 Confirmation sent to **${newOrderData.email}**\n🚚 Delivery: **${newOrderData.deliveryMethod}**\n\nThank you! 🙏`;
                         nextStep = 0;
                     } else {
                         botReply = `❌ Order cancelled.`;
