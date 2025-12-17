@@ -311,16 +311,16 @@ export const detectIntent = (message: string): IntentResult => {
     // Database query keywords (questions about data/information)
     // IMPORTANT: More specific keywords that indicate actual data queries, not just FAQ questions
     const databaseQueryKeywords = [
-        'how many', 'list all', 'show me all', 'tell me all', 'all products', 'all orders', 
+        'how many', 'list all', 'show me all', 'tell me all', 'all products', 'all orders',
         'product categories', 'shipping zones', 'active promotions', 'current offers',
         'shipping options', 'delivery zones', 'support topics', 'payment types', 'payment ways',
         'product catalog', 'order statistics', 'store information'
     ];
-    
+
     // Exclude FAQ-style questions from database queries
     const faqQuestions = ['delivery times', 'return policy', 'warranty', 'payment method', 'delivery address', 'schedule delivery'];
     const isFAQQuestion = faqQuestions.some(q => lowercaseMessage.includes(q));
-    
+
     const hasDatabaseQueryKeywords = !isFAQQuestion && databaseQueryKeywords.some(keyword => lowercaseMessage.includes(keyword));
 
     // Policy/FAQ keywords
