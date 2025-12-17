@@ -660,7 +660,7 @@ export async function POST(request: NextRequest) {
                     else if (paymentLower.includes('debit') || message === '2') paymentMethod = 'Debit Card';
                     else if (paymentLower.includes('cod') || message === '3') paymentMethod = 'Cash on Delivery';
                     else if (paymentLower.includes('wallet') || message === '4') paymentMethod = 'Mobile Wallet';
-                    
+
                     if (paymentMethod) {
                         newOrderData.paymentMethod = paymentMethod;
                         nextStep = 8;
@@ -674,7 +674,7 @@ export async function POST(request: NextRequest) {
                     if (deliveryLower.includes('standard') || message === '1') deliveryMethod = 'Standard (5-7 days)';
                     else if (deliveryLower.includes('express') || message === '2') deliveryMethod = 'Express (2-3 days)';
                     else if (deliveryLower.includes('overnight') || message === '3') deliveryMethod = 'Overnight';
-                    
+
                     if (deliveryMethod) {
                         newOrderData.deliveryMethod = deliveryMethod;
                         nextStep = 9;
