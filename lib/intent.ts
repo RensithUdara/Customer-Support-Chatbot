@@ -9,6 +9,7 @@ export interface IntentResult {
         category?: string;
         budget?: number;
         tags?: string[];
+        orderStep?: number;
     };
 }
 
