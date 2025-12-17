@@ -1,10 +1,13 @@
 # 🤖 Customer Support Chatbot - ShopEasy
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js" alt="Next.js">
-  <img src="https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript" alt="TypeScript">
-  <img src="https://img.shields.io/badge/SQLite-Database-green?style=for-the-badge&logo=sqlite" alt="SQLite">
-  <img src="https://img.shields.io/badge/AI-Powered-purple?style=for-the-badge" alt="AI Powered">
+  <img src="https://img.shields.io/badge/Next.js-16.0.8-black?style=for-the-badge&logo=next.js" alt="Next.js">
+  <img src="https://img.shields.io/badge/React-19.2.0-61DAFB?style=for-the-badge&logo=react" alt="React">
+  <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript">
+  <img src="https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite" alt="SQLite">
+  <img src="https://img.shields.io/badge/better--sqlite3-12.4.6-brightgreen?style=for-the-badge" alt="better-sqlite3">
+  <img src="https://img.shields.io/badge/AI-Multi_Provider-purple?style=for-the-badge" alt="AI Powered">
+  <img src="https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS">
 </div>
 
 <br>
@@ -104,19 +107,20 @@ npm install && npm run seed && npm run dev
 
 ```mermaid
 graph TD
-    A[User Interface] --> B[Next.js API Routes]
-    B --> C[Intent Detection Engine]
-    C --> D[Database Queries]
-    C --> E[LLM Processing]
-    D --> F[SQLite Database]
-    E --> G[Response Generation]
+    A[User Interface<br/>ChatWindow] --> B[Next.js API Routes]
+    B --> C[Intent Detection Engine<br/>18 Intent Types]
+    C --> D[Smart Database Query<br/>Multiple Tables]
+    C --> E[LLM Processing<br/>OpenAI/Anthropic/Groq]
+    D --> F[SQLite Database<br/>better-sqlite3]
+    E --> G[Response Generation<br/>Suggestions & Follow-ups]
     D --> G
-    G --> A
+    G --> H[Metadata & Analytics]
+    H --> A
 ```
 
 <div align="center">
 
-**🧠 AI Pipeline**: `User Input → Intent Detection → Context Extraction → Database Query → LLM Processing → Smart Response`
+**🧠 AI Pipeline**: `User Input → Intent Detection (18 types) → Conversation Context Analysis → Database Query → Multi-Provider LLM → Response Generation → Metadata Tracking`
 
 </div>
 
@@ -157,41 +161,69 @@ graph TD
 
 <div align="center">
 
-### **Frontend Technologies**
-![Next.js](https://img.shields.io/badge/Next.js-16.0-000000?style=flat&logo=next.js&logoColor=white)
-![React](https://img.shields.io/badge/React-19.2-61DAFB?style=flat&logo=react&logoColor=black)
+### **Frontend Technologies**.8-000000?style=flat&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-19.2.0-61DAFB?style=flat&logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
+![Recharts](https://img.shields.io/badge/Recharts-3.5.0-FF6B6B?style=flat)
+![Lucide Icons](https://img.shields.io/badge/Lucide-0.554.0-blue?style=flat)
 
-### **Backend & AI**
-![SQLite](https://img.shields.io/badge/SQLite-3.45-003B57?style=flat&logo=sqlite&logoColor=white)
-![LLM Integration](https://img.shields.io/badge/LLM-Integration-FF6B6B?style=flat)
+### **Backend & Database**
+![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=flat&logo=sqlite&logoColor=white)
+![better-sqlite3](https://img.shields.io/badge/better--sqlite3-12.4.6-green?style=flat)
+![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat&logo=node.js&logoColor=white)
+
+### **AI & LLM Integration**
+![OpenAI](https://img.shields.io/badge/OpenAI-6.9.1-412991?style=flat)
+![Anthropic](https://img.shields.io/badge/Anthropic-Claude-orange?style=flat)
+![Groq](https://img.shields.io/badge/Groq-API-FF6B6B?style=flat)
 ![Intent Detection](https://img.shields.io/badge/Intent-Detection-4ECDC4?style=flat)
-![Real-time API](https://img.shields.io/badge/Real--time-API-45B7D1?style=flat)
 
-</div>
-
----
-
-## 📁 **Project Structure**
-
-```
-customer-support-chatbot/
-├── 🎨 app/
-│   ├── api/chat/route.ts          # 🚀 Main chatbot API endpoint
+### **Additional Libraries**
+![date-fns](https://img.shields.io/badge/date--fns-4.1.0-green?style=flat)
+![UUID](http
+│   │   ├── chat/route.ts          # 🚀 Main chatbot API (18 intent types)
+│   │   ├── analytics/route.ts     # 📊 Analytics data endpoint
+│   │   ├── feedback/route.ts      # ⭐ Feedback collection API
+│   │   └── orders/route.ts        # 📦 Order management API
 │   ├── chat/page.tsx              # 💬 Interactive chat interface
+│   ├── analytics/page.tsx         # 📈 Analytics dashboard
 │   ├── page.tsx                   # 🏠 Landing page with features
 │   ├── layout.tsx                 # 📱 App layout & metadata
-│   └── globals.css                # 🎨 Global styling
+│   └── globals.css                # 🎨 Global styling (Tailwind 4.0)
 ├── 🧩 components/
-│   └── ChatWindow.tsx             # 💬 Advanced chat component
+│   ├── ChatWindow.tsx             # 💬 Main chat component (533 lines)
+│   ├── ChatContext.tsx            # 🔄 Context provider
+│   ├── ChatNotification.tsx       # 🔔 Notification system
+│   ├── ChatPopup.tsx              # 📲 Popup variant
+│   ├── FloatingChatWidget.tsx     # 🎯 Floating widget
+│   └── ChatContext.tsx            # 🔄 Conversation state
 ├── 📚 lib/
-│   ├── db.ts                      # 🗄️ SQLite operations & queries
-│   ├── intent.ts                  # 🧠 AI intent detection logic
-│   └── llm.ts                     # 🤖 LLM integration wrapper
+│   ├── db.ts                      # 🗄️ SQLite operations (914 lines)
+│   │                              #    50+ database functions
+│   ├── intent.ts                  # 🧠 Intent detection (489 lines)
+│   │                              #    18 intent types, context-aware
+│   └── llm.ts                     # 🤖 LLM integration (853 lines)
+│                                  #    Multi-provider support
 ├── 📊 data/
-│   ├── comprehensiveData.json     # 📋 Complete dataset
+│   ├── comprehensiveData.json     # 📋 Complete dataset (22K+ lines)
 │   ├── seedData.ts               # 🌱 Database seed structure
+│   ├── seed.ts                   # 🚀 Database initialization
+│   └── ecommerce.db              # 💾 SQLite database file
+├── ⚙️ Configuration Files
+│   ├── package.json              # 📦 Dependencies & scripts
+│   ├── tsconfig.json             # 🔧 TypeScript config
+│   ├── next.config.ts            # ⚡ Next.js optimization
+│   ├── postcss.config.mjs        # 🎨 PostCSS for Tailwind
+│   ├── eslint.config.mjs         # 📏 Code quality rules
+│   └── tailwind.config.js        # 🎨 Tailwind 4.0 config
+└── 📚 Documentation & Tests
+    ├── README.md                 # 📖 This comprehensive guide
+    ├── VISUAL_DEPLOYMENT_GUIDE.md# 🌐 Deployment instructions
+    ├── APPENDICES.md             # 📎 Additional details
+    ├── submission.md             # 📝 Project submission
+    ├── test-*.js                 # 🧪 Test files
+    └── next-env.d.ts             # 📝 Next.js type definitionsture
 │   ├── seed.ts                   # 🚀 Database initialization
 │   └── data.json                 # 📄 Additional data
 ├── ⚙️ Configuration Files
@@ -324,18 +356,38 @@ are my top recommendations:
 ---
 
 ## 🧠 **AI Implementation Details**
-
-### **🎯 Intent Detection Engine**
+Advanced Intent Detection Engine (18 Intent Types)**
 
 <div align="center">
 
 | Intent Type | Keywords | Confidence | Processing |
 |-------------|----------|------------|------------|
-| `ORDER_STATUS` | order, track, delivery, shipped | 95-99% | Real-time DB lookup |
-| `POLICY` | return, refund, warranty, shipping | 92-96% | FAQ semantic matching |
-| `PRODUCT_RECOMMENDATION` | recommend, best, budget, under | 90-95% | AI-powered filtering |
-| `OTHER` | general queries | 85-90% | Contextual fallback |
-
+| `GREETING` | hi, hello, hey, good morning | 95-99% | Personalized greeting |
+| `GRATITUDE` | thanks, thank you, appreciate | 95-99% | Acknowledgment response |
+| `GOODBYE` | bye, farewell, see you | 95-99% | Conversation closure |
+| `HELP` | help, assist, support, stuck | 90-98% | Context-aware assistance |
+| `CONFUSED` | confused, explain, unclear | 90-95% | Clarification response |
+| `YES/NO/APOLOGY` | yes, no, sorry, pardon | 95-99% | Affirmative/negative handling |
+| `SMALLTALK` | weather, how are you | 85-95% | Friendly conversation |
+| `ORDER_PLACEMENT` | want to buy, place order | 85-92% | Order flow initiation |
+| `ORDER_STATUS` | track, delivery, where is | 95-99% | Real-time DB lookup |
+| `POLICY` | return, refund, warranty | 92-96% | FAQ semantic matching |
+| `PRODUCT_RECOMMENDATION` | recommend, best, budget | 90-95% | AI-powered filtering |
+| `DELIVERY_METHODS` | shipping options, delivery types | 88-94% | Policy retrieval |
+| `RETURN_POLICIES` | return procedure, conditions | 90-96% | Category-specific policies |
+| `DATABAAdvanced Response Generation with Metadata**
+1. **Database Context** → Structured multi-table retrieval
+2. **Multi-Provider LLM** → OpenAI/Anthropic/Groq with fallback
+3. **Smart Suggestions** → Intent-based quick actions
+4. **Follow-up Questions** → Contextual next steps
+5. **Response Metadata** → Processing time, confidence factors, data sources
+6. **User Personalization** → Name recognition, response style preference
+7
+### **🔍 Context-Aware Detection with Conversation Memory**
+- Last 3-6 messages analyzed for conversation continuity
+- Detects conversation flow: `product_search`, `order_inquiry`, `policy_question`, `general`
+- Mentions tracking: Products, Orders, User Preferences
+- Dynamic confidence adjustment based on context
 </div>
 
 ### **🔍 Context Extraction**
@@ -412,12 +464,66 @@ Conversations (∞ records)
 </tr>
 </table>
 
-### **🏠 Landing Page Highlights**
-- Feature showcase with statistics
-- Interactive demo sections
-- Sample query buttons
-- Comprehensive data coverage
-- Mobile-responsive design
+## 📊 **API Endpoints**
+
+### **Main Chat API** (`/api/chat` - [route.ts](app/api/chat/route.ts) - 918 lines)
+
+**POST /api/chat**
+```json
+Request:
+{
+  "message": "Where is my order 1015?",
+  "sessionId": "session_timestamp",
+  "userName": "John",
+  "orderStep": 0,
+  "orderData": {}
+}
+
+Response:
+{
+  "reply": "Your order #1015... 📦",
+  "intent": "ORDER_STATUS",
+  "confidence": 0.98,
+  "sessionId": "session_timestamp",
+  "suggestions": ["Track another order", "Help with returns"],
+  "followUpQuestions": ["Expedited delivery?", "Change address?"],
+  "metadata": {
+    "processingTime": 245,
+    "dataSourcesUsed": ["orders_table", "llm_gpt4"],
+    "confidenceFactors": ["order_id_match", "status_found"],
+    "llmProvider": "openai",
+    "enhancedFeatures": true
+  }
+}
+```
+
+**Features:**
+- 18 intent type detection and routing
+- Conversation history storage (6 last messages)
+- User name extraction and personalization
+- Multi-step order placement workflow
+- Feedback collection
+- Real-time analytics tracking
+- Session management
+
+### **Analytics API** (`/api/analytics`)
+- Intent distribution statistics
+- Response time metrics
+- User satisfaction tracking
+- Conversation patterns
+- Popular queries
+
+### **Feedback API** (`/api/feedback`)
+- Like/Dislike collection
+- Intent-specific feedback
+- Session feedback aggregation
+- Satisfaction analytics
+
+### **Orders API** (`/api/orders`)
+- Order lookup by ID
+- Customer order history
+- Order status updates
+- Order creation for placement flow
 
 ---
 
