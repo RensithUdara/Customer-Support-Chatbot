@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { detectIntent, detectIntentWithContext, extractKeywords, detectGreeting, extractNameFromMessage, detectGratitude, detectGoodbye, detectHelpRequest, detectConfused, detectYes, detectNo, detectApology, detectSmallTalk, detectOrderPlacement } from '@/lib/intent';
+import { detectIntent, detectIntentWithContext, extractKeywords, detectGreeting, extractNameFromMessage, detectGratitude, detectGoodbye, detectHelpRequest, detectConfused, detectYes, detectNo, detectApology, detectSmallTalk, detectOrderPlacement, detectProductCategory } from '@/lib/intent';
 import { searchFAQs, getOrderById, searchProducts, saveConversation, getConversationHistory, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs, smartDatabaseQuery, saveOrder, getOrdersByCustomerEmail, getAllOrders } from '@/lib/db';
 import { callLLM } from '@/lib/llm';
 
@@ -603,11 +603,24 @@ export async function POST(request: NextRequest) {
                 break;
 
             case 'ORDER_PLACEMENT': {
-                const currentStep = intentResult.extractedData?.orderStep || orderStep || 1;
+                const currentStep = intentResult.extractedData?.orderStep || orderStep || 0;
                 let newOrderData: any = { ...orderData };
                 let nextStep = currentStep;
 
-                if (currentStep === 1) {
+                // Step 0: Detect product category from initial message
+                if (currentStep === 0) {
+                    const category = detectProductCategory(message);
+                    if (category) {
+                        newOrderData.category = category;
+                        newOrderData.selectedProducts = [];
+                        nextStep = 1;
+                        botReply = `✅ Looking for **${category}**!\n\n👤 What's your **name**?`;
+                    } else {
+                        botReply = `🛍️ What product category are you interested in? (Phone, Laptop, Tablet, etc.)`;
+                    }
+                }
+                // Step 1: Collect name
+                else if (currentStep === 1) {
                     const extractedName = extractNameFromMessage(message);
                     if (extractedName) {
                         newOrderData.name = extractedName;
@@ -616,7 +629,9 @@ export async function POST(request: NextRequest) {
                     } else {
                         botReply = `👤 What's your **name**?`;
                     }
-                } else if (currentStep === 2) {
+                }
+                // Step 2: Collect email
+                else if (currentStep === 2) {
                     const emailPattern = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i;
                     const emailMatch = message.match(emailPattern);
                     if (emailMatch) {
@@ -626,7 +641,9 @@ export async function POST(request: NextRequest) {
                     } else {
                         botReply = `📧 Please provide a valid **email address**`;
                     }
-                } else if (currentStep === 3) {
+                }
+                // Step 3: Collect phone
+                else if (currentStep === 3) {
                     const phonePattern = /[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}/;
                     const phoneMatch = message.match(phonePattern);
                     if (phoneMatch) {
@@ -636,24 +653,97 @@ export async function POST(request: NextRequest) {
                     } else {
                         botReply = `📞 Please provide a valid **phone number**`;
                     }
-                } else if (currentStep === 4) {
+                }
+                // Step 4: Collect address
+                else if (currentStep === 4) {
                     newOrderData.address = message.substring(0, 150);
                     nextStep = 5;
-                    botReply = `✅ Address saved!\n\n🛍️ Product name?`;
-                } else if (currentStep === 5) {
-                    newOrderData.productName = message.substring(0, 100);
-                    nextStep = 6;
-                    botReply = `✅ Product: **${newOrderData.productName}**\n\n📦 Quantity?`;
-                } else if (currentStep === 6) {
+                    // Fetch products in the selected category
+                    const products = await searchProducts(newOrderData.category);
+                    if (products && products.length > 0) {
+                        let productList = `✅ Address saved!\n\n📱 **Available ${newOrderData.category}:**\n\n`;
+                        products.forEach((product: any, index: number) => {
+                            productList += `${index + 1}️⃣ **${product.name}** - PKR ${product.price}\n`;
+                        });
+                        productList += `\nSelect by number (e.g., "1" for first product)`;
+                        botReply = productList;
+                        newOrderData.categoryProducts = products;
+                    } else {
+                        botReply = `Sorry, no products available in this category. Please try another.`;
+                        nextStep = 0;
+                    }
+                }
+                // Step 5: Select product from list
+                else if (currentStep === 5) {
+                    const productIndex = parseInt(message) - 1;
+                    if (productIndex >= 0 && newOrderData.categoryProducts && productIndex < newOrderData.categoryProducts.length) {
+                        const selectedProduct = newOrderData.categoryProducts[productIndex];
+                        newOrderData.productName = selectedProduct.name;
+                        newOrderData.selectedProducts = [{ ...selectedProduct }];
+                        nextStep = 6;
+                        botReply = `✅ Product: **${selectedProduct.name}** (PKR ${selectedProduct.price})\n\n❓ Do you need anything else? (yes/no)`;
+                    } else {
+                        botReply = `❌ Please select a valid product number`;
+                    }
+                }
+                // Step 6: Ask if user needs more products
+                else if (currentStep === 6) {
+                    if (message.toLowerCase().includes('yes')) {
+                        nextStep = 7;
+                        botReply = `🛍️ Which category? (Phones, Laptops, Tablets, Audio, etc.)`;
+                    } else if (message.toLowerCase().includes('no')) {
+                        nextStep = 8;
+                        botReply = `📦 **Quantity**?`;
+                    } else {
+                        botReply = `❓ Do you need anything else? (yes/no)`;
+                    }
+                }
+                // Step 7: Add more products (select category)
+                else if (currentStep === 7) {
+                    const additionalCategory = detectProductCategory(message);
+                    if (additionalCategory) {
+                        const moreProducts = await searchProducts(additionalCategory);
+                        if (moreProducts && moreProducts.length > 0) {
+                            let productList = `📱 **Available ${additionalCategory}:**\n\n`;
+                            moreProducts.forEach((product: any, index: number) => {
+                                productList += `${index + 1}️⃣ **${product.name}** - PKR ${product.price}\n`;
+                            });
+                            productList += `\nSelect by number`;
+                            botReply = productList;
+                            newOrderData.additionalCategoryProducts = moreProducts;
+                            nextStep = 7.5;
+                        } else {
+                            botReply = `No products in this category. Try another.`;
+                        }
+                    } else {
+                        botReply = `🛍️ Which category? (Phones, Laptops, Tablets, Audio, etc.)`;
+                    }
+                }
+                // Step 7.5: Select additional product
+                else if (currentStep === 7.5) {
+                    const productIndex = parseInt(message) - 1;
+                    if (productIndex >= 0 && newOrderData.additionalCategoryProducts && productIndex < newOrderData.additionalCategoryProducts.length) {
+                        const selectedProduct = newOrderData.additionalCategoryProducts[productIndex];
+                        newOrderData.selectedProducts.push({ ...selectedProduct });
+                        nextStep = 6;
+                        botReply = `✅ Added: **${selectedProduct.name}**\n\n❓ Need anything else? (yes/no)`;
+                    } else {
+                        botReply = `❌ Please select a valid product number`;
+                    }
+                }
+                // Step 8: Collect quantity
+                else if (currentStep === 8) {
                     const quantityMatch = message.match(/\d+/);
                     if (quantityMatch && parseInt(quantityMatch[0]) > 0) {
                         newOrderData.quantity = parseInt(quantityMatch[0]);
-                        nextStep = 7;
+                        nextStep = 9;
                         botReply = `✅ Quantity: **${newOrderData.quantity}**\n\n💳 Payment method?\n1️⃣ Credit Card\n2️⃣ Debit Card\n3️⃣ COD\n4️⃣ Wallet`;
                     } else {
                         botReply = `📦 Please enter a valid **quantity**`;
                     }
-                } else if (currentStep === 7) {
+                }
+                // Step 9: Payment method
+                else if (currentStep === 9) {
                     const paymentLower = message.toLowerCase();
                     let paymentMethod = '';
                     if (paymentLower.includes('credit') || message === '1') paymentMethod = 'Credit Card';
@@ -663,12 +753,14 @@ export async function POST(request: NextRequest) {
 
                     if (paymentMethod) {
                         newOrderData.paymentMethod = paymentMethod;
-                        nextStep = 8;
+                        nextStep = 10;
                         botReply = `✅ Payment: **${paymentMethod}**\n\n🚚 Delivery method?\n1️⃣ Standard (5-7 days)\n2️⃣ Express (2-3 days)\n3️⃣ Overnight`;
                     } else {
                         botReply = `💳 Please choose a valid **payment method**`;
                     }
-                } else if (currentStep === 8) {
+                }
+                // Step 10: Delivery method
+                else if (currentStep === 10) {
                     const deliveryLower = message.toLowerCase();
                     let deliveryMethod = '';
                     if (deliveryLower.includes('standard') || message === '1') deliveryMethod = 'Standard (5-7 days)';
@@ -677,21 +769,23 @@ export async function POST(request: NextRequest) {
 
                     if (deliveryMethod) {
                         newOrderData.deliveryMethod = deliveryMethod;
-                        nextStep = 9;
-                        botReply = `✅ Delivery: **${deliveryMethod}**\n\n📋 **SUMMARY:**\n👤 Name: **${newOrderData.name}**\n📧 Email: **${newOrderData.email}**\n📞 Phone: **${newOrderData.phone}**\n🛍️ Product: **${newOrderData.productName}** (${newOrderData.quantity}x)\n💳 Payment: **${newOrderData.paymentMethod}**\n🚚 Delivery: **${deliveryMethod}**\n\n✅ Confirm? (yes/no)`;
+                        nextStep = 11;
+                        const productSummary = newOrderData.selectedProducts.map((p: any) => `• ${p.name} - PKR ${p.price}`).join('\n');
+                        botReply = `✅ Delivery: **${deliveryMethod}**\n\n📋 **ORDER SUMMARY:**\n👤 Name: **${newOrderData.name}**\n📧 Email: **${newOrderData.email}**\n📞 Phone: **${newOrderData.phone}**\n🛍️ Products:\n${productSummary}\n📦 Qty: **${newOrderData.quantity}**\n💳 Payment: **${newOrderData.paymentMethod}**\n🚚 Delivery: **${deliveryMethod}**\n\n✅ Confirm? (yes/no)`;
                     } else {
                         botReply = `🚚 Please choose a valid **delivery method**`;
                     }
-                } else if (currentStep === 9) {
+                }
+                // Step 11: Confirm order
+                else if (currentStep === 11) {
                     if (message.toLowerCase().includes('yes')) {
-                        // Save order to database with all customer information
                         try {
                             const orderResult = saveOrder({
                                 customerName: newOrderData.name || '',
                                 customerEmail: newOrderData.email || '',
                                 customerPhone: newOrderData.phone || '',
                                 shippingAddress: newOrderData.address || '',
-                                productName: newOrderData.productName || '',
+                                productName: newOrderData.productName || (newOrderData.selectedProducts && newOrderData.selectedProducts[0]?.name) || 'Multiple Products',
                                 quantity: newOrderData.quantity || 1,
                                 paymentMethod: newOrderData.paymentMethod || '',
                                 deliveryMethod: newOrderData.deliveryMethod || ''
@@ -699,7 +793,8 @@ export async function POST(request: NextRequest) {
 
                             if (orderResult.success) {
                                 const orderId = orderResult.orderId;
-                                botReply = `🎉 **ORDER CONFIRMED!**\n\n📦 **Order #${orderId}**\n✅ Status: Processing\n📧 Confirmation sent to **${newOrderData.email}**\n🚚 Delivery: **${newOrderData.deliveryMethod}**\n📞 Total Amount: **PKR ${(newOrderData.quantity * 5000 + (newOrderData.deliveryMethod.includes('Standard') ? 200 : newOrderData.deliveryMethod.includes('Express') ? 500 : 1000))}**\n\nThank you! 🙏`;
+                                const deliveryDays = newOrderData.deliveryMethod.includes('Standard') ? '5-7' : newOrderData.deliveryMethod.includes('Express') ? '2-3' : '1';
+                                botReply = `🎉 **ORDER CONFIRMED!**\n\n📦 **Order #${orderId}**\n✅ Status: Processing\n📧 Confirmation sent to **${newOrderData.email}**\n🚚 Delivery: ${deliveryDays} days\n📞 Items: ${newOrderData.selectedProducts.length} product(s)\n\nThank you! 🙏`;
                             } else {
                                 botReply = `❌ Error saving order. Please try again.`;
                             }
