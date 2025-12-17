@@ -1,5 +1,5 @@
 // Intent detection logic
-export type Intent = 'GREETING' | 'ORDER_STATUS' | 'POLICY' | 'PRODUCT_RECOMMENDATION' | 'DELIVERY_METHODS' | 'RETURN_POLICIES' | 'DATABASE_QUERY' | 'OTHER';
+export type Intent = 'GREETING' | 'GRATITUDE' | 'GOODBYE' | 'HELP' | 'CONFUSED' | 'YES' | 'NO' | 'APOLOGY' | 'SMALLTALK' | 'ORDER_STATUS' | 'POLICY' | 'PRODUCT_RECOMMENDATION' | 'DELIVERY_METHODS' | 'RETURN_POLICIES' | 'DATABASE_QUERY' | 'OTHER';
 
 export interface IntentResult {
     intent: Intent;
@@ -56,6 +56,62 @@ export const detectGreeting = (message: string): boolean => {
     const lowercaseMessage = message.toLowerCase().trim();
     const greetingKeywords = ['hi', 'hello', 'hey', 'hola', 'greetings', 'wassup', 'whats up', "what's up", 'sup', 'good morning', 'good afternoon', 'good evening'];
     return greetingKeywords.some(keyword => lowercaseMessage === keyword || lowercaseMessage.startsWith(keyword + ' '));
+};
+
+// Gratitude/Thank you detection
+export const detectGratitude = (message: string): boolean => {
+    const lowercaseMessage = message.toLowerCase().trim();
+    const gratitudeKeywords = ['thank you', 'thanks', 'thankyou', 'appreciate', 'appreciate it', 'thx', 'ty', 'tks', 'thanks so much', 'thank you so much', 'much appreciated', 'very grateful', 'grateful', 'cheers'];
+    return gratitudeKeywords.some(keyword => lowercaseMessage === keyword || lowercaseMessage.includes(keyword));
+};
+
+// Goodbye detection
+export const detectGoodbye = (message: string): boolean => {
+    const lowercaseMessage = message.toLowerCase().trim();
+    const goodbyeKeywords = ['bye', 'goodbye', 'farewell', 'see you', 'see you later', 'ttyl', 'talk soon', 'take care', 'catch you', 'gotta go', 'have to go', 'bye bye', 'see ya', 'adios'];
+    return goodbyeKeywords.some(keyword => lowercaseMessage === keyword || lowercaseMessage.startsWith(keyword));
+};
+
+// Help request detection
+export const detectHelpRequest = (message: string): boolean => {
+    const lowercaseMessage = message.toLowerCase();
+    const helpKeywords = ['help', 'assist', 'support', 'can you help', 'help me', 'i need help', 'please help', 'stuck', 'confused', 'lost', 'don\'t know', 'not sure'];
+    return helpKeywords.some(keyword => lowercaseMessage.includes(keyword));
+};
+
+// Confused/Not understanding detection
+export const detectConfused = (message: string): boolean => {
+    const lowercaseMessage = message.toLowerCase();
+    const confusedKeywords = ['confused', 'don\'t understand', 'dont understand', 'what do you mean', 'i don\'t get', 'not clear', 'unclear', 'explain', 'what is', 'what\'s', 'how do i', 'how can i', 'pardon', 'sorry what'];
+    return confusedKeywords.some(keyword => lowercaseMessage.includes(keyword));
+};
+
+// Yes/Affirmative detection
+export const detectYes = (message: string): boolean => {
+    const lowercaseMessage = message.toLowerCase().trim();
+    const yesKeywords = ['yes', 'yeah', 'yep', 'yup', 'sure', 'okay', 'ok', 'alright', 'correct', 'that\'s right', 'right', 'affirmative', 'indeed', 'absolutely', 'definitely'];
+    return yesKeywords.some(keyword => lowercaseMessage === keyword || lowercaseMessage.startsWith(keyword));
+};
+
+// No/Negative detection
+export const detectNo = (message: string): boolean => {
+    const lowercaseMessage = message.toLowerCase().trim();
+    const noKeywords = ['no', 'nope', 'nah', 'not really', 'negative', 'i don\'t', 'dont', 'don\'t think so', 'not sure', 'probably not', 'definitely not'];
+    return noKeywords.some(keyword => lowercaseMessage === keyword || lowercaseMessage.startsWith(keyword));
+};
+
+// Apology detection
+export const detectApology = (message: string): boolean => {
+    const lowercaseMessage = message.toLowerCase();
+    const apologyKeywords = ['sorry', 'apologize', 'my bad', 'my apologies', 'excuse me', 'pardon', 'oops', 'i\'m sorry', 'im sorry', 'my mistake'];
+    return apologyKeywords.some(keyword => lowercaseMessage.includes(keyword));
+};
+
+// Small talk detection (weather, how are you, etc.)
+export const detectSmallTalk = (message: string): boolean => {
+    const lowercaseMessage = message.toLowerCase();
+    const smallTalkKeywords = ['how are you', 'how\'s it', 'how is it', 'how\'re you', 'what\'s up', 'what is up', 'how\'s your day', 'how are things', 'how\'s everything', 'nice day', 'weather', 'you doing', 'you up to'];
+    return smallTalkKeywords.some(keyword => lowercaseMessage.includes(keyword));
 };
 
 // Extract name from message (e.g., "Hi, I'm John" or "My name is Sarah")
