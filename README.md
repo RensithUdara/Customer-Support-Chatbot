@@ -146,10 +146,10 @@ graph TD
 
 | Intent Type | Accuracy | Response Time |
 |-------------|----------|---------------|
-| **Order Status** | 98% | <200ms |
-| **Policy/FAQ** | 96% | <150ms |
-| **Products** | 94% | <300ms |
-| **General** | 92% | <250ms |
+| **Order Status** | 98% | <250ms |
+| **Policy/FAQ** | 96% | <300ms |
+| **Products** | 94% | <350ms |
+| **General** | 92% | <400ms |
 
 </td>
 </tr>
