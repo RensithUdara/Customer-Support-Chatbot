@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { detectIntent, detectIntentWithContext, extractKeywords } from '@/lib/intent';
+import { detectIntent, detectIntentWithContext, extractKeywords, detectGreeting, extractNameFromMessage } from '@/lib/intent';
 import { searchFAQs, getOrderById, searchProducts, saveConversation, getConversationHistory, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs, smartDatabaseQuery } from '@/lib/db';
 import { callLLM } from '@/lib/llm';
 
