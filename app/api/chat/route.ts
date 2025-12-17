@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { detectIntent, detectIntentWithContext, extractKeywords, detectGreeting, extractNameFromMessage } from '@/lib/intent';
+import { detectIntent, detectIntentWithContext, extractKeywords, detectGreeting, extractNameFromMessage, detectGratitude, detectGoodbye, detectHelpRequest, detectConfused, detectYes, detectNo, detectApology, detectSmallTalk } from '@/lib/intent';
 import { searchFAQs, getOrderById, searchProducts, saveConversation, getConversationHistory, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs, smartDatabaseQuery } from '@/lib/db';
 import { callLLM } from '@/lib/llm';
 
@@ -84,10 +84,58 @@ export async function POST(request: NextRequest) {
         let extractedName: string | null = null;
         let intentResult = detectIntentWithContext(message, conversationHistory);
 
-        // If greeting detected, change intent to GREETING
+        // Check for conversational intents first (higher priority)
         if (isGreeting) {
             intentResult = {
                 intent: 'GREETING',
+                confidence: 0.95,
+                extractedData: {}
+            };
+        } else if (detectGratitude(message)) {
+            intentResult = {
+                intent: 'GRATITUDE',
+                confidence: 0.95,
+                extractedData: {}
+            };
+        } else if (detectGoodbye(message)) {
+            intentResult = {
+                intent: 'GOODBYE',
+                confidence: 0.95,
+                extractedData: {}
+            };
+        } else if (detectApology(message)) {
+            intentResult = {
+                intent: 'APOLOGY',
+                confidence: 0.9,
+                extractedData: {}
+            };
+        } else if (detectSmallTalk(message)) {
+            intentResult = {
+                intent: 'SMALLTALK',
+                confidence: 0.9,
+                extractedData: {}
+            };
+        } else if (detectConfused(message)) {
+            intentResult = {
+                intent: 'CONFUSED',
+                confidence: 0.85,
+                extractedData: {}
+            };
+        } else if (detectHelpRequest(message)) {
+            intentResult = {
+                intent: 'HELP',
+                confidence: 0.85,
+                extractedData: {}
+            };
+        } else if (detectYes(message)) {
+            intentResult = {
+                intent: 'YES',
+                confidence: 0.95,
+                extractedData: {}
+            };
+        } else if (detectNo(message)) {
+            intentResult = {
+                intent: 'NO',
                 confidence: 0.95,
                 extractedData: {}
             };
@@ -124,6 +172,131 @@ export async function POST(request: NextRequest) {
                         `📞 Customer support\n\n` +
                         `Before we get started, **what's your name?** 🤝`;
                 }
+                break;
+
+            case 'GRATITUDE':
+                // Handle thank you/gratitude responses
+                if (userName) {
+                    botReply = `😊 You're very welcome, ${userName}! I'm always happy to help!\n\n` +
+                        `Is there anything else I can assist you with today? Feel free to ask about:\n` +
+                        `📦 Orders and tracking\n` +
+                        `🛍️ Product recommendations\n` +
+                        `❓ Policies and FAQs\n` +
+                        `📞 Support services\n\n` +
+                        `Just let me know! 🤝`;
+                } else {
+                    botReply = `😊 You're very welcome! I'm always happy to help!\n\n` +
+                        `Is there anything else I can assist you with today? Feel free to ask about:\n` +
+                        `📦 Orders and tracking\n` +
+                        `🛍️ Product recommendations\n` +
+                        `❓ Policies and FAQs\n` +
+                        `📞 Support services\n\n` +
+                        `Just let me know! 🤝`;
+                }
+                break;
+
+            case 'GOODBYE':
+                // Handle goodbye/farewell responses
+                if (userName) {
+                    botReply = `👋 Goodbye, ${userName}! It was great chatting with you!\n\n` +
+                        `Thank you for choosing ShopEasy. Have a wonderful day! 😊\n\n` +
+                        `Feel free to come back anytime you need help. We're here 24/7! 🎉`;
+                } else {
+                    botReply = `👋 Goodbye! It was great chatting with you!\n\n` +
+                        `Thank you for choosing ShopEasy. Have a wonderful day! 😊\n\n` +
+                        `Feel free to come back anytime you need help. We're here 24/7! 🎉`;
+                }
+                break;
+
+            case 'APOLOGY':
+                // Handle apologies
+                botReply = `No problem at all! 😊\n\n` +
+                    `Don't worry - I'm here to help make things easy for you! There's no need to apologize.\n\n` +
+                    `Let's get back on track. How can I assist you today?\n` +
+                    `📦 Track an order\n` +
+                    `🛍️ Find a product\n` +
+                    `❓ Answer a question\n` +
+                    `📞 Get support\n\n` +
+                    `What would you like help with? 🤝`;
+                break;
+
+            case 'CONFUSED':
+                // Handle confusion/not understanding
+                if (userName) {
+                    botReply = `No worries, ${userName}! I'm here to clarify! 😊\n\n` +
+                        `I understand it can sometimes be confusing. Let me break it down for you:\n\n` +
+                        `**How can I help clarify?**\n` +
+                        `🎯 **Track Order** - I can find your order status with a 4-digit order number\n` +
+                        `🎯 **Find Products** - Tell me what you're looking for and your budget\n` +
+                        `🎯 **Policies** - Ask about returns, shipping, payments, warranty\n` +
+                        `🎯 **Support** - Need to speak with someone? I can connect you\n\n` +
+                        `Feel free to ask me anything, and I'll explain it clearly! 💡`;
+                } else {
+                    botReply = `No worries! I'm here to clarify! 😊\n\n` +
+                        `I understand it can sometimes be confusing. Let me help you out:\n\n` +
+                        `**How can I help?**\n` +
+                        `🎯 **Track Order** - Give me a 4-digit order number\n` +
+                        `🎯 **Find Products** - Tell me what you want and your budget\n` +
+                        `🎯 **Ask Questions** - About returns, shipping, payments, warranty\n` +
+                        `🎯 **Get Support** - Connect with our team\n\n` +
+                        `Feel free to ask anything, and I'll explain it clearly! 💡`;
+                }
+                break;
+
+            case 'HELP':
+                // Handle help requests
+                if (userName) {
+                    botReply = `Of course, ${userName}! I'm here to help! 💪\n\n` +
+                        `I can assist you with:\n\n` +
+                        `📦 **Order Tracking** - Check status, tracking number, delivery time\n` +
+                        `🛍️ **Product Search** - Find products in your budget\n` +
+                        `❓ **Policies & FAQs** - Returns, shipping, payment options, warranty\n` +
+                        `💡 **Expert Advice** - EMI options, product recommendations\n` +
+                        `📞 **Customer Support** - Direct contact information\n\n` +
+                        `What do you need help with, ${userName}? Just tell me and I'll take care of it! 🎯`;
+                } else {
+                    botReply = `Of course! I'm here to help! 💪\n\n` +
+                        `I can assist you with:\n\n` +
+                        `📦 **Order Tracking** - Check status and delivery info\n` +
+                        `🛍️ **Product Search** - Find what you need\n` +
+                        `❓ **Policies & FAQs** - Get answers to your questions\n` +
+                        `💡 **Expert Advice** - Recommendations and tips\n` +
+                        `📞 **Customer Support** - Contact information\n\n` +
+                        `What do you need help with? Let me know! 🎯`;
+                }
+                break;
+
+            case 'SMALLTALK':
+                // Handle small talk
+                const responses = [
+                    `I'm doing great, thanks for asking! 😊 I'm always here and ready to help you with anything you need. How can I make your day better?`,
+                    `Doing wonderful! 🌟 Thanks for the friendly chat! So, what brings you here today? Can I help you with an order, product search, or anything else?`,
+                    `I appreciate you asking! 😄 I'm here 24/7 to make sure you have the best experience. What can I help you with today?`,
+                    `All good here! 👍 Just excited to help awesome customers like you! What's on your mind? Any orders, questions, or products you're looking for?`
+                ];
+                botReply = responses[Math.floor(Math.random() * responses.length)];
+                break;
+
+            case 'YES':
+                // Handle affirmative responses (usually in context of a question)
+                botReply = `Awesome! 🎉 That's great to hear!\n\n` +
+                    `So what would you like to do next?\n` +
+                    `📦 Track an order\n` +
+                    `🛍️ Browse products\n` +
+                    `❓ Ask a question\n` +
+                    `📞 Get support\n\n` +
+                    `I'm all ears! 👂`;
+                break;
+
+            case 'NO':
+                // Handle negative responses
+                botReply = `No problem! That's completely fine. 😊\n\n` +
+                    `Let me know if there's anything else I can help you with:\n` +
+                    `📦 Track an order\n` +
+                    `🛍️ Find products\n` +
+                    `❓ Ask questions\n` +
+                    `📞 Get support\n\n` +
+                    `Just say the word! 🤝`;
                 break;
 
             case 'ORDER_STATUS':
