@@ -160,7 +160,7 @@ export const detectIntent = (message: string): IntentResult => {
         };
     }
 
-    if (detectThanks(message)) {
+    if (detectGratitude(message)) {
         return {
             intent: 'GRATITUDE',
             confidence: 0.95,
