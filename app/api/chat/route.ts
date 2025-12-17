@@ -602,6 +602,102 @@ export async function POST(request: NextRequest) {
                 botReply = databaseResponse;
                 break;
 
+            case 'ORDER_PLACEMENT': {
+                const currentStep = intentResult.extractedData?.orderStep || orderStep || 1;
+                let newOrderData: any = { ...orderData };
+                let nextStep = currentStep;
+
+                if (currentStep === 1) {
+                    const extractedName = extractNameFromMessage(message);
+                    if (extractedName) {
+                        newOrderData.name = extractedName;
+                        nextStep = 2;
+                        botReply = `✅ Name: **${extractedName}**\n\n📧 Email address?`;
+                    } else {
+                        botReply = `👤 What's your **name**?`;
+                    }
+                } else if (currentStep === 2) {
+                    const emailPattern = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i;
+                    const emailMatch = message.match(emailPattern);
+                    if (emailMatch) {
+                        newOrderData.email = emailMatch[1];
+                        nextStep = 3;
+                        botReply = `✅ Email: **${emailMatch[1]}**\n\n📞 Phone number?`;
+                    } else {
+                        botReply = `📧 Please provide a valid **email address**`;
+                    }
+                } else if (currentStep === 3) {
+                    const phonePattern = /[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}/;
+                    const phoneMatch = message.match(phonePattern);
+                    if (phoneMatch) {
+                        newOrderData.phone = phoneMatch[0];
+                        nextStep = 4;
+                        botReply = `✅ Phone: **${phoneMatch[0]}**\n\n🏠 Delivery address?`;
+                    } else {
+                        botReply = `📞 Please provide a valid **phone number**`;
+                    }
+                } else if (currentStep === 4) {
+                    newOrderData.address = message.substring(0, 150);
+                    nextStep = 5;
+                    botReply = `✅ Address saved!\n\n🛍️ Product name?`;
+                } else if (currentStep === 5) {
+                    newOrderData.productName = message.substring(0, 100);
+                    nextStep = 6;
+                    botReply = `✅ Product: **${newOrderData.productName}**\n\n📦 Quantity?`;
+                } else if (currentStep === 6) {
+                    const quantityMatch = message.match(/\d+/);
+                    if (quantityMatch && parseInt(quantityMatch[0]) > 0) {
+                        newOrderData.quantity = parseInt(quantityMatch[0]);
+                        nextStep = 7;
+                        botReply = `✅ Quantity: **${newOrderData.quantity}**\n\n💳 Payment method?\n1️⃣ Credit Card\n2️⃣ Debit Card\n3️⃣ COD\n4️⃣ Wallet`;
+                    } else {
+                        botReply = `📦 Please enter a valid **quantity**`;
+                    }
+                } else if (currentStep === 7) {
+                    const paymentLower = message.toLowerCase();
+                    let paymentMethod = '';
+                    if (paymentLower.includes('credit') || message === '1') paymentMethod = 'Credit Card';
+                    else if (paymentLower.includes('debit') || message === '2') paymentMethod = 'Debit Card';
+                    else if (paymentLower.includes('cod') || message === '3') paymentMethod = 'Cash on Delivery';
+                    else if (paymentLower.includes('wallet') || message === '4') paymentMethod = 'Mobile Wallet';
+                    
+                    if (paymentMethod) {
+                        newOrderData.paymentMethod = paymentMethod;
+                        nextStep = 8;
+                        botReply = `✅ Payment: **${paymentMethod}**\n\n🚚 Delivery method?\n1️⃣ Standard (5-7 days)\n2️⃣ Express (2-3 days)\n3️⃣ Overnight`;
+                    } else {
+                        botReply = `💳 Please choose a valid **payment method**`;
+                    }
+                } else if (currentStep === 8) {
+                    const deliveryLower = message.toLowerCase();
+                    let deliveryMethod = '';
+                    if (deliveryLower.includes('standard') || message === '1') deliveryMethod = 'Standard (5-7 days)';
+                    else if (deliveryLower.includes('express') || message === '2') deliveryMethod = 'Express (2-3 days)';
+                    else if (deliveryLower.includes('overnight') || message === '3') deliveryMethod = 'Overnight';
+                    
+                    if (deliveryMethod) {
+                        newOrderData.deliveryMethod = deliveryMethod;
+                        nextStep = 9;
+                        botReply = `✅ Delivery: **${deliveryMethod}**\n\n📋 **SUMMARY:**\n👤 Name: **${newOrderData.name}**\n📧 Email: **${newOrderData.email}**\n📞 Phone: **${newOrderData.phone}**\n🛍️ Product: **${newOrderData.productName}** (${newOrderData.quantity}x)\n💳 Payment: **${newOrderData.paymentMethod}**\n🚚 Delivery: **${deliveryMethod}**\n\n✅ Confirm? (yes/no)`;
+                    } else {
+                        botReply = `🚚 Please choose a valid **delivery method**`;
+                    }
+                } else if (currentStep === 9) {
+                    if (message.toLowerCase().includes('yes')) {
+                        const orderNumber = 2000 + Math.floor(Math.random() * 9000);
+                        botReply = `🎉 **ORDER CONFIRMED!**\n\n📦 **Order #${orderNumber}**\n✅ Status: Processing\n📧 Confirmation sent to **${newOrderData.email}**\n🚚 Delivery: **${newOrderData.deliveryMethod}**\n\nThank you! 🙏`;
+                        nextStep = 0;
+                    } else {
+                        botReply = `❌ Order cancelled.`;
+                        nextStep = 0;
+                    }
+                }
+
+                context.orderData = newOrderData;
+                context.nextOrderStep = nextStep;
+                break;
+            }
+
             case 'PRODUCT_RECOMMENDATION':
                 systemPrompt = 'You are a product recommendation expert. Help customers find the best products based on their needs and budget.';
 
@@ -674,7 +770,9 @@ export async function POST(request: NextRequest) {
             intent: intentResult.intent,
             confidence: intentResult.confidence,
             sessionId,
-            extractedName: extractedName, // Return extracted name if found
+            extractedName: extractedName,
+            orderStep: context.nextOrderStep,
+            orderData: context.orderData,
             suggestions: aiResponse?.suggestions || [],
             followUpQuestions: aiResponse?.followUpQuestions || [],
             metadata: aiResponse?.metadata || {
