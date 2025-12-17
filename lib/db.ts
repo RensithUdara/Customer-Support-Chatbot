@@ -818,13 +818,16 @@ export const saveOrder = (orderData: {
   deliveryMethod: string;
 }): { orderId: string; success: boolean } => {
   try {
-    // Generate professional order ID: ORD-YYYYMMDD-XXXXX (where XXXXX is random)
+    // Generate sequential numeric order ID (like 1001, 1002, 1003...)
     const now = new Date();
-    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
-    const randomNum = String(Math.floor(Math.random() * 100000)).padStart(5, '0');
-    const orderId = `ORD-${dateStr}-${randomNum}`;
+    
+    // Get the maximum existing order ID
+    const maxResult = db.prepare('SELECT MAX(CAST(orderId AS INTEGER)) as maxId FROM orders WHERE orderId REGEXP "^[0-9]+$"').get() as any;
+    const maxId = maxResult?.maxId || 1000;
+    const orderId = String(maxId + 1);
 
-    // Generate tracking number
+    // Generate tracking number with date format
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
     const trackingNumber = `TRK-${dateStr}-${String(Math.floor(Math.random() * 1000000)).padStart(6, '0')}`;
 
     // Calculate estimated delivery based on delivery method
