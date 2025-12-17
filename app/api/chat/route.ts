@@ -270,15 +270,15 @@ export async function POST(request: NextRequest) {
                 const policyFaq = bestMatch as FAQ | undefined;
 
                 if (policyFaq && policyFaq.answer) {
-                    botReply = policyFaq.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                    botReply = policyFaq.answer + (userName ? `\n\n${userName}, is there anything specific about this policy you'd like me to explain further?` : "\n\nIs there anything specific about this policy you'd like me to explain further?");
                 } else {
                     // Fallback to general search
                     const relevantFAQs = await searchFAQs(keywords);
                     if (relevantFAQs.length > 0) {
                         const firstFaq = relevantFAQs[0] as FAQ;
-                        botReply = firstFaq.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                        botReply = firstFaq.answer + (userName ? `\n\n${userName}, is there anything specific about this policy you'd like me to explain further?` : "\n\nIs there anything specific about this policy you'd like me to explain further?");
                     } else {
-                        botReply = "I'd be happy to help you with policy information. Could you please be more specific about what you'd like to know about our shipping, returns, payments, or other policies?";
+                        botReply = `I'd be happy to help you with policy information${userName ? `, ${userName}` : ''}. Could you please be more specific about what you'd like to know about our shipping, returns, payments, or other policies?`;
                     }
                 }
                 break;
