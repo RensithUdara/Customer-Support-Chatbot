@@ -241,7 +241,7 @@ export const detectIntent = (message: string): IntentResult => {
         let confidence = 0.8;
         if (budget) confidence = 0.95; // High confidence when budget is specified
         if (hasBrandName || hasProductType) confidence = 0.9;
-        
+
         return {
             intent: 'PRODUCT_RECOMMENDATION',
             confidence,
