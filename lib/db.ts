@@ -217,6 +217,18 @@ export const searchBestFAQ = (message: string, keywords: string[]) => {
 
   const messageLower = message.toLowerCase();
 
+  // PRIORITY: Check for "delivery times" / "delivery time" questions
+  if (messageLower.includes('delivery times') || messageLower.includes('delivery time')) {
+    // Get the first FAQ from Orders & Shipping category with "delivery times" in question
+    const deliveryTimeMatch = db.prepare(`
+      SELECT * FROM faqs 
+      WHERE category = 'Orders & Shipping' 
+      AND question LIKE '%delivery time%'
+      LIMIT 1
+    `).get();
+    if (deliveryTimeMatch) return deliveryTimeMatch;
+  }
+
   // Special handling for common delivery queries
   const deliveryMappings = [
     { patterns: ['international delivery', 'ship internationally', 'overseas shipping', 'abroad'], searchFor: 'ship internationally' },
@@ -225,10 +237,9 @@ export const searchBestFAQ = (message: string, keywords: string[]) => {
     { patterns: ['delivery charges', 'shipping charges', 'delivery cost', 'shipping cost'], searchFor: 'shipping charges' },
     { patterns: ['bulk delivery', 'wholesale delivery', 'large orders'], searchFor: 'bulk delivery' },
     { patterns: ['delivery address', 'shipping address', 'change address'], searchFor: 'delivery address' },
-    { patterns: ['delivery time', 'schedule delivery', 'time slot'], searchFor: 'schedule' },
+    { patterns: ['schedule delivery', 'time slot'], searchFor: 'schedule' },
     { patterns: ['not home', 'absent during delivery', 'redelivery'], searchFor: 'not home' },
-    { patterns: ['delivery updates', 'track delivery', 'delivery status'], searchFor: 'delivery updates' },
-    { patterns: ['delivery times', 'how long delivery'], searchFor: 'delivery times' }
+    { patterns: ['delivery updates', 'track delivery', 'delivery status'], searchFor: 'delivery updates' }
   ];
 
   // Check for delivery pattern matches
