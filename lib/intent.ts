@@ -234,8 +234,23 @@ export const detectIntent = (message: string): IntentResult => {
         }
     });
 
-    // Determine intent
-    if (hasOrderKeywords && orderId) {
+    // Determine intent - Product recommendation should be checked BEFORE order status
+    // This prevents budget amounts from being confused with order IDs
+    if (hasProductKeywords && (budget || foundCategory || hasBrandName || hasProductType)) {
+        // This is clearly a product recommendation query
+        let confidence = 0.8;
+        if (budget) confidence = 0.95; // High confidence when budget is specified
+        if (hasBrandName || hasProductType) confidence = 0.9;
+        
+        return {
+            intent: 'PRODUCT_RECOMMENDATION',
+            confidence,
+            extractedData: { category: foundCategory || 'general', budget, tags }
+        };
+    }
+
+    // Order status detection - but only for 4-digit numbers (typical order IDs), not large numbers
+    if (hasOrderKeywords && orderId && orderId >= 1000 && orderId <= 9999) {
         return {
             intent: 'ORDER_STATUS',
             confidence: 0.9,
