@@ -118,10 +118,10 @@ export const detectSmallTalk = (message: string): boolean => {
 // Order placement detection - only for PLACING new orders, not checking existing ones
 export const detectOrderPlacement = (message: string): boolean => {
     const lowercaseMessage = message.toLowerCase();
-    
+
     // Product categories that indicate order placement
     const productKeywords = ['phone', 'mobile', 'laptop', 'notebook', 'computer', 'tablet', 'ipad', 'smartwatch', 'watch', 'headphones', 'earbuds', 'speakers', 'camera', 'monitor', 'keyboard', 'mouse', 'charger'];
-    
+
     // Order intent phrases
     const placeOrderKeywords = ['place order', 'want to order', 'i want to buy', 'i would like to order', 'can i order', 'i want to purchase', 'make a purchase', 'place a purchase', 'new order', 'ready to order', 'need to buy', 'i need'];
 
@@ -131,8 +131,8 @@ export const detectOrderPlacement = (message: string): boolean => {
 
     // Match if it has explicit order intent OR (product keyword AND buy/need intent)
     const hasOrderIntent = placeOrderKeywords.some(keyword => lowercaseMessage.includes(keyword));
-    const hasProductAndBuyIntent = productKeywords.some(keyword => lowercaseMessage.includes(keyword)) && 
-                                   (lowercaseMessage.includes('buy') || lowercaseMessage.includes('need') || lowercaseMessage.includes('purchase') || lowercaseMessage.includes('want'));
+    const hasProductAndBuyIntent = productKeywords.some(keyword => lowercaseMessage.includes(keyword)) &&
+        (lowercaseMessage.includes('buy') || lowercaseMessage.includes('need') || lowercaseMessage.includes('purchase') || lowercaseMessage.includes('want'));
 
     return (hasOrderIntent || hasProductAndBuyIntent) && !isExcluded;
 };
@@ -140,7 +140,7 @@ export const detectOrderPlacement = (message: string): boolean => {
 // Detect product category from message
 export const detectProductCategory = (message: string): string | null => {
     const lowercaseMessage = message.toLowerCase();
-    
+
     const categoryMappings: { [key: string]: string } = {
         'phone': 'Phones',
         'mobile': 'Phones',
@@ -162,13 +162,13 @@ export const detectProductCategory = (message: string): string | null => {
         'mouse': 'Accessories',
         'charger': 'Accessories'
     };
-    
+
     for (const [keyword, category] of Object.entries(categoryMappings)) {
         if (lowercaseMessage.includes(keyword)) {
             return category;
         }
     }
-    
+
     return null;
 };
 
