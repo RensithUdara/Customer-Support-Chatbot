@@ -170,8 +170,9 @@ export default function ChatWindow() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    message: inputValue,
-                    sessionId
+                    message: textToSend,
+                    sessionId,
+                    userName: userName
                 })
             });
 
@@ -179,7 +180,14 @@ export default function ChatWindow() {
                 throw new Error('Failed to get response');
             }
 
-            const data: ChatResponse = await response.json();
+            const data: ChatResponse & { extractedName?: string } = await response.json();
+
+            // Extract name if provided by user
+            if (data.extractedName && !userName) {
+                setUserName(data.extractedName);
+                setAwaitingName(false);
+                setHasGreeted(true);
+            }
 
             const botMessage: Message = {
                 id: (Date.now() + 1).toString(),
