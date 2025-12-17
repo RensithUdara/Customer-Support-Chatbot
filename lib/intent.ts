@@ -15,19 +15,19 @@ export interface IntentResult {
 // Context-aware intent detection
 export const detectIntentWithContext = (message: string, conversationHistory: any[] = []): IntentResult => {
     const basicIntent = detectIntent(message);
-    
+
     // Enhance intent detection with conversation context
     if (conversationHistory.length > 0) {
         const recentMessages = conversationHistory.slice(-3); // Last 3 messages
-        
+
         // Check if user is continuing a previous conversation
         const lastBotMessage = recentMessages.find(msg => msg.sender === 'bot');
         if (lastBotMessage) {
             const botContent = lastBotMessage.message.toLowerCase();
-            
+
             // If bot mentioned products and user gives a short response, likely product-related
             if (botContent.includes('product') || botContent.includes('acer') || botContent.includes('laptop')) {
-                if (message.length < 20 && (message.toLowerCase().includes('yes') || 
+                if (message.length < 20 && (message.toLowerCase().includes('yes') ||
                     message.toLowerCase().includes('more') || message.toLowerCase().includes('details'))) {
                     return {
                         intent: 'PRODUCT_RECOMMENDATION',
@@ -36,7 +36,7 @@ export const detectIntentWithContext = (message: string, conversationHistory: an
                     };
                 }
             }
-            
+
             // If bot mentioned order and user gives order-related response
             if (botContent.includes('order') && message.match(/\d{4}/)) {
                 return {
@@ -47,7 +47,7 @@ export const detectIntentWithContext = (message: string, conversationHistory: an
             }
         }
     }
-    
+
     return basicIntent;
 };
 
@@ -218,12 +218,12 @@ export const detectIntent = (message: string): IntentResult => {
     // Advanced product recommendation detection
     if (hasProductKeywords || budget || hasBrandName || hasProductType || foundCategory) {
         let confidence = 0.7;
-        
+
         // Higher confidence for brand names or specific product types
         if (hasBrandName) confidence = 0.9;
         if (hasProductType) confidence = Math.max(confidence, 0.8);
         if (foundCategory) confidence = Math.max(confidence, 0.75);
-        
+
         return {
             intent: 'PRODUCT_RECOMMENDATION',
             confidence: confidence,
