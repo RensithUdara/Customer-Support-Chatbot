@@ -67,7 +67,7 @@ const personalizeResponse = (response: string, userNameParam?: string | null): s
 
 export async function POST(request: NextRequest) {
     try {
-        const { message, sessionId = 'anonymous', userName = null } = await request.json();
+        const { message, sessionId = 'anonymous', userName = null, orderStep = 0, orderData = {} } = await request.json();
 
         if (!message) {
             return NextResponse.json({ error: 'Message is required' }, { status: 400 });
@@ -108,6 +108,20 @@ export async function POST(request: NextRequest) {
                 intent: 'APOLOGY',
                 confidence: 0.9,
                 extractedData: {}
+            };
+        } else if (orderStep > 0) {
+            // If we're in the middle of order placement, continue that process
+            intentResult = {
+                intent: 'ORDER_PLACEMENT',
+                confidence: 0.9,
+                extractedData: { orderStep }
+            };
+        } else if (detectOrderPlacement(message)) {
+            // User initiated order placement
+            intentResult = {
+                intent: 'ORDER_PLACEMENT',
+                confidence: 0.95,
+                extractedData: { orderStep: 1 }
             };
         } else if (detectSmallTalk(message)) {
             intentResult = {
