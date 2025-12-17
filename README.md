@@ -268,18 +268,21 @@ graph TD
     ├── test-*.js                 # 🧪 Test files
     └── next-env.d.ts             # 📝 Next.js type definitionsture
 │   ├── seed.ts                   # 🚀 Database initialization
-│   └── data.json                 # 📄 Additional data
+│   └── ecommerce.db              # 💾 SQLite database file
 ├── ⚙️ Configuration Files
 │   ├── package.json              # 📦 Dependencies & scripts
 │   ├── tsconfig.json             # 🔧 TypeScript config
 │   ├── next.config.ts            # ⚡ Next.js optimization
-│   ├── tailwind.config.js        # 🎨 Tailwind customization
-│   └── eslint.config.mjs         # 📏 Code quality rules
-└── 📚 Documentation
+│   ├── postcss.config.mjs        # 🎨 PostCSS for Tailwind
+│   ├── eslint.config.mjs         # 📏 Code quality rules
+│   └── tailwind.config.js        # 🎨 Tailwind 4.0 config
+└── 📚 Documentation & Tests
     ├── README.md                 # 📖 This comprehensive guide
-    ├── PROJECT_README.md         # 🎓 Academic documentation
-    ├── API_TESTING.md            # 🧪 API testing guide
-    └── ISSUE_RESOLVED.md         # 🔧 Troubleshooting log
+    ├── VISUAL_DEPLOYMENT_GUIDE.md# 🌐 Deployment instructions
+    ├── APPENDICES.md             # 📎 Additional details
+    ├── submission.md             # 📝 Project submission
+    ├── test-*.js                 # 🧪 Test files
+    └── next-env.d.ts             # 📝 Next.js type definitions
 ```
 
 ---
