@@ -48,6 +48,23 @@ interface DatabaseQueryResult {
     supportType?: string;
 }
 
+// Helper function to personalize responses with user's name
+const personalizeResponse = (response: string, userNameParam?: string | null): string => {
+    if (!userNameParam) return response;
+    
+    // Add friendly greeting with name at the start of response if it's a detailed response
+    if (response.length > 100 && !response.includes(userNameParam)) {
+        return `Hey ${userNameParam}! 👋\n\n${response}`;
+    }
+    
+    // Add closing with user's name
+    if (response.endsWith('!') || response.endsWith('?')) {
+        return response + `\n\nIs there anything else I can help you with, ${userNameParam}? 😊`;
+    }
+    
+    return response;
+};
+
 export async function POST(request: NextRequest) {
     try {
         const { message, sessionId = 'anonymous', userName = null } = await request.json();
