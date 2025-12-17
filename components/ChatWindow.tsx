@@ -356,37 +356,6 @@ export default function ChatWindow() {
                                         className="leading-relaxed text-sm lg:text-base"
                                     />
 
-                                    {/* Suggestions */}
-                                    {message.sender === 'bot' && message.suggestions && message.suggestions.length > 0 && (
-                                        <div className="mt-4 flex flex-wrap gap-2">
-                                            {message.suggestions.map((suggestion, idx) => (
-                                                <button
-                                                    key={idx}
-                                                    onClick={() => handleSuggestionClick(suggestion)}
-                                                    className="group px-4 py-2 text-xs bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 text-blue-700 rounded-full border border-blue-200 hover:border-blue-300 transition-all duration-200 transform hover:scale-105 hover:shadow-md flex items-center space-x-1"
-                                                >
-                                                    <span className="text-blue-500 group-hover:animate-bounce">💡</span>
-                                                    <span className="font-medium">{suggestion}</span>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {/* Follow-up Questions */}
-                                    {message.sender === 'bot' && message.followUpQuestions && message.followUpQuestions.length > 0 && (
-                                        <div className="mt-3 space-y-2 border-t border-gray-100 pt-3">
-                                            <p className="text-xs text-gray-500 font-medium mb-2">💭 Follow-up questions:</p>
-                                            {message.followUpQuestions.map((question, idx) => (
-                                                <button
-                                                    key={idx}
-                                                    onClick={() => handleSuggestionClick(question)}
-                                                    className="block w-full text-left px-3 py-2 text-xs text-gray-600 hover:text-indigo-600 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 rounded-lg transition-all duration-200 border border-transparent hover:border-indigo-200 group"
-                                                >
-                                                    <span className="group-hover:animate-pulse">❓</span> {question}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
 
                                     <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
                                         <span className="text-xs opacity-60 flex items-center space-x-1">
