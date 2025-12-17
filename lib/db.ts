@@ -300,6 +300,18 @@ export const getOrderById = (orderId: string) => {
   return db.prepare(query).get(orderId);
 };
 
+export const getOrdersByCustomerEmail = (email: string) => {
+  // Get all orders for a customer by email
+  const query = `SELECT * FROM orders WHERE customerEmail = ? ORDER BY orderDate DESC`;
+  return db.prepare(query).all(email);
+};
+
+export const getAllOrders = () => {
+  // Get all orders from database
+  const query = `SELECT * FROM orders ORDER BY orderDate DESC`;
+  return db.prepare(query).all();
+};
+
 export const saveConversation = (sessionId: string, message: string, sender: 'user' | 'bot', intent?: string) => {
   const stmt = db.prepare(`
     INSERT INTO conversations (session_id, message, sender, timestamp, intent)
