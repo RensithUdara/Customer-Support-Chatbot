@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
                     deliveryMethodsText += '\n';
                 });
 
-                deliveryMethodsText += '💡 Choose the method that best suits your needs!';
+                deliveryMethodsText += (userName ? `💡 ${userName}, choose the method that best suits your needs!` : '💡 Choose the method that best suits your needs!');
                 botReply = deliveryMethodsText;
                 break;
 
