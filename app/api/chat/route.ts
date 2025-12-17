@@ -50,7 +50,7 @@ interface DatabaseQueryResult {
 
 export async function POST(request: NextRequest) {
     try {
-        const { message, sessionId = 'anonymous' } = await request.json();
+        const { message, sessionId = 'anonymous', userName = null } = await request.json();
 
         if (!message) {
             return NextResponse.json({ error: 'Message is required' }, { status: 400 });
@@ -62,8 +62,23 @@ export async function POST(request: NextRequest) {
         // Save user message to conversation history
         await saveConversation(sessionId, message, 'user');
 
-        // Detect intent from the message with conversation context
-        const intentResult = detectIntentWithContext(message, conversationHistory);
+        // Check if this is a greeting
+        let isGreeting = detectGreeting(message);
+        let extractedName: string | null = null;
+        let intentResult = detectIntentWithContext(message, conversationHistory);
+
+        // If greeting detected, change intent to GREETING
+        if (isGreeting) {
+            intentResult = {
+                intent: 'GREETING',
+                confidence: 0.95,
+                extractedData: {}
+            };
+        } else {
+            // Try to extract name from message in case user provides their name
+            extractedName = extractNameFromMessage(message);
+        }
+
         console.log('Intent detected:', intentResult);
 
         let botReply = '';
@@ -71,6 +86,29 @@ export async function POST(request: NextRequest) {
         let context: any = {};
 
         switch (intentResult.intent) {
+            case 'GREETING':
+                // Handle greeting - ask for name if not provided
+                if (userName) {
+                    // User already provided name, use friendly greeting
+                    botReply = `👋 Hi ${userName}! How can I help you today?\n\n` +
+                        `I'm here to assist you with:\n` +
+                        `📦 **Order Tracking** - Check your order status\n` +
+                        `🛍️ **Product Recommendations** - Find what you need\n` +
+                        `❓ **FAQs & Policies** - Get answers to common questions\n` +
+                        `📞 **Support** - Connect with our team\n\n` +
+                        `What can I do for you, ${userName}?`;
+                } else {
+                    // First time greeting, ask for name
+                    botReply = `👋 Hi! Welcome to ShopEasy! 😊\n\n` +
+                        `I'm your friendly AI assistant here to help you with:\n` +
+                        `📦 Order tracking & status updates\n` +
+                        `🛍️ Product recommendations\n` +
+                        `❓ FAQs & policies\n` +
+                        `📞 Customer support\n\n` +
+                        `Before we get started, **what's your name?** 🤝`;
+                }
+                break;
+
             case 'ORDER_STATUS':
                 if (intentResult.extractedData?.orderId) {
                     const orderResult = await getOrderById(intentResult.extractedData.orderId.toString());
