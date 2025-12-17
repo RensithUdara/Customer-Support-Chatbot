@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { detectIntent, detectIntentWithContext, extractKeywords } from '@/lib/intent';
+import { detectIntent, detectIntentWithContext, extractKeywords, detectGreeting, extractNameFromMessage } from '@/lib/intent';
 import { searchFAQs, getOrderById, searchProducts, saveConversation, getConversationHistory, searchBestFAQ, getDeliveryMethods, getReturnPolicies, getReturnPoliciesByCategory, getReturnFAQs, smartDatabaseQuery } from '@/lib/db';
 import { callLLM } from '@/lib/llm';
 
@@ -48,9 +48,26 @@ interface DatabaseQueryResult {
     supportType?: string;
 }
 
+// Helper function to personalize responses with user's name
+const personalizeResponse = (response: string, userNameParam?: string | null): string => {
+    if (!userNameParam) return response;
+
+    // Add friendly greeting with name at the start of response if it's a detailed response
+    if (response.length > 100 && !response.includes(userNameParam)) {
+        return `Hey ${userNameParam}! 👋\n\n${response}`;
+    }
+
+    // Add closing with user's name
+    if (response.endsWith('!') || response.endsWith('?')) {
+        return response + `\n\nIs there anything else I can help you with, ${userNameParam}? 😊`;
+    }
+
+    return response;
+};
+
 export async function POST(request: NextRequest) {
     try {
-        const { message, sessionId = 'anonymous' } = await request.json();
+        const { message, sessionId = 'anonymous', userName = null } = await request.json();
 
         if (!message) {
             return NextResponse.json({ error: 'Message is required' }, { status: 400 });
@@ -58,12 +75,27 @@ export async function POST(request: NextRequest) {
 
         // Get recent conversation history for context
         const conversationHistory = await getConversationHistory(sessionId, 6); // Last 6 messages
-        
+
         // Save user message to conversation history
         await saveConversation(sessionId, message, 'user');
 
-        // Detect intent from the message with conversation context
-        const intentResult = detectIntentWithContext(message, conversationHistory);
+        // Check if this is a greeting
+        let isGreeting = detectGreeting(message);
+        let extractedName: string | null = null;
+        let intentResult = detectIntentWithContext(message, conversationHistory);
+
+        // If greeting detected, change intent to GREETING
+        if (isGreeting) {
+            intentResult = {
+                intent: 'GREETING',
+                confidence: 0.95,
+                extractedData: {}
+            };
+        } else {
+            // Try to extract name from message in case user provides their name
+            extractedName = extractNameFromMessage(message);
+        }
+
         console.log('Intent detected:', intentResult);
 
         let botReply = '';
@@ -71,6 +103,29 @@ export async function POST(request: NextRequest) {
         let context: any = {};
 
         switch (intentResult.intent) {
+            case 'GREETING':
+                // Handle greeting - ask for name if not provided
+                if (userName) {
+                    // User already provided name, use friendly greeting
+                    botReply = `👋 Hi ${userName}! How can I help you today?\n\n` +
+                        `I'm here to assist you with:\n` +
+                        `📦 **Order Tracking** - Check your order status\n` +
+                        `🛍️ **Product Recommendations** - Find what you need\n` +
+                        `❓ **FAQs & Policies** - Get answers to common questions\n` +
+                        `📞 **Support** - Connect with our team\n\n` +
+                        `What can I do for you, ${userName}?`;
+                } else {
+                    // First time greeting, ask for name
+                    botReply = `👋 Hi! Welcome to ShopEasy! 😊\n\n` +
+                        `I'm your friendly AI assistant here to help you with:\n` +
+                        `📦 Order tracking & status updates\n` +
+                        `🛍️ Product recommendations\n` +
+                        `❓ FAQs & policies\n` +
+                        `📞 Customer support\n\n` +
+                        `Before we get started, **what's your name?** 🤝`;
+                }
+                break;
+
             case 'ORDER_STATUS':
                 if (intentResult.extractedData?.orderId) {
                     const orderResult = await getOrderById(intentResult.extractedData.orderId.toString());
@@ -105,20 +160,20 @@ export async function POST(request: NextRequest) {
                                 `💳 **Payment Method:** ${order.paymentMethod}\n` +
                                 `🚚 **Tracking Number:** ${order.trackingNumber}\n` +
                                 `📦 **Estimated Delivery:** ${order.estimatedDelivery}` +
-                                itemsInfo;
+                                itemsInfo + (userName ? `\n\n✨ Hope you're excited about this order, ${userName}!` : '');
                         } else {
                             // Show basic tracking information only (privacy-safe)
                             botReply = `📦 **Order #${order.orderId}** - ${order.status}\n\n` +
                                 `🚚 **Tracking Number:** ${order.trackingNumber}\n` +
                                 `📅 **Order Date:** ${order.orderDate}\n` +
                                 `📦 **Estimated Delivery:** ${order.estimatedDelivery}\n\n` +
-                                `💡 Ask for "order details" if you need more information.`;
+                                `💡 Ask for "order details" if you need more information.` + (userName ? `\n\n${userName}, let me know if you need anything else! 😊` : '');
                         }
                     } else {
                         botReply = "I couldn't find that order number. Please double-check your order ID and try again, or contact our support team for assistance.";
                     }
                 } else {
-                    botReply = "I'd be happy to help you track your order! Could you please provide your order number? It's usually a 4-digit number like 1001 or 1015.";
+                    botReply = `I'd be happy to help you track your order${userName ? `, ${userName}` : ''}! Could you please provide your order number? It's usually a 4-digit number like 1001 or 1015.`;
                 }
                 break;
 
@@ -141,7 +196,7 @@ export async function POST(request: NextRequest) {
                     deliveryMethodsText += '\n';
                 });
 
-                deliveryMethodsText += '💡 Choose the method that best suits your needs!';
+                deliveryMethodsText += (userName ? `💡 ${userName}, choose the method that best suits your needs!` : '💡 Choose the method that best suits your needs!');
                 botReply = deliveryMethodsText;
                 break;
 
@@ -204,7 +259,7 @@ export async function POST(request: NextRequest) {
                     returnPolicyText += `A: ${faqResult.answer}\n`;
                 }
 
-                returnPolicyText += '\n💡 Need more help? Contact our support team!';
+                returnPolicyText += (userName ? `\n💡 ${userName}, need more help? Contact our support team!` : '\n💡 Need more help? Contact our support team!');
                 botReply = returnPolicyText;
                 break;
 
@@ -215,15 +270,15 @@ export async function POST(request: NextRequest) {
                 const policyFaq = bestMatch as FAQ | undefined;
 
                 if (policyFaq && policyFaq.answer) {
-                    botReply = policyFaq.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                    botReply = policyFaq.answer + (userName ? `\n\n${userName}, is there anything specific about this policy you'd like me to explain further?` : "\n\nIs there anything specific about this policy you'd like me to explain further?");
                 } else {
                     // Fallback to general search
                     const relevantFAQs = await searchFAQs(keywords);
                     if (relevantFAQs.length > 0) {
                         const firstFaq = relevantFAQs[0] as FAQ;
-                        botReply = firstFaq.answer + "\n\nIs there anything specific about this policy you'd like me to explain further?";
+                        botReply = firstFaq.answer + (userName ? `\n\n${userName}, is there anything specific about this policy you'd like me to explain further?` : "\n\nIs there anything specific about this policy you'd like me to explain further?");
                     } else {
-                        botReply = "I'd be happy to help you with policy information. Could you please be more specific about what you'd like to know about our shipping, returns, payments, or other policies?";
+                        botReply = `I'd be happy to help you with policy information${userName ? `, ${userName}` : ''}. Could you please be more specific about what you'd like to know about our shipping, returns, payments, or other policies?`;
                     }
                 }
                 break;
@@ -432,6 +487,7 @@ export async function POST(request: NextRequest) {
             intent: intentResult.intent,
             confidence: intentResult.confidence,
             sessionId,
+            extractedName: extractedName, // Return extracted name if found
             suggestions: aiResponse?.suggestions || [],
             followUpQuestions: aiResponse?.followUpQuestions || [],
             metadata: aiResponse?.metadata || {

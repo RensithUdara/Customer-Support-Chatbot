@@ -16,6 +16,10 @@ interface ChatContextType {
     messages: Message[];
     setMessages: (messages: Message[] | ((prev: Message[]) => Message[])) => void;
     sessionId: string;
+    userName: string | null;
+    setUserName: (name: string | null) => void;
+    hasGreeted: boolean;
+    setHasGreeted: (greeted: boolean) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -36,6 +40,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [sessionId] = useState(() => 'popup_session_' + Date.now());
+    const [userName, setUserName] = useState<string | null>(null);
+    const [hasGreeted, setHasGreeted] = useState(false);
 
     return (
         <ChatContext.Provider value={{
@@ -43,7 +49,11 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
             setIsPopupOpen,
             messages,
             setMessages,
-            sessionId
+            sessionId,
+            userName,
+            setUserName,
+            hasGreeted,
+            setHasGreeted
         }}>
             {children}
         </ChatContext.Provider>

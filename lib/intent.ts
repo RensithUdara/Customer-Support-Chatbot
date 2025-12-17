@@ -1,5 +1,5 @@
 // Intent detection logic
-export type Intent = 'ORDER_STATUS' | 'POLICY' | 'PRODUCT_RECOMMENDATION' | 'DELIVERY_METHODS' | 'RETURN_POLICIES' | 'DATABASE_QUERY' | 'OTHER';
+export type Intent = 'GREETING' | 'ORDER_STATUS' | 'POLICY' | 'PRODUCT_RECOMMENDATION' | 'DELIVERY_METHODS' | 'RETURN_POLICIES' | 'DATABASE_QUERY' | 'OTHER';
 
 export interface IntentResult {
     intent: Intent;
@@ -15,19 +15,19 @@ export interface IntentResult {
 // Context-aware intent detection
 export const detectIntentWithContext = (message: string, conversationHistory: any[] = []): IntentResult => {
     const basicIntent = detectIntent(message);
-    
+
     // Enhance intent detection with conversation context
     if (conversationHistory.length > 0) {
         const recentMessages = conversationHistory.slice(-3); // Last 3 messages
-        
+
         // Check if user is continuing a previous conversation
         const lastBotMessage = recentMessages.find(msg => msg.sender === 'bot');
         if (lastBotMessage) {
             const botContent = lastBotMessage.message.toLowerCase();
-            
+
             // If bot mentioned products and user gives a short response, likely product-related
             if (botContent.includes('product') || botContent.includes('acer') || botContent.includes('laptop')) {
-                if (message.length < 20 && (message.toLowerCase().includes('yes') || 
+                if (message.length < 20 && (message.toLowerCase().includes('yes') ||
                     message.toLowerCase().includes('more') || message.toLowerCase().includes('details'))) {
                     return {
                         intent: 'PRODUCT_RECOMMENDATION',
@@ -36,7 +36,7 @@ export const detectIntentWithContext = (message: string, conversationHistory: an
                     };
                 }
             }
-            
+
             // If bot mentioned order and user gives order-related response
             if (botContent.includes('order') && message.match(/\d{4}/)) {
                 return {
@@ -47,8 +47,48 @@ export const detectIntentWithContext = (message: string, conversationHistory: an
             }
         }
     }
-    
+
     return basicIntent;
+};
+
+// Greeting detection
+export const detectGreeting = (message: string): boolean => {
+    const lowercaseMessage = message.toLowerCase().trim();
+    const greetingKeywords = ['hi', 'hello', 'hey', 'hola', 'greetings', 'wassup', 'whats up', "what's up", 'sup', 'good morning', 'good afternoon', 'good evening'];
+    return greetingKeywords.some(keyword => lowercaseMessage === keyword || lowercaseMessage.startsWith(keyword + ' '));
+};
+
+// Extract name from message (e.g., "Hi, I'm John" or "My name is Sarah")
+export const extractNameFromMessage = (message: string): string | null => {
+    // Pattern for "I'm [name]"
+    const iamPattern = /i'm\s+([a-zA-Z]+)/i;
+    const iamMatch = message.match(iamPattern);
+    if (iamMatch) return iamMatch[1];
+
+    // Pattern for "I am [name]"
+    const iamPattern2 = /i\s+am\s+([a-zA-Z]+)/i;
+    const iamMatch2 = message.match(iamPattern2);
+    if (iamMatch2) return iamMatch2[1];
+
+    // Pattern for "My name is [name]"
+    const myNamePattern = /my\s+name\s+is\s+([a-zA-Z]+)/i;
+    const myNameMatch = message.match(myNamePattern);
+    if (myNameMatch) return myNameMatch[1];
+
+    // Pattern for "It's [name]" or "It is [name]"
+    const itsPattern = /it(?:\'s|\s+is)\s+([a-zA-Z]+)/i;
+    const itsMatch = message.match(itsPattern);
+    if (itsMatch) return itsMatch[1];
+
+    // If message is just a single word or name
+    if (message.length <= 20 && /^[a-zA-Z\s'-]+$/.test(message)) {
+        const words = message.trim().split(/\s+/);
+        if (words.length === 1 || (words.length === 2 && words[0].toLowerCase() === 'name')) {
+            return words[words.length - 1];
+        }
+    }
+
+    return null;
 };
 
 // Rule-based intent detection
@@ -178,12 +218,12 @@ export const detectIntent = (message: string): IntentResult => {
     // Advanced product recommendation detection
     if (hasProductKeywords || budget || hasBrandName || hasProductType || foundCategory) {
         let confidence = 0.7;
-        
+
         // Higher confidence for brand names or specific product types
         if (hasBrandName) confidence = 0.9;
         if (hasProductType) confidence = Math.max(confidence, 0.8);
         if (foundCategory) confidence = Math.max(confidence, 0.75);
-        
+
         return {
             intent: 'PRODUCT_RECOMMENDATION',
             confidence: confidence,

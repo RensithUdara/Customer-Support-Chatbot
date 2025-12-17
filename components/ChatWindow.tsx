@@ -47,6 +47,9 @@ export default function ChatWindow() {
     const [userPreferences, setUserPreferences] = useState({ responseStyle: 'friendly', technicalLevel: 'basic' });
     const [isListening, setIsListening] = useState(false);
     const [voiceSupported, setVoiceSupported] = useState(false);
+    const [userName, setUserName] = useState<string | null>(null);
+    const [hasGreeted, setHasGreeted] = useState(false);
+    const [awaitingName, setAwaitingName] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const recognitionRef = useRef<any>(null);
@@ -113,33 +116,26 @@ export default function ChatWindow() {
         }
     };
 
-    // Initialize with welcome message
+    // Initialize with welcome message - Greeting flow
     useEffect(() => {
         const welcomeMessage: Message = {
             id: 'welcome',
-            text: "🎉 **Welcome to ShopEasy Support!** I'm your AI assistant with advanced capabilities:\n\n" +
-                "🚀 **What I can do:**\n" +
-                "📦 **Smart Order Tracking** - Real-time updates for orders 1001-1030\n" +
-                "📋 **Intelligent FAQ System** - 50+ policies with context-aware answers\n" +
-                "🛍️ **AI Product Recommendations** - 40+ products with smart filtering\n" +
-                "💡 **Expert Insights** - Warranty, EMI, delivery optimization\n\n" +
-                "⚡ **Quick Start - Try these:**\n" +
-                "• \"Track my order 1015\" (Laptop - Express shipped)\n" +
-                "• \"Gaming laptop under 200000\"\n" +
-                "• \"Return policy for electronics\"\n" +
-                "• \"EMI options available?\"\n\n" +
-                "💬 **Pro Tip:** I learn from our conversation to give you better answers!",
+            text: `👋 **Welcome to ShopEasy Support!** 😊\n\n` +
+                `I'm your friendly AI assistant here to help you 24/7!\n\n` +
+                `🚀 **What I can do for you:**\n` +
+                `📦 Track your orders in real-time\n` +
+                `🛍️ Recommend products that match your needs\n` +
+                `❓ Answer all your questions about policies\n` +
+                `📞 Connect you with our support team\n\n` +
+                `**Before we begin, what's your name?** Just say "hi" or type your name to get started! 🤝`,
             sender: 'bot',
             timestamp: new Date(),
             confidence: 1.0,
-            suggestions: ['Track Order', 'Product Search', 'Policies', 'Payment Info'],
-            followUpQuestions: [
-                "Looking for a specific product category?",
-                "Need help with an existing order?",
-                "Want to know about our policies?"
-            ]
+            suggestions: [],
+            followUpQuestions: []
         };
         setMessages([welcomeMessage]);
+        setAwaitingName(true);
     }, []);
 
     const handleSuggestionClick = (suggestion: string) => {
@@ -174,8 +170,9 @@ export default function ChatWindow() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    message: inputValue,
-                    sessionId
+                    message: textToSend,
+                    sessionId,
+                    userName: userName
                 })
             });
 
@@ -183,7 +180,14 @@ export default function ChatWindow() {
                 throw new Error('Failed to get response');
             }
 
-            const data: ChatResponse = await response.json();
+            const data: ChatResponse & { extractedName?: string } = await response.json();
+
+            // Extract name if provided by user
+            if (data.extractedName && !userName) {
+                setUserName(data.extractedName);
+                setAwaitingName(false);
+                setHasGreeted(true);
+            }
 
             const botMessage: Message = {
                 id: (Date.now() + 1).toString(),
@@ -479,8 +483,8 @@ export default function ChatWindow() {
                                 <button
                                     onClick={toggleVoiceInput}
                                     className={`p-2 rounded-lg transition-all duration-200 ${isListening
-                                            ? 'bg-red-100 text-red-600 animate-pulse'
-                                            : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
+                                        ? 'bg-red-100 text-red-600 animate-pulse'
+                                        : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
                                         }`}
                                     title={isListening ? 'Stop listening' : 'Start voice input'}
                                     aria-label={isListening ? 'Stop listening' : 'Start voice input'}
