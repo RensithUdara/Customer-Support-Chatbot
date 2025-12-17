@@ -118,17 +118,58 @@ export const detectSmallTalk = (message: string): boolean => {
 // Order placement detection - only for PLACING new orders, not checking existing ones
 export const detectOrderPlacement = (message: string): boolean => {
     const lowercaseMessage = message.toLowerCase();
-    // Be specific - only trigger on phrases that clearly indicate placing a NEW order
-    const placeOrderKeywords = ['place order', 'want to order', 'i want to buy', 'i would like to order', 'can i order', 'i want to purchase', 'make a purchase', 'place a purchase', 'new order', 'ready to order'];
+    
+    // Product categories that indicate order placement
+    const productKeywords = ['phone', 'mobile', 'laptop', 'notebook', 'computer', 'tablet', 'ipad', 'smartwatch', 'watch', 'headphones', 'earbuds', 'speakers', 'camera', 'monitor', 'keyboard', 'mouse', 'charger'];
+    
+    // Order intent phrases
+    const placeOrderKeywords = ['place order', 'want to order', 'i want to buy', 'i would like to order', 'can i order', 'i want to purchase', 'make a purchase', 'place a purchase', 'new order', 'ready to order', 'need to buy', 'i need'];
 
     // Exclude phrases that indicate checking existing orders
     const excludeKeywords = ['where is', 'what is', 'status', 'track', 'when will', 'when is', 'how long'];
     const isExcluded = excludeKeywords.some(keyword => lowercaseMessage.includes(keyword));
 
-    // Only match if it has place/order/buy intent AND doesn't have tracking intent
+    // Match if it has explicit order intent OR (product keyword AND buy/need intent)
     const hasOrderIntent = placeOrderKeywords.some(keyword => lowercaseMessage.includes(keyword));
+    const hasProductAndBuyIntent = productKeywords.some(keyword => lowercaseMessage.includes(keyword)) && 
+                                   (lowercaseMessage.includes('buy') || lowercaseMessage.includes('need') || lowercaseMessage.includes('purchase') || lowercaseMessage.includes('want'));
 
-    return hasOrderIntent && !isExcluded;
+    return (hasOrderIntent || hasProductAndBuyIntent) && !isExcluded;
+};
+
+// Detect product category from message
+export const detectProductCategory = (message: string): string | null => {
+    const lowercaseMessage = message.toLowerCase();
+    
+    const categoryMappings: { [key: string]: string } = {
+        'phone': 'Phones',
+        'mobile': 'Phones',
+        'smartphone': 'Phones',
+        'laptop': 'Laptops',
+        'notebook': 'Laptops',
+        'computer': 'Computers',
+        'desktop': 'Computers',
+        'tablet': 'Tablets',
+        'ipad': 'Tablets',
+        'smartwatch': 'Wearables',
+        'watch': 'Wearables',
+        'headphones': 'Audio',
+        'earbuds': 'Audio',
+        'speakers': 'Audio',
+        'camera': 'Cameras',
+        'monitor': 'Monitors',
+        'keyboard': 'Accessories',
+        'mouse': 'Accessories',
+        'charger': 'Accessories'
+    };
+    
+    for (const [keyword, category] of Object.entries(categoryMappings)) {
+        if (lowercaseMessage.includes(keyword)) {
+            return category;
+        }
+    }
+    
+    return null;
 };
 
 // Extract name from message (e.g., "Hi, I'm John" or "My name is Sarah")
