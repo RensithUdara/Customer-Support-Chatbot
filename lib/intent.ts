@@ -1,5 +1,5 @@
 // Intent detection logic
-export type Intent = 'GREETING' | 'GRATITUDE' | 'GOODBYE' | 'HELP' | 'CONFUSED' | 'YES' | 'NO' | 'APOLOGY' | 'SMALLTALK' | 'ORDER_STATUS' | 'POLICY' | 'PRODUCT_RECOMMENDATION' | 'DELIVERY_METHODS' | 'RETURN_POLICIES' | 'DATABASE_QUERY' | 'OTHER';
+export type Intent = 'GREETING' | 'GRATITUDE' | 'GOODBYE' | 'HELP' | 'CONFUSED' | 'YES' | 'NO' | 'APOLOGY' | 'SMALLTALK' | 'ORDER_PLACEMENT' | 'ORDER_STATUS' | 'POLICY' | 'PRODUCT_RECOMMENDATION' | 'DELIVERY_METHODS' | 'RETURN_POLICIES' | 'DATABASE_QUERY' | 'OTHER';
 
 export interface IntentResult {
     intent: Intent;
@@ -9,6 +9,7 @@ export interface IntentResult {
         category?: string;
         budget?: number;
         tags?: string[];
+        orderStep?: number;
     };
 }
 
@@ -112,6 +113,22 @@ export const detectSmallTalk = (message: string): boolean => {
     const lowercaseMessage = message.toLowerCase();
     const smallTalkKeywords = ['how are you', 'how\'s it', 'how is it', 'how\'re you', 'what\'s up', 'what is up', 'how\'s your day', 'how are things', 'how\'s everything', 'nice day', 'weather', 'you doing', 'you up to'];
     return smallTalkKeywords.some(keyword => lowercaseMessage.includes(keyword));
+};
+
+// Order placement detection - only for PLACING new orders, not checking existing ones
+export const detectOrderPlacement = (message: string): boolean => {
+    const lowercaseMessage = message.toLowerCase();
+    // Be specific - only trigger on phrases that clearly indicate placing a NEW order
+    const placeOrderKeywords = ['place order', 'want to order', 'i want to buy', 'i would like to order', 'can i order', 'i want to purchase', 'make a purchase', 'place a purchase', 'new order', 'ready to order'];
+
+    // Exclude phrases that indicate checking existing orders
+    const excludeKeywords = ['where is', 'what is', 'status', 'track', 'when will', 'when is', 'how long'];
+    const isExcluded = excludeKeywords.some(keyword => lowercaseMessage.includes(keyword));
+
+    // Only match if it has place/order/buy intent AND doesn't have tracking intent
+    const hasOrderIntent = placeOrderKeywords.some(keyword => lowercaseMessage.includes(keyword));
+
+    return hasOrderIntent && !isExcluded;
 };
 
 // Extract name from message (e.g., "Hi, I'm John" or "My name is Sarah")

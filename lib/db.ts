@@ -300,6 +300,18 @@ export const getOrderById = (orderId: string) => {
   return db.prepare(query).get(orderId);
 };
 
+export const getOrdersByCustomerEmail = (email: string) => {
+  // Get all orders for a customer by email
+  const query = `SELECT * FROM orders WHERE customerEmail = ? ORDER BY orderDate DESC`;
+  return db.prepare(query).all(email);
+};
+
+export const getAllOrders = () => {
+  // Get all orders from database
+  const query = `SELECT * FROM orders ORDER BY orderDate DESC`;
+  return db.prepare(query).all();
+};
+
 export const saveConversation = (sessionId: string, message: string, sender: 'user' | 'bot', intent?: string) => {
   const stmt = db.prepare(`
     INSERT INTO conversations (session_id, message, sender, timestamp, intent)
@@ -791,6 +803,97 @@ export const getMessageFeedback = (messageId: string) => {
   } catch (error) {
     console.error('Error getting message feedback:', error);
     return null;
+  }
+};
+
+// Save order to database
+export const saveOrder = (orderData: {
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  shippingAddress: string;
+  productName: string;
+  quantity: number;
+  paymentMethod: string;
+  deliveryMethod: string;
+}): { orderId: string; success: boolean } => {
+  try {
+    // Generate sequential numeric order ID (like 1001, 1002, 1003...)
+    const now = new Date();
+
+    // Get the maximum existing order ID
+    const maxResult = db.prepare('SELECT MAX(CAST(orderId AS INTEGER)) as maxId FROM orders WHERE orderId REGEXP "^[0-9]+$"').get() as any;
+    const maxId = maxResult?.maxId || 1000;
+    const orderId = String(maxId + 1);
+
+    // Generate tracking number with date format
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+    const trackingNumber = `TRK-${dateStr}-${String(Math.floor(Math.random() * 1000000)).padStart(6, '0')}`;
+
+    // Calculate estimated delivery based on delivery method
+    const deliveryDate = new Date(now);
+    if (orderData.deliveryMethod.includes('Standard')) {
+      deliveryDate.setDate(deliveryDate.getDate() + 6); // 5-7 days
+    } else if (orderData.deliveryMethod.includes('Express')) {
+      deliveryDate.setDate(deliveryDate.getDate() + 2); // 2-3 days
+    } else if (orderData.deliveryMethod.includes('Overnight')) {
+      deliveryDate.setDate(deliveryDate.getDate() + 1); // 1 day
+    }
+    const estimatedDelivery = deliveryDate.toISOString().slice(0, 10);
+
+    // Calculate total amount (using default pricing)
+    let totalAmount = 5000; // Base product price
+    if (orderData.deliveryMethod.includes('Standard')) {
+      totalAmount += 200;
+    } else if (orderData.deliveryMethod.includes('Express')) {
+      totalAmount += 500;
+    } else if (orderData.deliveryMethod.includes('Overnight')) {
+      totalAmount += 1000;
+    }
+    totalAmount *= orderData.quantity;
+
+    const stmt = db.prepare(`
+      INSERT INTO orders (
+        orderId,
+        customerName,
+        customerEmail,
+        customerPhone,
+        status,
+        orderDate,
+        totalAmount,
+        paymentMethod,
+        shippingAddress,
+        trackingNumber,
+        estimatedDelivery,
+        items
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(
+      orderId,
+      orderData.customerName,
+      orderData.customerEmail,
+      orderData.customerPhone,
+      'Processing',
+      now.toISOString(),
+      totalAmount,
+      orderData.paymentMethod,
+      orderData.shippingAddress,
+      trackingNumber,
+      estimatedDelivery,
+      JSON.stringify([{
+        name: orderData.productName,
+        quantity: orderData.quantity,
+        price: 5000,
+        category: 'Product'
+      }])
+    );
+
+    console.log(`Order saved: ${orderId}`);
+    return { orderId, success: true };
+  } catch (error) {
+    console.error('Error saving order:', error);
+    return { orderId: '', success: false };
   }
 };
 

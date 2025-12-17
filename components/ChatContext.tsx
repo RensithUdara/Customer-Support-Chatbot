@@ -10,6 +10,17 @@ interface Message {
     intent?: string;
 }
 
+interface OrderData {
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    productName?: string;
+    quantity?: number;
+    paymentMethod?: string;
+    deliveryMethod?: string;
+}
+
 interface ChatContextType {
     isPopupOpen: boolean;
     setIsPopupOpen: (open: boolean) => void;
@@ -20,6 +31,10 @@ interface ChatContextType {
     setUserName: (name: string | null) => void;
     hasGreeted: boolean;
     setHasGreeted: (greeted: boolean) => void;
+    orderData: OrderData;
+    setOrderData: (data: OrderData | ((prev: OrderData) => OrderData)) => void;
+    orderStep: number;
+    setOrderStep: (step: number) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -42,6 +57,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     const [sessionId] = useState(() => 'popup_session_' + Date.now());
     const [userName, setUserName] = useState<string | null>(null);
     const [hasGreeted, setHasGreeted] = useState(false);
+    const [orderData, setOrderData] = useState<OrderData>({});
+    const [orderStep, setOrderStep] = useState(0); // 0: not ordering, 1: name, 2: email, 3: phone, 4: address, 5: product, 6: quantity, 7: payment, 8: delivery, 9: confirm, 10: complete
 
     return (
         <ChatContext.Provider value={{
@@ -53,7 +70,11 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
             userName,
             setUserName,
             hasGreeted,
-            setHasGreeted
+            setHasGreeted,
+            orderData,
+            setOrderData,
+            orderStep,
+            setOrderStep
         }}>
             {children}
         </ChatContext.Provider>
