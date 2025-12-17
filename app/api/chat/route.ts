@@ -160,20 +160,20 @@ export async function POST(request: NextRequest) {
                                 `💳 **Payment Method:** ${order.paymentMethod}\n` +
                                 `🚚 **Tracking Number:** ${order.trackingNumber}\n` +
                                 `📦 **Estimated Delivery:** ${order.estimatedDelivery}` +
-                                itemsInfo;
+                                itemsInfo + (userName ? `\n\n✨ Hope you're excited about this order, ${userName}!` : '');
                         } else {
                             // Show basic tracking information only (privacy-safe)
                             botReply = `📦 **Order #${order.orderId}** - ${order.status}\n\n` +
                                 `🚚 **Tracking Number:** ${order.trackingNumber}\n` +
                                 `📅 **Order Date:** ${order.orderDate}\n` +
                                 `📦 **Estimated Delivery:** ${order.estimatedDelivery}\n\n` +
-                                `💡 Ask for "order details" if you need more information.`;
+                                `💡 Ask for "order details" if you need more information.` + (userName ? `\n\n${userName}, let me know if you need anything else! 😊` : '');
                         }
                     } else {
                         botReply = "I couldn't find that order number. Please double-check your order ID and try again, or contact our support team for assistance.";
                     }
                 } else {
-                    botReply = "I'd be happy to help you track your order! Could you please provide your order number? It's usually a 4-digit number like 1001 or 1015.";
+                    botReply = `I'd be happy to help you track your order${userName ? `, ${userName}` : ''}! Could you please provide your order number? It's usually a 4-digit number like 1001 or 1015.`;
                 }
                 break;
 
