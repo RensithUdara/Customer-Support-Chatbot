@@ -833,7 +833,7 @@ export const saveOrder = (orderData: {
     const now = new Date();
 
     // Get the maximum existing order ID
-    const maxResult = db.prepare('SELECT MAX(CAST(orderId AS INTEGER)) as maxId FROM orders WHERE orderId REGEXP "^[0-9]+$"').get() as any;
+    const maxResult = db.prepare('SELECT MAX(CAST(orderId AS INTEGER)) as maxId FROM orders').get() as any;
     const maxId = maxResult?.maxId || 1000;
     const orderId = String(maxId + 1);
 
