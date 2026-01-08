@@ -663,7 +663,7 @@ export async function POST(request: NextRequest) {
                     if (products && products.length > 0) {
                         let productList = `✅ Address saved!\n\n📱 **Available ${newOrderData.category}:**\n\n`;
                         products.forEach((product: any, index: number) => {
-                            productList += `${index + 1}️⃣ **${product.name}** - PKR ${product.price}\n`;
+                            productList += `${index + 1}️⃣ **${product.name}** - LKR ${product.price}\n`;
                         });
                         productList += `\nSelect by number (e.g., "1" for first product)`;
                         botReply = productList;
@@ -681,7 +681,7 @@ export async function POST(request: NextRequest) {
                         newOrderData.productName = selectedProduct.name;
                         newOrderData.selectedProducts = [{ ...selectedProduct }];
                         nextStep = 6;
-                        botReply = `✅ Product: **${selectedProduct.name}** (PKR ${selectedProduct.price})\n\n❓ Do you need anything else? (yes/no)`;
+                        botReply = `✅ Product: **${selectedProduct.name}** (LKR ${selectedProduct.price})\n\n❓ Do you need anything else? (yes/no)`;
                     } else {
                         botReply = `❌ Please select a valid product number`;
                     }
@@ -706,7 +706,7 @@ export async function POST(request: NextRequest) {
                         if (moreProducts && moreProducts.length > 0) {
                             let productList = `📱 **Available ${additionalCategory}:**\n\n`;
                             moreProducts.forEach((product: any, index: number) => {
-                                productList += `${index + 1}️⃣ **${product.name}** - PKR ${product.price}\n`;
+                                productList += `${index + 1}️⃣ **${product.name}** - LKR ${product.price}\n`;
                             });
                             productList += `\nSelect by number`;
                             botReply = productList;
@@ -770,7 +770,7 @@ export async function POST(request: NextRequest) {
                     if (deliveryMethod) {
                         newOrderData.deliveryMethod = deliveryMethod;
                         nextStep = 11;
-                        const productSummary = newOrderData.selectedProducts.map((p: any) => `• ${p.name} - PKR ${p.price}`).join('\n');
+                        const productSummary = newOrderData.selectedProducts.map((p: any) => `• ${p.name} - LKR ${p.price}`).join('\n');
                         botReply = `✅ Delivery: **${deliveryMethod}**\n\n📋 **ORDER SUMMARY:**\n👤 Name: **${newOrderData.name}**\n📧 Email: **${newOrderData.email}**\n📞 Phone: **${newOrderData.phone}**\n🛍️ Products:\n${productSummary}\n📦 Qty: **${newOrderData.quantity}**\n💳 Payment: **${newOrderData.paymentMethod}**\n🚚 Delivery: **${deliveryMethod}**\n\n✅ Confirm? (yes/no)`;
                     } else {
                         botReply = `🚚 Please choose a valid **delivery method**`;
