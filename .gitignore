@@ -55,3 +55,7 @@ test-*.js
 *_GUIDE.md
 PROJECT_*.md
 .env*
+.env
+.env.*
+.env.local
+.env.production
