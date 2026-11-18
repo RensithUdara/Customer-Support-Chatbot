@@ -54,4 +54,4 @@ test-*.js
 *_RESOLVED.md
 *_GUIDE.md
 PROJECT_*.md
-.env*
+config.bat
