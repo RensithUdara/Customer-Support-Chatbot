@@ -43,4 +43,7 @@ config/*.json
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-config.bat
+.env
+.env.*
+.env.local
+.env.production
